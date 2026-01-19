@@ -1,8 +1,9 @@
-﻿using Lenden.Core.UserFeatures;
+﻿using Lenden.Core.Entities;
+using Lenden.Core.UserFeatures;
 using Lenden.Data.DbContexts;
 using Microsoft.EntityFrameworkCore;
 
-namespace Lenden.Data;
+namespace Lenden.Data.Repositories;
 
 public class UserRepository: Repository<UserEntity>, IUserRepository
 {

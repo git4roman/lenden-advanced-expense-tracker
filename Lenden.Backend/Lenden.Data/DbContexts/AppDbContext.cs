@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Lenden.Core.BalanceFeatures;
+using Lenden.Core.Entities;
 using Lenden.Core.ExpenseFeatures;
 using Lenden.Core.GroupFeatures;
 using Lenden.Core.SettlementFeatures;

@@ -1,4 +1,6 @@
-﻿namespace Lenden.Core.UserFeatures;
+﻿using Lenden.Core.Entities;
+
+namespace Lenden.Core.UserFeatures;
 
 public interface IUserRepository: IRepository<UserEntity>
 {

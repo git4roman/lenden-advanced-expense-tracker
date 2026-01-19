@@ -1,4 +1,5 @@
-﻿using Lenden.Core.GroupFeatures;
+﻿using Lenden.Core.Entities;
+using Lenden.Core.GroupFeatures;
 using Lenden.Core.UserFeatures;
 
 namespace Lenden.Core.SettlementFeatures;

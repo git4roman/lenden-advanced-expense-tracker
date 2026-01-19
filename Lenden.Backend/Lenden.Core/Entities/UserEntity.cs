@@ -1,6 +1,6 @@
 ﻿using Lenden.Core.UserGroupFeatures;
 
-namespace Lenden.Core.UserFeatures;
+namespace Lenden.Core.Entities;
 
 public class UserEntity
 {

@@ -1,5 +1,6 @@
 using System.Text;
 using Lenden.Core;
+using Lenden.Core.Entities;
 using Lenden.Core.GroupFeatures;
 using Lenden.Core.SettlementFeatures;
 using Lenden.Core.TransactionFeatures;

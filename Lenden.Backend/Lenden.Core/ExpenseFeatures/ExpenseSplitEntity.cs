@@ -1,4 +1,5 @@
-﻿using Lenden.Core.UserFeatures;
+﻿using Lenden.Core.Entities;
+using Lenden.Core.UserFeatures;
 
 namespace Lenden.Core.ExpenseFeatures;
 

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, StyleSheet, Alert, Linking } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { axiosInstance } from "@/src/services";
+// import { axiosInstance } from "@/src/services";
+import axiosInstance from "@/src/api/config/apiConfig";
 import { UserEntity } from "@/src/types/UserEntity";
 import * as Contacts from "expo-contacts";
 import * as Crypto from "expo-crypto";

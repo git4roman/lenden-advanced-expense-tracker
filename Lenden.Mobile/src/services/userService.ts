@@ -1,4 +1,5 @@
-import axiosInstance from "./axios";
+// import axiosInstance from "./axios";
+import axiosInstance from "../api/config/apiConfig";
 import * as SecureStore from "expo-secure-store";
 import { UserLoginDto, UserRegisterDto } from "@/src/types";
 

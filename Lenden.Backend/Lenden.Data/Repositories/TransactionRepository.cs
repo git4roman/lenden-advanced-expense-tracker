@@ -1,7 +1,7 @@
 ﻿using Lenden.Core.TransactionFeatures;
 using Lenden.Data.DbContexts;
 
-namespace Lenden.Data;
+namespace Lenden.Data.Repositories;
 
 public class TransactionRepository: Repository<TransactionEntity>,ITransactionRepository
 {

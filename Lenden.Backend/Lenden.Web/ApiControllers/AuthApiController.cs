@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Lenden.Core;
+using Lenden.Core.Entities;
 using Lenden.Core.UserFeatures;
 using Lenden.Core.Utilities;
 using Microsoft.AspNetCore.Authorization;

@@ -2,7 +2,7 @@
 using Lenden.Data.DbContexts;
 using Microsoft.EntityFrameworkCore;
 
-namespace Lenden.Data;
+namespace Lenden.Data.Repositories;
 
 public class Repository<T> : IRepository<T> where T : class
 {

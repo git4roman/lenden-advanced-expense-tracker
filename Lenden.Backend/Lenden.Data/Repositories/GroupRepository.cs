@@ -1,9 +1,8 @@
-﻿using System.Text.RegularExpressions;
-using Lenden.Core.GroupFeatures;
+﻿using Lenden.Core.GroupFeatures;
 using Lenden.Data.DbContexts;
 using Microsoft.EntityFrameworkCore;
 
-namespace Lenden.Data;
+namespace Lenden.Data.Repositories;
 
 public class GroupRepository: Repository<GroupEntity>, IGroupRepository
 {

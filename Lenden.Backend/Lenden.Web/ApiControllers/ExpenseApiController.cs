@@ -47,16 +47,20 @@ public class ExpenseApiController: ControllerBase
         var allUserIds = dto.PaidByDto.Select(u => u.UserId)
             .Concat(dto.SplitBetweenDto.Select(u => u.UserId))
             .Distinct();
-        foreach(var userId in allUserIds)
-        {
-            var existingUser = await _uow.User.GetByIdAsync(userId);
-            if (existingUser == null) return NotFound($"User with id {userId} doesn't exist");
-        }
+        
+        var userIds = allUserIds.ToList();
+        var existingUserIds = await _context.Users
+            .Where(u => userIds.Contains(u.Id))
+            .Select(u => u.Id)
+            .ToListAsync();
+
+        if (existingUserIds.Count != userIds.Count)
+            return NotFound("One or more users not found");
+        var balances = await _context.Balances.Where(u => u.GroupId == dto.GroupId).ToListAsync();
         
         var splitCount = dto.SplitBetweenDto.Count;
         
         await using var transaction = await _context.Database.BeginTransactionAsync();
-        
         
         try
         {
@@ -82,9 +86,8 @@ public class ExpenseApiController: ControllerBase
 
                     var owedToId = Math.Min(payer.UserId, splitter.UserId);
                     var owedById = Math.Max(payer.UserId, splitter.UserId);
-                    var existingBalance = await _context.Balances.Where(u =>
-                            ((u.OwedToId == owedToId && u.OwedById == owedById) && u.GroupId == dto.GroupId))
-                        .FirstOrDefaultAsync();
+                    var existingBalance = balances.FirstOrDefault(u =>
+                        u.OwedToId == owedToId && u.OwedById == owedById);
                     if (existingBalance != null)
                     {
                         if (payer.UserId == existingBalance.OwedToId)
@@ -127,10 +130,8 @@ public async Task<IActionResult> GetTransactions(int groupId)
         return NotFound($"Group with id {groupId} doesn't exist");
 
     var expenses = await _context.Expenses
+        .AsNoTracking()
         .Where(e => e.GroupId == groupId)
-        .Include(e => e.MadeBy)
-        .Include(e => e.ExpensePayers)
-        .ThenInclude(ep => ep.Payer)
         .Select(e => new
         {
             e.Id,
@@ -151,9 +152,8 @@ public async Task<IActionResult> GetTransactions(int groupId)
         .ToListAsync();
 
     var settlements = await _context.Settlements
+        .AsNoTracking()
         .Where(s => s.GroupId == groupId)
-        .Include(s => s.FromUser)
-        .Include(s => s.ToUser)
         .Select(s => new
         {
             s.Id,
@@ -165,9 +165,7 @@ public async Task<IActionResult> GetTransactions(int groupId)
             ToUser = new { s.ToUser.Id, s.ToUser.FullName }
         })
         .ToListAsync();
-
-
-
+    
     return Ok(new {expenses = expenses, settlements = settlements});
 }
 
