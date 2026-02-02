@@ -21,6 +21,16 @@ export default function _layout() {
         initialRouteName="(groups)"
       >
         <Tabs.Screen
+          name="(home)"
+          options={{
+            headerShown: false,
+            title: "Home",
+            tabBarIcon: ({ color, size }) => (
+              <FontAwesome5 name="home" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
           name="(groups)"
           options={{
             headerShown: false,
@@ -41,16 +51,6 @@ export default function _layout() {
           }}
         />
 
-        <Tabs.Screen
-          name="(activity)"
-          options={{
-            headerShown: false,
-            title: "Activity", // Optional: set a title for the tab
-            tabBarIcon: ({ color, size }) => (
-              <FontAwesome5 name="chart-line" size={size} color={color} />
-            ),
-          }}
-        />
         <Tabs.Screen
           name="(account)"
           options={{
