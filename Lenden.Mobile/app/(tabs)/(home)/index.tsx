@@ -1,15 +1,24 @@
-import { View, Text, Image, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  FlatList,
+  StyleSheet,
+  ImageBackground,
+} from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { CText } from "@/src/shared/ui/components/CText";
+import HeroSectionGenerativePattern from "@/assets/images/HeroSectionGenerativePatterns.png";
 import {
   Send2,
   DirectInbox,
   TableDocument,
   Eye,
   EyeSlash,
+  Profile,
 } from "iconsax-react-nativejs";
 
 const activityMockData = [
@@ -71,37 +80,41 @@ const Header = () => (
   <View
     style={{
       flexDirection: "row",
-      paddingHorizontal: 26,
+      // paddingHorizontal: 16,
+      paddingBottom: 12,
       alignItems: "center",
     }}
   >
-    <View style={{ flex: 1 }} />
-    <CText weight="extrabold" italic size="xxlg">
+    {/* <View style={{ flex: 1 }} /> */}
+    <CText weight="extrabold" italic size="xlg" color="neutral" shade={100}>
       LENDEN
     </CText>
-    <View style={{ flex: 1, alignItems: "flex-end" }}>
-      <FontAwesome5 name="bell" size={24} />
+    <View style={{ flex: 1, alignItems: "flex-end", marginRight: 10 }}>
+      <FontAwesome5 name="bell" size={24} color={Colors.accent[300]} />
     </View>
   </View>
 );
 
 const BalanceCard = () => (
-  <View
+  <ImageBackground
+    source={HeroSectionGenerativePattern}
+    imageStyle={{ opacity: 0.5 }}
     style={{
-      height: 200,
-      backgroundColor: Colors.primary[500],
+      height: 180,
+      backgroundColor: Colors.accent[500],
       borderRadius: 24,
       // borderTopRightRadius: 14,
-      padding: 16,
+      padding: 8,
       justifyContent: "space-between",
+      overflow: "hidden",
     }}
   >
     <View
       style={{
         flexDirection: "row",
         justifyContent: "space-between",
-        alignItems: "baseline",
-        // borderWidth: 1,
+        alignItems: "flex-end",
+        // borderWidth:K 1,
       }}
     >
       <View
@@ -109,7 +122,8 @@ const BalanceCard = () => (
           justifyContent: "flex-start",
           alignItems: "center",
           flexDirection: "row",
-          gap: 8,
+          gap: 6,
+          flex: 1,
         }}
       >
         <View
@@ -117,21 +131,17 @@ const BalanceCard = () => (
             width: 44,
             height: 44,
             borderRadius: "50%",
-            borderWidth: 1,
-            backgroundColor: Colors.secondary[500],
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: Colors.neutral[100],
           }}
-        ></View>
-        <View>
+        >
+          <Profile size="40" color={Colors.accent[500]} />
+        </View>
+        <View style={{ flex: 1 }}>
           <CText weight="semibold" size="xmd">
             Hi,Roman !
           </CText>
-          {/* <CText>
-          A/C No.{" "}
-          <CText size="md" weight="medium">
-            0234668635
-          </CText>
-        </CText> */}
-
           <CText italic>Proud Lenden User</CText>
         </View>
       </View>
@@ -148,7 +158,7 @@ const BalanceCard = () => (
           <CText
             weight="medium"
             size="ssm"
-            color="primary"
+            color="accent"
             shade={900}
             style={{ textAlign: "center" }}
           >
@@ -158,14 +168,14 @@ const BalanceCard = () => (
         <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
           <CText weight="medium" size="md" style={{ lineHeight: 24 }}>
             NPR.{" "}
-            <CText weight="semibold" size="xxlg" letterSpacing={1}>
+            <CText weight="semibold" size="xlg" letterSpacing={1}>
               -398
               <CText weight="medium" size="ssm" letterSpacing={1}>
                 .52
               </CText>
             </CText>
           </CText>
-          <Eye size="20" color={Colors.primary[900]} />
+          {/* <Eye size="20" color={Colors.accent[900]} /> */}
         </View>
       </View>
     </View>
@@ -182,16 +192,16 @@ const BalanceCard = () => (
       }}
     >
       <IconCover label="Pay">
-        <Send2 size="28" color={Colors.primary[200]} />
+        <Send2 size="28" color={Colors.accent[200]} />
       </IconCover>
       <IconCover label="Request">
-        <DirectInbox size="28" color={Colors.primary[200]} />
+        <DirectInbox size="28" color={Colors.accent[200]} />
       </IconCover>
       <IconCover label="Statement">
-        <TableDocument size="28" color={Colors.primary[200]} />
+        <TableDocument size="28" color={Colors.accent[200]} />
       </IconCover>
     </View>
-  </View>
+  </ImageBackground>
 );
 
 const ActivityItem = ({ item }: any) => (
@@ -211,8 +221,12 @@ const ActivityItem = ({ item }: any) => (
         marginRight: 6,
       }}
     >
-      <CText>{item.date}</CText>
-      <CText>{item.time}</CText>
+      <CText color="neutral" shade={100}>
+        {item.date}
+      </CText>
+      <CText color="neutral" shade={100}>
+        {item.time}
+      </CText>
     </View>
 
     <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
@@ -223,15 +237,19 @@ const ActivityItem = ({ item }: any) => (
           borderRadius: 18,
           borderWidth: 1,
           marginRight: 8,
+          borderColor: Colors.neutral[100],
+          backgroundColor: Colors.neutral[400],
         }}
       />
       <View style={{ flex: 1 }}>
-        <CText weight="medium" size="ssm">
+        <CText weight="medium" size="ssm" color="neutral" shade={100}>
           {item.category}
         </CText>
-        <CText italic>{item.description}</CText>
+        <CText italic color="neutral" shade={100}>
+          {item.description}
+        </CText>
       </View>
-      <CText weight="medium" italic>
+      <CText weight="medium" italic color="neutral" shade={100}>
         NPR. {item.amount}
       </CText>
     </View>
@@ -240,13 +258,19 @@ const ActivityItem = ({ item }: any) => (
 
 const HomeScreen = () => {
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFEFA" }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: Colors.neutral[900],
+        paddingHorizontal: 24,
+      }}
+    >
       <Header />
-      <View style={{ paddingHorizontal: 10 }}>
+      <View style={{}}>
         <BalanceCard />
       </View>
 
-      <View style={{ padding: 20 }}>
+      <View style={{ paddingTop: 16 }}>
         <View
           style={{
             flexDirection: "row",
@@ -254,10 +278,10 @@ const HomeScreen = () => {
             alignItems: "center",
           }}
         >
-          <CText weight="semibold" size="xxmd">
+          <CText weight="semibold" size="xmd" color="neutral" shade={100}>
             Activity
           </CText>
-          <CText color="primary" shade={800} size="ssm">
+          <CText size="ssm" color="accent" shade={100}>
             View All
           </CText>
         </View>
@@ -274,12 +298,12 @@ const HomeScreen = () => {
               style={{
                 flex: 1,
                 height: 1,
-                backgroundColor: Colors.primary[700],
+                backgroundColor: Colors.neutral[500],
               }}
             />
             <CText
-              color="primary"
-              shade={700}
+              color="neutral"
+              shade={400}
               size="xmd"
               style={{ paddingHorizontal: 10 }}
             >
@@ -289,7 +313,7 @@ const HomeScreen = () => {
               style={{
                 flex: 1,
                 height: 1,
-                backgroundColor: Colors.primary[700],
+                backgroundColor: Colors.neutral[500],
               }}
             />
           </View>
