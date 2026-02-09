@@ -66,6 +66,7 @@ const GroupScreen = () => {
           justifyContent: "center",
           alignItems: "center",
           paddingHorizontal: 12,
+          paddingVertical: 12,
           marginBottom: 8,
           borderRadius: 16,
           overflow: "hidden",
