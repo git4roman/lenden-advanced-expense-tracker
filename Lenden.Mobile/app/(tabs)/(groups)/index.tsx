@@ -11,65 +11,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { ArrowRight2, More } from "iconsax-react-nativejs";
-
-const groupsData = [
-  {
-    id: 1,
-    label: "Kathmandu City",
-    image: "https://picsum.photos/200/200?random=1",
-    members: [
-      "https://randomuser.me/api/portraits/men/32.jpg",
-      "https://randomuser.me/api/portraits/women/45.jpg",
-      "https://randomuser.me/api/portraits/women/25.jpg",
-      "https://randomuser.me/api/portraits/men/25.jpg",
-    ],
-  },
-  {
-    id: 2,
-    label: "Pokhara Hills",
-    image: "https://picsum.photos/200/200?random=2",
-    members: [
-      "https://randomuser.me/api/portraits/men/12.jpg",
-      "https://randomuser.me/api/portraits/women/15.jpg",
-      "https://randomuser.me/api/portraits/men/23.jpg",
-    ],
-  },
-  {
-    id: 3,
-    label: "Chitwan National Park",
-    image: "https://picsum.photos/200/200?random=3",
-    members: [
-      "https://randomuser.me/api/portraits/women/34.jpg",
-      "https://randomuser.me/api/portraits/men/54.jpg",
-      "https://randomuser.me/api/portraits/women/44.jpg",
-      "https://randomuser.me/api/portraits/men/14.jpg",
-      "https://randomuser.me/api/portraits/women/22.jpg",
-    ],
-  },
-  {
-    id: 4,
-    label: "Bhaktapur Durbar Square",
-    image: "https://picsum.photos/200/200?random=4",
-    members: [
-      "https://randomuser.me/api/portraits/men/2.jpg",
-      "https://randomuser.me/api/portraits/women/5.jpg",
-      "https://randomuser.me/api/portraits/men/9.jpg",
-    ],
-  },
-  {
-    id: 5,
-    label: "Lumbini Garden",
-    image: "https://picsum.photos/200/200?random=5",
-    members: [
-      "https://randomuser.me/api/portraits/women/12.jpg",
-      "https://randomuser.me/api/portraits/men/18.jpg",
-      "https://randomuser.me/api/portraits/women/30.jpg",
-      "https://randomuser.me/api/portraits/men/36.jpg",
-    ],
-  },
-];
-
-const groupButtonsLabel = ["label 1", "label 2", "label 3", "label 4"];
+import { router } from "expo-router";
+import { groupsData } from "./groups.mock";
 
 const GroupScreen = () => {
   return (
@@ -78,7 +21,7 @@ const GroupScreen = () => {
         flex: 1,
         paddingHorizontal: 8,
         backgroundColor: Colors.neutral[800],
-        gap: 16,
+        gap: 4,
       }}
     >
       <View style={{ justifyContent: "center", alignItems: "center" }}>
@@ -115,16 +58,15 @@ const GroupScreen = () => {
         style={{
           //   backgroundColor: Colors.neutral[900],
           paddingHorizontal: 8,
-          paddingTop: 16,
+          //   paddingTop: 16,
           borderRadius: 8 + 8,
           flex: 1,
         }}
-        contentContainerStyle={{ gap: 8 }}
+        contentContainerStyle={{ gap: 4 }}
       >
         {groupsData.map((group, index) => (
-          <>
+          <React.Fragment key={group.id}>
             <Pressable
-              key={group.id}
               style={{
                 flexDirection: "row",
                 gap: 16,
@@ -138,15 +80,18 @@ const GroupScreen = () => {
                 paddingRight: 12,
               }}
               onPress={() => {
-                console.log("Card is pressed");
+                router.push({
+                  pathname: "/[groupId]",
+                  params: { groupId: group.id },
+                });
               }}
             >
               <View
                 style={{
-                  width: 75,
-                  height: 55,
+                  width: 100,
+                  height: 70,
                   borderWidth: 1,
-                  borderColor: Colors.accent[600],
+                  borderColor: Colors.neutral[600],
                   borderRadius: 8,
                   overflow: "hidden",
                 }}
@@ -166,7 +111,7 @@ const GroupScreen = () => {
                   flex: 1,
                 }}
               >
-                <View style={{ gap: 4 }}>
+                <View style={{ gap: 10 }}>
                   <CText
                     weight="semibold"
                     size="md"
@@ -235,7 +180,7 @@ const GroupScreen = () => {
                 </View>
                 <View style={{}}>
                   <Pressable onPress={() => console.log("first")} style={{}}>
-                    <ArrowRight2 size="24" color={Colors.accent[500]} />
+                    <ArrowRight2 size="24" color={Colors.neutral[300]} />
                   </Pressable>
                 </View>
               </View>
@@ -250,7 +195,7 @@ const GroupScreen = () => {
                 }}
               />
             )}
-          </>
+          </React.Fragment>
         ))}
       </ScrollView>
     </SafeAreaView>
