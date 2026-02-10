@@ -61,12 +61,16 @@ const balanceData = [
 ];
 
 const BalanceTab = () => {
+  const maxBalance = Math.max(...balanceData.map((b) => Math.abs(b.balance)));
   return (
     <View style={{ flex: 1 }}>
       <FlatList
         data={balanceData}
-        renderItem={({ item }) => <BalanceItem item={item} />}
+        renderItem={({ item }) => (
+          <BalanceItem item={item} maxBalance={maxBalance} />
+        )}
         contentContainerStyle={{ gap: 10 }}
+        keyExtractor={(item) => item.user.id.toString()}
       />
     </View>
   );
@@ -74,9 +78,24 @@ const BalanceTab = () => {
 
 export default BalanceTab;
 
-function BalanceItem({ item }: { item: any }) {
+function BalanceItem({ item, maxBalance }: { item: any; maxBalance: any }) {
   const isPositive = item.balance > 0;
   const absBalance = Math.abs(item.balance);
+  const minWidth = 60;
+  const maxWidth = 90;
+  const widthPercent =
+    absBalance === 0
+      ? minWidth
+      : Math.floor(
+          Math.max(
+            minWidth,
+            Math.min(maxWidth, (absBalance / maxBalance) * maxWidth),
+          ),
+        );
+  console.log(widthPercent);
+
+  if (absBalance === 0) return;
+
   return (
     <View style={{ flexDirection: isPositive ? "row" : "row-reverse" }}>
       <View style={{ flex: 1, padding: 16 }}>
@@ -91,7 +110,7 @@ function BalanceItem({ item }: { item: any }) {
       >
         <View
           style={{
-            width: "80%",
+            width: `${widthPercent}%`,
             backgroundColor: isPositive ? "green" : "red",
             padding: 16,
             borderTopRightRadius: isPositive ? 8 : 0,
