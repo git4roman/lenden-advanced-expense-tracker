@@ -1,162 +1,277 @@
-import React from "react";
+import { Href, useRouter } from "expo-router";
 import {
-  View,
-  Text,
+  ImageSourcePropType,
+  Pressable,
+  ScrollView,
   StyleSheet,
+  View,
+  ViewStyle,
   Image,
-  TouchableOpacity,
-  Alert,
 } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState, AppDispatch } from "@/src/store/store";
-import { logout } from "@/src/store/userSlice";
-import * as SecureStore from "expo-secure-store";
-import { signOutGoogle } from "@/src/services";
-import { AntDesign } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useDispatch } from "react-redux";
+import BellICon from "@/assets/icons/bell.png";
+import ChervonRight from "@/assets/icons/chevron-right.png";
+import CreditCardIcon from "@/assets/icons/credit-card.png";
+import InfoIcon from "@/assets/icons/info.png";
+import LockIcon from "@/assets/icons/lock.png";
+import SettingIcon from "@/assets/icons/settings.png";
+import StarIcon from "@/assets/icons/star.png";
+import UserIcon from "@/assets/icons/user.png";
+import { CText } from "@/src/shared/ui/components/CText";
+
+import { ReactNode } from "react";
+import { Colors } from "@/src/shared/ui/theme/colors";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function Account() {
-  const user = useSelector((state: RootState) => state.user);
-  const dispatch = useDispatch<AppDispatch>();
-  const router = useRouter();
+type AcccountItems = {
+  title: string;
+  icon: ImageSourcePropType;
+  path: Href;
+};
 
-  const handleSignOut = async () => {
-    try {
-      await signOutGoogle();
-      await SecureStore.deleteItemAsync("userToken");
-      dispatch(logout());
-      console.log("User signed out successfully");
+const accountItems: AcccountItems[] = [
+  { title: "Personal Information", icon: UserIcon, path: "/personalinfo" },
+  { title: "Payment details", icon: CreditCardIcon, path: "/paymentDetails" },
+  { title: "Security", icon: LockIcon, path: "/security" },
+];
 
-      router.replace("/(auth)");
-    } catch (e) {
-      console.error("Sign out error:", e);
-      Alert.alert("Error", "Failed to sign out. Please try again.");
-    }
-  };
+type SettingItemProps = {
+  leftIcon?: ImageSourcePropType;
+  title: string;
+  rightIcon: ImageSourcePropType;
+  onPress: () => void;
+  rightExtraContent?: string;
+  variant?: "default" | "danger";
+};
+
+export function DividedPattern({
+  leftIcon,
+  title,
+  rightIcon,
+  onPress,
+  rightExtraContent,
+  variant,
+}: SettingItemProps) {
+  const isDanger = variant === "danger";
+  const textColor = isDanger ? Colors.warning[200] : Colors.neutral[800];
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <View style={styles.profileHeader}>
+    <Pressable
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+      }}
+      onPress={onPress}
+    >
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 12,
+        }}
+      >
+        {leftIcon && (
           <Image
-            source={{
-              uri: user.pictureUrl || "https://via.placeholder.com/150",
-            }}
-            style={styles.profilePicture}
+            source={leftIcon}
+            style={{ width: 18, height: 18, tintColor: textColor }}
           />
-          <Text style={styles.fullName}>{user.fullName || "User"}</Text>
-          <Text style={styles.email}>{user.email || "No Email"}</Text>
-        </View>
-
-        <View style={styles.infoSection}>
-          <View style={styles.infoRow}>
-            <AntDesign name="team" size={24} color="#888" style={styles.icon} />
-            <Text style={styles.infoText}>Role: {user.role}</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <AntDesign
-              name="calendar"
-              size={24}
-              color="#888"
-              style={styles.icon}
-            />
-            <Text style={styles.infoText}>
-              Member Since: {user.createdAt.split("T")[0]}
-            </Text>
-          </View>
-        </View>
-
-        <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
-          <Text style={styles.signOutButtonText}>Sign Out</Text>
-        </TouchableOpacity>
+        )}
+        <CText size="sm" color={textColor} weight="semibold">
+          {title}
+        </CText>
       </View>
-    </SafeAreaView>
+
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 8,
+        }}
+      >
+        {rightExtraContent && (
+          <CText size="sm" color={Colors.neutral[200]} weight="semibold">
+            {rightExtraContent}
+          </CText>
+        )}
+        <Image
+          source={rightIcon}
+          style={{ width: 16, height: 16, tintColor: Colors.neutral[200] }}
+        />
+      </View>
+    </Pressable>
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#f9f9f9",
-  },
-  container: {
-    flex: 1,
-    alignItems: "center",
-    paddingHorizontal: 20,
-  },
-  profileHeader: {
-    alignItems: "center",
-    marginVertical: 30,
-    backgroundColor: "#fff",
-    borderRadius: 15,
-    padding: 20,
-    width: "100%",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
-  },
-  profilePicture: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    marginBottom: 15,
-    borderWidth: 3,
-    borderColor: "#ddd",
-  },
-  fullName: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 5,
-  },
-  email: {
-    fontSize: 16,
-    color: "#666",
-  },
-  infoSection: {
-    width: "100%",
-    backgroundColor: "#fff",
-    borderRadius: 15,
-    padding: 15,
-    marginTop: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
-  },
-  infoRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-  },
-  icon: {
-    marginRight: 15,
-  },
-  infoText: {
-    fontSize: 16,
-    color: "#444",
-  },
-  signOutButton: {
-    backgroundColor: "#ff6347",
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-    borderRadius: 30,
-    marginTop: 30,
-    shadowColor: "#ff6347",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 5,
-  },
-  signOutButtonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-});
+export default function Account() {
+  const router = useRouter();
+
+  return (
+    <SafeAreaView>
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: 15 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View
+          style={{
+            paddingVertical: 16,
+            paddingHorizontal: 20,
+            backgroundColor: Colors.neutral[900],
+            flex: 1,
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "column",
+              gap: 12,
+              paddingVertical: 16,
+              paddingHorizontal: 20,
+              borderRadius: 12,
+              backgroundColor: Colors.neutral[200],
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <View
+              style={{
+                width: 64,
+                height: 64,
+                padding: 1,
+                borderRadius: 32,
+                backgroundColor: "#000",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <CText size="sm" color="pure-white" weight="bold">
+                Hello
+              </CText>
+            </View>
+            <CText size="sm" color={Colors.neutral[800]} weight="bold">
+              Some Name
+            </CText>
+            <Pressable onPress={() => router.push("/notificationyes")}>
+              <CText size="sm" color={Colors.neutral[800]}>
+                Member since November 2025
+              </CText>
+            </Pressable>
+          </View>
+
+          <View
+            style={{
+              marginTop: 24,
+              flexDirection: "column",
+              gap: 24,
+            }}
+          >
+            <View
+              style={{
+                flexDirection: "column",
+                gap: 12,
+              }}
+            >
+              <CText size="ssm" color={Colors.neutral[200]} weight="bold">
+                Account
+              </CText>
+              <View
+                style={{
+                  flexDirection: "column",
+                  gap: 24,
+                  paddingVertical: 16,
+                  paddingHorizontal: 20,
+                  borderRadius: 12,
+                  backgroundColor: Colors.neutral[200],
+                }}
+              >
+                {accountItems.map((item) => (
+                  <DividedPattern
+                    key={item.title}
+                    leftIcon={item.icon}
+                    title={item.title}
+                    rightIcon={ChervonRight}
+                    onPress={() => router.push(item.path)}
+                  />
+                ))}
+              </View>
+            </View>
+
+            <View
+              style={{
+                flexDirection: "column",
+                gap: 12,
+              }}
+            >
+              <CText size="ssm" color={Colors.neutral[200]} weight="bold">
+                Preferences
+              </CText>
+              <View
+                style={{
+                  flexDirection: "column",
+                  gap: 24,
+                  paddingVertical: 16,
+                  paddingHorizontal: 20,
+                  borderRadius: 12,
+                  backgroundColor: Colors.neutral[200],
+                }}
+              >
+                <DividedPattern
+                  leftIcon={BellICon}
+                  title="Notification"
+                  rightIcon={ChervonRight}
+                  onPress={() => router.push("/notification")}
+                />
+                <DividedPattern
+                  leftIcon={SettingIcon}
+                  title="Settings"
+                  rightIcon={ChervonRight}
+                  onPress={() => router.push("/settings")}
+                />
+              </View>
+            </View>
+
+            <View
+              style={{
+                flexDirection: "column",
+                gap: 12,
+              }}
+            >
+              <CText size="sm" color={Colors.neutral[200]} weight="bold">
+                Support
+              </CText>
+              <View
+                style={{
+                  flexDirection: "column",
+                  gap: 24,
+                  paddingVertical: 16,
+                  paddingHorizontal: 20,
+                  borderRadius: 12,
+                  backgroundColor: Colors.neutral[200],
+                }}
+              >
+                <DividedPattern
+                  leftIcon={StarIcon}
+                  title="Rate the App"
+                  rightIcon={ChervonRight}
+                  onPress={() => {}}
+                />
+                <DividedPattern
+                  leftIcon={InfoIcon}
+                  title="About App"
+                  rightIcon={ChervonRight}
+                  onPress={() => router.push("/about")}
+                />
+                <DividedPattern
+                  leftIcon={InfoIcon}
+                  title="Logout"
+                  rightIcon={ChervonRight}
+                  onPress={() => {}}
+                />
+              </View>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}

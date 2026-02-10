@@ -1,7 +1,8 @@
-import { View, Text, FlatList } from "react-native";
+import { View, Text, FlatList, ScrollView } from "react-native";
 import React from "react";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { CText } from "@/src/shared/ui/components/CText";
+import { Feather } from "@expo/vector-icons";
 
 const balanceData = [
   {
@@ -47,7 +48,7 @@ const balanceData = [
       givenName: "Michael",
       familyName: "Lee",
     },
-    balance: -250,
+    balance: -2500,
   },
   {
     groupId: 9,
@@ -60,19 +61,60 @@ const balanceData = [
   },
 ];
 
+const groupMutualBalance = [
+  { from: "Maryland Winkles", to: "Andrew", balance: 2503 },
+  { from: "John Doe", to: "Jane Smith", balance: 1200 },
+  { from: "Alex Johnson", to: "Emily Brown", balance: 540 },
+  { from: "Michael Lee", to: "Sara Wilson", balance: 875 },
+  { from: "Olivia Davis", to: "David Clark", balance: 430 },
+  { from: "Sophia Miller", to: "Liam Moore", balance: 150 },
+  { from: "Ethan Taylor", to: "Ava Anderson", balance: 620 },
+  { from: "Isabella Thomas", to: "Noah Martin", balance: 3000 },
+  { from: "Mason Jackson", to: "Emma White", balance: 980 },
+  { from: "Charlotte Harris", to: "Logan Lewis", balance: 450 },
+];
+
 const BalanceTab = () => {
   const maxBalance = Math.max(...balanceData.map((b) => Math.abs(b.balance)));
   return (
-    <View style={{ flex: 1 }}>
-      <FlatList
-        data={balanceData}
-        renderItem={({ item }) => (
-          <BalanceItem item={item} maxBalance={maxBalance} />
-        )}
-        contentContainerStyle={{ gap: 10 }}
-        keyExtractor={(item) => item.user.id.toString()}
-      />
-    </View>
+    <ScrollView style={{}}>
+      <View style={{ gap: 12, paddingBottom: 20 }}>
+        <FlatList
+          data={balanceData}
+          renderItem={({ item }) => (
+            <BalanceItem item={item} maxBalance={maxBalance} />
+          )}
+          contentContainerStyle={{
+            gap: 10,
+            borderWidth: 1,
+            borderRadius: 12,
+            paddingVertical: 12,
+            backgroundColor: Colors.neutral[900],
+            borderColor: Colors.neutral[800],
+          }}
+          keyExtractor={(item) => item.user.id.toString()}
+          scrollEnabled={false}
+        />
+        <FlatList
+          keyExtractor={(_, index) => index.toString()}
+          data={groupMutualBalance}
+          renderItem={({ item }) => <GroupMemberMutualBalance item={item} />}
+          contentContainerStyle={{ gap: 8 }}
+          scrollEnabled={false}
+          ItemSeparatorComponent={() => (
+            <View
+              style={{
+                width: "100%",
+                height: 1,
+                backgroundColor: Colors.neutral[600],
+                marginVertical: 8,
+                opacity: 0.5,
+              }}
+            />
+          )}
+        />
+      </View>
+    </ScrollView>
   );
 };
 
@@ -81,7 +123,7 @@ export default BalanceTab;
 function BalanceItem({ item, maxBalance }: { item: any; maxBalance: any }) {
   const isPositive = item.balance > 0;
   const absBalance = Math.abs(item.balance);
-  const minWidth = 60;
+  const minWidth = 55;
   const maxWidth = 90;
   const widthPercent =
     absBalance === 0
@@ -98,7 +140,7 @@ function BalanceItem({ item, maxBalance }: { item: any; maxBalance: any }) {
 
   return (
     <View style={{ flexDirection: isPositive ? "row" : "row-reverse" }}>
-      <View style={{ flex: 1, padding: 16 }}>
+      <View style={{ flex: 1, padding: 8 }}>
         <View style={{ alignItems: isPositive ? "flex-end" : "stretch" }}>
           <CText shade={50} size="ssm" letterSpacing={0.4}>
             {item.user.givenName} {item.user.familyName}
@@ -112,7 +154,7 @@ function BalanceItem({ item, maxBalance }: { item: any; maxBalance: any }) {
           style={{
             width: `${widthPercent}%`,
             backgroundColor: isPositive ? "green" : "red",
-            padding: 16,
+            padding: 8,
             borderTopRightRadius: isPositive ? 8 : 0,
             borderBottomRightRadius: isPositive ? 8 : 0,
             borderTopLeftRadius: isPositive ? 0 : 8,
@@ -124,6 +166,59 @@ function BalanceItem({ item, maxBalance }: { item: any; maxBalance: any }) {
             {isPositive ? `+ NPR ${absBalance} ` : `- NPR ${absBalance} `}
           </CText>
         </View>
+      </View>
+    </View>
+  );
+}
+
+function GroupMemberMutualBalance({ item }: { item: any }) {
+  console.log(item.from);
+  return (
+    <View
+      style={{
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        flex: 1,
+      }}
+    >
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flex: 1,
+          paddingHorizontal: 12,
+        }}
+      >
+        <View>
+          <View>
+            <CText color="neutral" shade={300} weight="semibold" size="md">
+              {item.from}
+            </CText>
+          </View>
+          <CText color="neutral" shade={300} weight="regular" size="ssm">
+            owes
+          </CText>
+          <View>
+            <CText color="neutral" shade={300} weight="semibold" size="md">
+              {item.to}
+            </CText>
+          </View>
+        </View>
+        <View>
+          <CText color="neutral" shade={300} weight="semibold" size="md">
+            {item.balance}
+          </CText>
+        </View>
+      </View>
+      <View
+        style={{
+          flex: 0.2,
+          marginHorizontal: 12,
+        }}
+      >
+        <Feather name="more-vertical" size={24} color={Colors.neutral[200]} />
       </View>
     </View>
   );
