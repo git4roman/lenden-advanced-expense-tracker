@@ -33,6 +33,7 @@ const ExpenseTab = () => {
     <ScrollView
       style={{ borderColor: "transparent" }}
       contentContainerStyle={{ paddingBottom: 14 }}
+      showsVerticalScrollIndicator={false}
     >
       <View style={{ gap: 0 }}>
         <View
