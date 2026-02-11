@@ -2,7 +2,7 @@ import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { MaterialIcons, FontAwesome, FontAwesome6 } from "@expo/vector-icons";
 import React from "react";
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 
 const sharedExpenseCategories = [
   {

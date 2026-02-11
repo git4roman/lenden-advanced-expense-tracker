@@ -125,7 +125,11 @@ const FriendsScreen = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.neutral[900] }}>
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 16, gap: 16 }}
+        contentContainerStyle={{
+          paddingHorizontal: 16,
+          paddingVertical: 16,
+          gap: 16,
+        }}
         showsVerticalScrollIndicator={false}
       >
         <View style={{ gap: 4 }}>
@@ -147,7 +151,9 @@ const FriendsScreen = () => {
             gap: 12,
           }}
         >
-          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
             <View>
               <CText size="sm" color="neutral" shade={200} weight="semibold">
                 Your Network
@@ -201,7 +207,14 @@ const FriendsScreen = () => {
                 justifyContent: "space-between",
               }}
             >
-              <View style={{ flexDirection: "row", gap: 10, alignItems: "center", flex: 1 }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  gap: 10,
+                  alignItems: "center",
+                  flex: 1,
+                }}
+              >
                 <View
                   style={{
                     width: 36,
@@ -218,7 +231,12 @@ const FriendsScreen = () => {
                 </View>
 
                 <View style={{ flex: 1 }}>
-                  <CText size="sm" color="neutral" shade={200} weight="semibold">
+                  <CText
+                    size="sm"
+                    color="neutral"
+                    shade={200}
+                    weight="semibold"
+                  >
                     {friend.name}
                   </CText>
                   <CText size="xs" color="neutral" shade={500}>
@@ -241,7 +259,8 @@ const FriendsScreen = () => {
 
         <View style={{ gap: 10, paddingBottom: 24 }}>
           <CText size="sm" color="neutral" shade={300} weight="semibold">
-            Synced Contacts {syncedContacts.length > 0 ? `(${syncedContacts.length})` : ""}
+            Synced Contacts{" "}
+            {syncedContacts.length > 0 ? `(${syncedContacts.length})` : ""}
           </CText>
 
           {syncedContacts.length === 0 ? (
@@ -256,7 +275,8 @@ const FriendsScreen = () => {
               }}
             >
               <CText size="ssm" color="neutral" shade={500}>
-                No contacts synced yet. Tap Sync Mobile Contacts to import saved contacts.
+                No contacts synced yet. Tap Sync Mobile Contacts to import saved
+                contacts.
               </CText>
             </View>
           ) : (
@@ -276,7 +296,12 @@ const FriendsScreen = () => {
                 }}
               >
                 <View style={{ flex: 1 }}>
-                  <CText size="sm" color="neutral" shade={200} weight="semibold">
+                  <CText
+                    size="sm"
+                    color="neutral"
+                    shade={200}
+                    weight="semibold"
+                  >
                     {contact.name}
                   </CText>
                   <CText size="xs" color="neutral" shade={500}>
@@ -294,7 +319,12 @@ const FriendsScreen = () => {
                     borderColor: Colors.neutral[600],
                   }}
                 >
-                  <CText size="xs" color="neutral" shade={300} weight="semibold">
+                  <CText
+                    size="xs"
+                    color="neutral"
+                    shade={300}
+                    weight="semibold"
+                  >
                     Invite
                   </CText>
                 </Pressable>

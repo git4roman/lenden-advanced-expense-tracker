@@ -54,6 +54,39 @@ const activityMockData = [
     categoryKey: "household_utilities",
     description: "LPG cylinder refill for cooking",
     amount: "2500",
+    date: "20 Jan",
+    time: "07:30 AM",
+    categoryKey: "accommodation",
+    description: "Monthly room rent paid by Roman",
+    amount: "8000",
+  },
+  {
+    date: "20 Jan",
+    time: "09:00 AM",
+    categoryKey: "household_utilities",
+    description: "Internet bill for shared WiFi paid",
+    amount: "1200",
+  },
+  {
+    date: "21 Jan",
+    time: "06:30 PM",
+    categoryKey: "lifestyle_personal",
+    description: "Netflix subscription shared among roommates",
+    amount: "500",
+  },
+  {
+    date: "21 Jan",
+    time: "08:00 PM",
+    categoryKey: "food_groceries",
+    description: "Dinner at Newa Lahana by Roman and 2 others",
+    amount: "1500",
+  },
+  {
+    date: "22 Jan",
+    time: "08:00 AM",
+    categoryKey: "household_utilities",
+    description: "LPG cylinder refill for cooking",
+    amount: "2500",
   },
 ];
 
@@ -62,8 +95,10 @@ const ExpenseTab = () => {
     <ScrollView
       style={{ borderColor: "transparent" }}
       contentContainerStyle={{ paddingBottom: 50 }}
+      contentContainerStyle={{ paddingBottom: 50 }}
       showsVerticalScrollIndicator={false}
     >
+      <View style={{ gap: 5 }}>
       <View style={{ gap: 5 }}>
         <View
           style={{
@@ -77,9 +112,12 @@ const ExpenseTab = () => {
             color="neutral"
             shade={400}
             size="ssm"
+            size="ssm"
             style={{ paddingHorizontal: 10 }}
             weight="medium"
+            weight="medium"
           >
+            Fri, FEB 6
             Fri, FEB 6
           </CText>
           <View
