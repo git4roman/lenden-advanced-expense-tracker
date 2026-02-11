@@ -134,7 +134,6 @@ function BalanceItem({ item, maxBalance }: { item: any; maxBalance: any }) {
             Math.min(maxWidth, (absBalance / maxBalance) * maxWidth),
           ),
         );
-  console.log(widthPercent);
 
   if (absBalance === 0) return;
 
@@ -142,7 +141,7 @@ function BalanceItem({ item, maxBalance }: { item: any; maxBalance: any }) {
     <View style={{ flexDirection: isPositive ? "row" : "row-reverse" }}>
       <View style={{ flex: 1, padding: 8 }}>
         <View style={{ alignItems: isPositive ? "flex-end" : "stretch" }}>
-          <CText shade={50} size="ssm" letterSpacing={0.4}>
+          <CText shade={50} size="sm" letterSpacing={0.4}>
             {item.user.givenName} {item.user.familyName}
           </CText>
         </View>
@@ -162,7 +161,7 @@ function BalanceItem({ item, maxBalance }: { item: any; maxBalance: any }) {
             alignItems: isPositive ? "stretch" : "flex-end",
           }}
         >
-          <CText shade={50} size="ssm" letterSpacing={0.4}>
+          <CText shade={50} size="sm" letterSpacing={0.4}>
             {isPositive ? `+ NPR ${absBalance} ` : `- NPR ${absBalance} `}
           </CText>
         </View>
