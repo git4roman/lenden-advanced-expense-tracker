@@ -28,7 +28,7 @@ export function GroupTabs({
               backgroundColor:
                 selectedTab === item.key
                   ? Colors.accent[500]
-                  : Colors.neutral[400],
+                  : Colors.neutral[500],
               paddingVertical: 8,
               paddingHorizontal: 12,
               borderRadius: 12,

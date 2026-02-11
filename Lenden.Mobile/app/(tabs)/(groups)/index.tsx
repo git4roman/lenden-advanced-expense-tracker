@@ -20,7 +20,7 @@ const GroupScreen = () => {
       style={{
         flex: 1,
         paddingHorizontal: 8,
-        backgroundColor: Colors.neutral[800],
+        backgroundColor: Colors.neutral[900],
         gap: 4,
       }}
     >
@@ -70,7 +70,7 @@ const GroupScreen = () => {
               style={{
                 flexDirection: "row",
                 gap: 16,
-                backgroundColor: Colors.neutral[800],
+                backgroundColor: Colors.neutral[900],
                 // borderWidth: 1,
                 borderRadius: 16,
                 // borderColor: "transparent",

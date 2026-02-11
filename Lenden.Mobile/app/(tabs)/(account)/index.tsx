@@ -31,7 +31,7 @@ type AcccountItems = {
 
 const accountItems: AcccountItems[] = [
   { title: "Personal Information", icon: UserIcon, path: "/personalinfo" },
-  { title: "Payment details", icon: CreditCardIcon, path: "/paymentDetails" },
+  // { title: "Payment details", icon: CreditCardIcon, path: "/paymentDetails" },
   { title: "Security", icon: LockIcon, path: "/security" },
 ];
 
@@ -107,9 +107,14 @@ export default function Account() {
   const router = useRouter();
 
   return (
-    <SafeAreaView>
+    <SafeAreaView
+      style={{ backgroundColor: Colors.neutral[900], flex: 1 }}
+      edges={["top"]}
+    >
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 15 }}
+        style={{ flex: 1 }}
+        contentContainerStyle={{ flex: 1 }}
+        scrollEnabled={false}
         showsVerticalScrollIndicator={false}
       >
         <View

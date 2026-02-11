@@ -77,7 +77,7 @@ const groupMutualBalance = [
 const BalanceTab = () => {
   const maxBalance = Math.max(...balanceData.map((b) => Math.abs(b.balance)));
   return (
-    <ScrollView style={{}}>
+    <ScrollView style={{}} showsVerticalScrollIndicator={false}>
       <View style={{ gap: 12, paddingBottom: 20 }}>
         <FlatList
           data={balanceData}
@@ -172,7 +172,6 @@ function BalanceItem({ item, maxBalance }: { item: any; maxBalance: any }) {
 }
 
 function GroupMemberMutualBalance({ item }: { item: any }) {
-  console.log(item.from);
   return (
     <View
       style={{

@@ -1,11 +1,11 @@
-import { View, Text, Pressable, Image } from "react-native";
+import { View, Text, Pressable, Image, Modal } from "react-native";
 import React, { useState } from "react";
 import { Stack, useLocalSearchParams } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { CText } from "@/src/shared/ui/components/CText";
 import { groupData } from "../groups.mock";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
 import { Bag, Edit } from "iconsax-react-nativejs";
 import { Flex } from "@ant-design/react-native";
 import { GroupTabs } from "../../../../src/modules/groups/components/GroupTabs";
@@ -30,17 +30,19 @@ const TAB_CONTENT: Record<string, React.FC> = {
 
 const GroupScreen = () => {
   const { groupId } = useLocalSearchParams();
+  const insets = useSafeAreaInsets();
   const [selectedTab, setSelectedTab] = useState<string>(
     groupButtonsLabel[0].key,
   );
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const AciveTabScreen = TAB_CONTENT[selectedTab];
   return (
     <View
       style={{
         flex: 1,
-        // paddingHorizontal: 6,
         backgroundColor: Colors.neutral[900],
         gap: 4,
+        position: "relative",
       }}
     >
       <Stack.Screen
@@ -48,14 +50,16 @@ const GroupScreen = () => {
           title: groupData.label,
           headerRight: () => (
             <>
-              <Pressable onPress={() => console.log("Edit")}>
-                <Edit size="22" color={Colors.accent[600]} />
-              </Pressable>
               <Pressable
-                style={{ marginLeft: 8 }}
-                onPress={() => console.log("REMOve")}
+                onPress={() => {
+                  setIsMenuOpen((prev) => !prev);
+                }}
               >
-                <Bag size="22" color={Colors.accent[600]} />
+                <Feather
+                  name="more-vertical"
+                  size={24}
+                  color={Colors.neutral[200]}
+                />
               </Pressable>
             </>
           ),
@@ -110,6 +114,77 @@ const GroupScreen = () => {
           </Pressable>
         )}
       </View>
+
+      <Modal
+        transparent
+        visible={isMenuOpen}
+        animationType="fade"
+        onRequestClose={() => {
+          setIsMenuOpen(false);
+        }}
+      >
+        <View style={{ flex: 1 }}>
+          <Pressable
+            onPress={() => {
+              setIsMenuOpen(false);
+            }}
+            style={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              bottom: 0,
+              left: 0,
+            }}
+          />
+          <View
+            style={{
+              position: "absolute",
+              top: insets.top + 48,
+              right: 12,
+              backgroundColor: Colors.neutral[400],
+              zIndex: 10000,
+              paddingVertical: 8,
+              paddingHorizontal: 12,
+              borderRadius: 8,
+              gap: 8,
+            }}
+          >
+            <Pressable
+              style={{
+                flexDirection: "row",
+                gap: 6,
+                justifyContent: "flex-start",
+                alignItems: "center",
+              }}
+            >
+              <Feather name="edit" size={12} color="black" />
+              <CText>Edit Info</CText>
+            </Pressable>
+            <Pressable
+              style={{
+                flexDirection: "row",
+                gap: 6,
+                justifyContent: "flex-start",
+                alignItems: "center",
+              }}
+            >
+              <Ionicons name="exit-outline" size={12} color="black" />
+              <CText>Leave Group</CText>
+            </Pressable>
+            <Pressable
+              style={{
+                flexDirection: "row",
+                gap: 6,
+                justifyContent: "flex-start",
+                alignItems: "center",
+              }}
+            >
+              <AntDesign name="delete" size={12} color="black" />
+              <CText>Delete Group</CText>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };

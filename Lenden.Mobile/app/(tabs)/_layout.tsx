@@ -12,7 +12,7 @@ import { Home2 } from "iconsax-react-nativejs";
 export default function _layout() {
   return (
     <SafeAreaProvider>
-      <StatusBar style="dark" />
+      <StatusBar style="light" />
       <Tabs
         screenOptions={{
           tabBarActiveTintColor: Colors.accent[500],
