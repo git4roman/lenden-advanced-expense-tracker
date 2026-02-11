@@ -10,18 +10,20 @@ import { Colors } from "@/src/shared/ui/theme/colors";
 import { Home2 } from "iconsax-react-nativejs";
 
 export default function _layout() {
+  const TAB_ICON_SIZE = 16;
+
   return (
     <SafeAreaProvider>
-      <StatusBar style="dark" />
+      <StatusBar style="light" />
       <Tabs
         screenOptions={{
           tabBarActiveTintColor: Colors.accent[500],
           tabBarInactiveTintColor: Colors.neutral[300],
           tabBarStyle: {
-            paddingBottom: 5,
+            // paddingBottom: 5,
             backgroundColor: Colors.neutral[900],
           },
-          tabBarLabelStyle: { fontSize: 12 },
+          tabBarLabelStyle: { fontSize: 14, marginTop: -4 },
           headerShown: false,
         }}
         initialRouteName="(groups)"
@@ -31,7 +33,9 @@ export default function _layout() {
           options={{
             headerShown: false,
             title: "Home",
-            tabBarIcon: ({ color, size }) => <Home2 size="28" color={color} />,
+            tabBarIcon: ({ color }) => (
+              <Home2 size={String(TAB_ICON_SIZE)} color={color} />
+            ),
           }}
         />
         <Tabs.Screen
@@ -39,8 +43,8 @@ export default function _layout() {
           options={{
             headerShown: false,
             title: "Groups",
-            tabBarIcon: ({ color, size }) => (
-              <FontAwesome5 name="users" size={size} color={color} />
+            tabBarIcon: ({ color }) => (
+              <FontAwesome5 name="users" size={TAB_ICON_SIZE} color={color} />
             ),
           }}
         />
@@ -49,8 +53,12 @@ export default function _layout() {
           options={{
             headerShown: false,
             title: "Friends", // Optional: set a title for the tab
-            tabBarIcon: ({ color, size }) => (
-              <FontAwesome5 name="user-friends" size={size} color={color} />
+            tabBarIcon: ({ color }) => (
+              <FontAwesome5
+                name="user-friends"
+                size={TAB_ICON_SIZE}
+                color={color}
+              />
             ),
           }}
         />
@@ -59,8 +67,8 @@ export default function _layout() {
           name="(account)"
           options={{
             title: "Account",
-            tabBarIcon: ({ size, color }) => (
-              <AccountIcon size={size} color={color} />
+            tabBarIcon: ({ color }) => (
+              <AccountIcon size={TAB_ICON_SIZE} color={color} />
             ),
           }}
         />

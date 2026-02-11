@@ -147,11 +147,13 @@ const GroupInfoTab = () => {
                     {item.email}
                   </CText>
                 </View>
-                <Feather
-                  name="more-vertical"
-                  size={24}
-                  color={Colors.neutral[200]}
-                />
+                <Pressable onPress={() => {}}>
+                  <Feather
+                    name="more-vertical"
+                    size={24}
+                    color={Colors.neutral[200]}
+                  />
+                </Pressable>
               </View>
             </View>
           ))}

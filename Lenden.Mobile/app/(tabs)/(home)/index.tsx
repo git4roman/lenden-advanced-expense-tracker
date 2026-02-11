@@ -96,7 +96,7 @@ const BalanceCard = () => (
       backgroundColor: Colors.accent[500],
       borderRadius: 24,
       // borderTopRightRadius: 14,
-      padding: 8,
+      padding: 12,
       justifyContent: "space-between",
       overflow: "hidden",
     }}
@@ -106,12 +106,11 @@ const BalanceCard = () => (
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "flex-end",
-        // borderWidth:K 1,
       }}
     >
       <View
         style={{
-          justifyContent: "flex-start",
+          justifyContent: "center",
           alignItems: "center",
           flexDirection: "row",
           gap: 6,
@@ -120,38 +119,43 @@ const BalanceCard = () => (
       >
         <View
           style={{
-            width: 44,
-            height: 44,
+            width: 38,
+            height: 38,
             borderRadius: "50%",
             justifyContent: "center",
             alignItems: "center",
             backgroundColor: Colors.neutral[100],
           }}
         >
-          <Profile size="40" color={Colors.accent[500]} />
+          <Profile size="32" color={Colors.accent[500]} />
         </View>
-        <View style={{ flex: 1 }}>
-          <CText weight="semibold" size="xmd">
+        <View style={{ flex: 1, justifyContent: "flex-end" }}>
+          <CText weight="semibold" size="md">
             Hi,Roman !
           </CText>
-          <CText italic>Proud Lenden User</CText>
+          <CText italic size="xs">
+            Proud Lenden User
+          </CText>
         </View>
       </View>
 
       <View style={{ alignItems: "flex-end", gap: 4 }}>
         <View
           style={{
-            justifyContent: "center",
+            justifyContent: "flex-end",
             flexDirection: "row",
             alignItems: "center",
-            gap: 4,
+            backgroundColor: Colors.accent[700],
+            paddingVertical: 4,
+            paddingHorizontal: 8,
+            borderRadius: 999,
           }}
         >
           <CText
-            weight="medium"
-            size="ssm"
-            color="accent"
-            shade={900}
+            weight="semibold"
+            size="xs"
+            color="neutral"
+            shade={100}
             style={{ textAlign: "center" }}
           >
             Net Balance

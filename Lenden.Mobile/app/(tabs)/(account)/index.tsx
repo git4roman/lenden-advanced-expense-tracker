@@ -3,15 +3,11 @@ import {
   ImageSourcePropType,
   Pressable,
   ScrollView,
-  StyleSheet,
   View,
-  ViewStyle,
   Image,
 } from "react-native";
-import { useDispatch } from "react-redux";
 import BellICon from "@/assets/icons/bell.png";
 import ChervonRight from "@/assets/icons/chevron-right.png";
-import CreditCardIcon from "@/assets/icons/credit-card.png";
 import InfoIcon from "@/assets/icons/info.png";
 import LockIcon from "@/assets/icons/lock.png";
 import SettingIcon from "@/assets/icons/settings.png";
@@ -19,7 +15,6 @@ import StarIcon from "@/assets/icons/star.png";
 import UserIcon from "@/assets/icons/user.png";
 import { CText } from "@/src/shared/ui/components/CText";
 
-import { ReactNode } from "react";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -31,7 +26,7 @@ type AcccountItems = {
 
 const accountItems: AcccountItems[] = [
   { title: "Personal Information", icon: UserIcon, path: "/personalinfo" },
-  { title: "Payment details", icon: CreditCardIcon, path: "/paymentDetails" },
+  // { title: "Payment details", icon: CreditCardIcon, path: "/paymentDetails" },
   { title: "Security", icon: LockIcon, path: "/security" },
 ];
 
@@ -53,7 +48,7 @@ export function DividedPattern({
   variant,
 }: SettingItemProps) {
   const isDanger = variant === "danger";
-  const textColor = isDanger ? Colors.warning[200] : Colors.neutral[800];
+  const textColor = isDanger ? Colors.warning[300] : Colors.neutral[200];
 
   return (
     <Pressable
@@ -61,6 +56,7 @@ export function DividedPattern({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
+        minHeight: 38,
       }}
       onPress={onPress}
     >
@@ -90,13 +86,13 @@ export function DividedPattern({
         }}
       >
         {rightExtraContent && (
-          <CText size="sm" color={Colors.neutral[200]} weight="semibold">
+          <CText size="sm" color={Colors.neutral[400]} weight="semibold">
             {rightExtraContent}
           </CText>
         )}
         <Image
           source={rightIcon}
-          style={{ width: 16, height: 16, tintColor: Colors.neutral[200] }}
+          style={{ width: 16, height: 16, tintColor: Colors.neutral[400] }}
         />
       </View>
     </Pressable>
@@ -107,16 +103,21 @@ export default function Account() {
   const router = useRouter();
 
   return (
-    <SafeAreaView>
+    <SafeAreaView
+      style={{ backgroundColor: Colors.neutral[950], flex: 1 }}
+      edges={["top"]}
+    >
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 15 }}
+        style={{ flex: 1 }}
+        contentContainerStyle={{ flex: 1 }}
+        scrollEnabled={false}
         showsVerticalScrollIndicator={false}
       >
         <View
           style={{
             paddingVertical: 16,
             paddingHorizontal: 20,
-            backgroundColor: Colors.neutral[900],
+            backgroundColor: Colors.neutral[950],
             flex: 1,
           }}
         >
@@ -127,7 +128,9 @@ export default function Account() {
               paddingVertical: 16,
               paddingHorizontal: 20,
               borderRadius: 12,
-              backgroundColor: Colors.neutral[200],
+              backgroundColor: Colors.neutral[800],
+              borderWidth: 1,
+              borderColor: Colors.neutral[700],
               alignItems: "center",
               justifyContent: "center",
             }}
@@ -138,21 +141,21 @@ export default function Account() {
                 height: 64,
                 padding: 1,
                 borderRadius: 32,
-                backgroundColor: "#000",
+                backgroundColor: Colors.accent[900],
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "center",
               }}
             >
-              <CText size="sm" color="pure-white" weight="bold">
-                Hello
+              <CText size="sm" color="accent" shade={300} weight="bold">
+                SN
               </CText>
             </View>
-            <CText size="sm" color={Colors.neutral[800]} weight="bold">
+            <CText size="sm" color={Colors.neutral[100]} weight="bold">
               Some Name
             </CText>
             <Pressable onPress={() => router.push("/notificationyes")}>
-              <CText size="sm" color={Colors.neutral[800]}>
+              <CText size="sm" color={Colors.neutral[400]}>
                 Member since November 2025
               </CText>
             </Pressable>
@@ -168,20 +171,22 @@ export default function Account() {
             <View
               style={{
                 flexDirection: "column",
-                gap: 12,
+                gap: 8,
               }}
             >
-              <CText size="ssm" color={Colors.neutral[200]} weight="bold">
+              <CText size="ssm" color={Colors.neutral[300]} weight="bold">
                 Account
               </CText>
               <View
                 style={{
                   flexDirection: "column",
-                  gap: 24,
+                  gap: 4,
                   paddingVertical: 16,
                   paddingHorizontal: 20,
                   borderRadius: 12,
-                  backgroundColor: Colors.neutral[200],
+                  backgroundColor: Colors.neutral[800],
+                  borderWidth: 1,
+                  borderColor: Colors.neutral[700],
                 }}
               >
                 {accountItems.map((item) => (
@@ -199,20 +204,22 @@ export default function Account() {
             <View
               style={{
                 flexDirection: "column",
-                gap: 12,
+                gap: 8,
               }}
             >
-              <CText size="ssm" color={Colors.neutral[200]} weight="bold">
+              <CText size="ssm" color={Colors.neutral[300]} weight="bold">
                 Preferences
               </CText>
               <View
                 style={{
                   flexDirection: "column",
-                  gap: 24,
+                  gap: 4,
                   paddingVertical: 16,
                   paddingHorizontal: 20,
                   borderRadius: 12,
-                  backgroundColor: Colors.neutral[200],
+                  backgroundColor: Colors.neutral[800],
+                  borderWidth: 1,
+                  borderColor: Colors.neutral[700],
                 }}
               >
                 <DividedPattern
@@ -233,20 +240,22 @@ export default function Account() {
             <View
               style={{
                 flexDirection: "column",
-                gap: 12,
+                gap: 8,
               }}
             >
-              <CText size="sm" color={Colors.neutral[200]} weight="bold">
+              <CText size="sm" color={Colors.neutral[300]} weight="bold">
                 Support
               </CText>
               <View
                 style={{
                   flexDirection: "column",
-                  gap: 24,
+                  gap: 4,
                   paddingVertical: 16,
                   paddingHorizontal: 20,
                   borderRadius: 12,
-                  backgroundColor: Colors.neutral[200],
+                  backgroundColor: Colors.neutral[800],
+                  borderWidth: 1,
+                  borderColor: Colors.neutral[700],
                 }}
               >
                 <DividedPattern
