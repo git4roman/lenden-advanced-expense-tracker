@@ -1,4 +1,4 @@
-import { View, Text, Pressable, Image, Modal } from "react-native";
+import { View, Pressable, Image, Modal } from "react-native";
 import React, { useState } from "react";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -6,8 +6,6 @@ import { Colors } from "@/src/shared/ui/theme/colors";
 import { CText } from "@/src/shared/ui/components/CText";
 import { groupData } from "../groups.mock";
 import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
-import { Bag, Edit } from "iconsax-react-nativejs";
-import { Flex } from "@ant-design/react-native";
 import { GroupTabs } from "../../../../src/modules/groups/components/GroupTabs";
 import ExpenseTab from "@/src/modules/groups/components/expense-tab";
 import BalanceTab from "@/src/modules/groups/components/balance-tab";
@@ -116,6 +114,7 @@ const GroupScreen = () => {
               right: 0,
               bottom: 0,
               left: 0,
+              backgroundColor: "rgba(0,0,0,0.35)",
             }}
           />
           <View
@@ -123,46 +122,94 @@ const GroupScreen = () => {
               position: "absolute",
               top: insets.top + 48,
               right: 12,
-              backgroundColor: Colors.neutral[400],
+              backgroundColor: Colors.neutral[800],
+              borderColor: Colors.neutral[700],
+              borderWidth: 1,
               zIndex: 10000,
               paddingVertical: 8,
-              paddingHorizontal: 12,
-              borderRadius: 8,
-              gap: 8,
+              paddingHorizontal: 8,
+              borderRadius: 14,
+              gap: 6,
+              minWidth: 110,
             }}
           >
+            {/* <View style={{ gap: 2, paddingHorizontal: 4, paddingBottom: 2 }}>
+              <CText weight="bold" size="sm" color="neutral" shade={200}>
+                Group Actions
+              </CText>
+              <CText size="xs" color="neutral" shade={500}>
+                Manage this group
+              </CText>
+            </View> */}
             <Pressable
+              onPress={() => {
+                setIsMenuOpen(false);
+              }}
               style={{
                 flexDirection: "row",
-                gap: 6,
+                gap: 10,
                 justifyContent: "flex-start",
                 alignItems: "center",
+                borderRadius: 10,
+                paddingHorizontal: 10,
+                paddingVertical: 10,
+                backgroundColor: Colors.neutral[900],
+                borderWidth: 1,
+                borderColor: Colors.neutral[700],
               }}
             >
-              <Feather name="edit" size={12} color="black" />
-              <CText>Edit Info</CText>
+              <Feather name="edit-2" size={15} color={Colors.neutral[300]} />
+              <CText color="neutral" shade={200} weight="semibold">
+                Edit Info
+              </CText>
             </Pressable>
             <Pressable
+              onPress={() => {
+                setIsMenuOpen(false);
+              }}
               style={{
                 flexDirection: "row",
-                gap: 6,
+                gap: 10,
                 justifyContent: "flex-start",
                 alignItems: "center",
+                borderRadius: 10,
+                paddingHorizontal: 10,
+                paddingVertical: 10,
+                backgroundColor: Colors.neutral[900],
+                borderWidth: 1,
+                borderColor: Colors.neutral[700],
               }}
             >
-              <Ionicons name="exit-outline" size={12} color="black" />
-              <CText>Leave Group</CText>
+              <Ionicons
+                name="exit-outline"
+                size={16}
+                color={Colors.warning[400]}
+              />
+              <CText color="neutral" shade={200} weight="semibold">
+                Leave Group
+              </CText>
             </Pressable>
             <Pressable
+              onPress={() => {
+                setIsMenuOpen(false);
+              }}
               style={{
                 flexDirection: "row",
-                gap: 6,
+                gap: 10,
                 justifyContent: "flex-start",
                 alignItems: "center",
+                borderRadius: 10,
+                paddingHorizontal: 10,
+                paddingVertical: 10,
+                backgroundColor: Colors.warning[900],
+                borderWidth: 1,
+                borderColor: Colors.warning[700],
               }}
             >
-              <AntDesign name="delete" size={12} color="black" />
-              <CText>Delete Group</CText>
+              <AntDesign name="delete" size={14} color={Colors.warning[300]} />
+              <CText color="warning" shade={300} weight="semibold">
+                Delete Group
+              </CText>
             </Pressable>
           </View>
         </View>

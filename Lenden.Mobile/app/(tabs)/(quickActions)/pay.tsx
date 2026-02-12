@@ -1,45 +1,48 @@
 import React, { useMemo, useState } from "react";
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  TextInput,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
+import { router, useLocalSearchParams } from "expo-router";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { CText } from "@/src/shared/ui/components/CText";
-import { Pressable, ScrollView, TextInput, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
 
 const groups = ["Roommates", "Office Team", "Trip to Pokhara"];
-const categories = [
-  "Food",
-  "Transport",
-  "Groceries",
-  "Utilities",
-  "Shopping",
-  "Other",
-];
-const members = ["Roman", "Aayush", "Sita", "Nabin"];
+const recipients = ["Roman", "Aayush", "Sita", "Nabin"];
+const methods = ["Cash", "Bank Transfer", "eSewa", "Khalti"];
 
-const Expense = () => {
+const Pay = () => {
+  const {
+    from,
+    groupId,
+    date,
+    time,
+    categoryKey,
+    description,
+    amount: sourceAmount,
+  } = useLocalSearchParams<{
+    from?: string;
+    groupId?: string;
+    date?: string;
+    time?: string;
+    categoryKey?: string;
+    description?: string;
+    amount?: string;
+  }>();
+
   const [amount, setAmount] = useState("");
-  const [selectedGroup, setSelectedGroup] = useState(groups[0]);
-  const [selectedCategory, setSelectedCategory] = useState(categories[0]);
-  const [paidBy, setPaidBy] = useState(members[0]);
-  const [splitBetween, setSplitBetween] = useState<string[]>(members);
+  const [group, setGroup] = useState(groups[0]);
+  const [recipient, setRecipient] = useState(recipients[0]);
+  const [method, setMethod] = useState(methods[0]);
+  const [evidenceUrl, setEvidenceUrl] = useState("");
   const [notes, setNotes] = useState("");
 
-  const perPersonAmount = useMemo(() => {
-    const total = Number(amount || "0");
-    if (!splitBetween.length || Number.isNaN(total)) return "0.00";
-    return (total / splitBetween.length).toFixed(2);
-  }, [amount, splitBetween.length]);
-
-  const toggleSplitMember = (member: string) => {
-    setSplitBetween((prev) => {
-      if (prev.includes(member)) {
-        if (prev.length === 1) return prev;
-        return prev.filter((item) => item !== member);
-      }
-      return [...prev, member];
-    });
-  };
+  const hasEvidence = useMemo(() => evidenceUrl.trim().length > 0, [evidenceUrl]);
 
   const chipStyle = (active: boolean) => ({
     paddingHorizontal: 12,
@@ -50,19 +53,34 @@ const Expense = () => {
     backgroundColor: active ? Colors.accent[900] : Colors.neutral[900],
   });
 
-  const handleSubmit = () => {
-    console.log("Create Expense", {
-      amount,
-      selectedGroup,
-      selectedCategory,
-      paidBy,
-      splitBetween,
-      notes,
-    });
+  const handleCancel = () => {
+    if (from === "groupDetails" && groupId) {
+      router.replace({
+        pathname: "/(tabs)/(groups)/[groupId]/details",
+        params: {
+          groupId,
+          date: date ?? "",
+          time: time ?? "",
+          categoryKey: categoryKey ?? "",
+          description: description ?? "",
+          amount: sourceAmount ?? "",
+        },
+      });
+      return;
+    }
+
+    router.replace("/(tabs)/(home)");
   };
 
-  const handleCancel = () => {
-    router.back();
+  const handleSubmit = () => {
+    console.log("Create Payment", {
+      amount,
+      group,
+      recipient,
+      method,
+      evidenceUrl,
+      notes,
+    });
   };
 
   return (
@@ -82,7 +100,7 @@ const Expense = () => {
         }}
       >
         <CText weight="bold" size="xmd" color="neutral" shade={200}>
-          Add Expense
+          Record Payment
         </CText>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
           <Pressable
@@ -115,6 +133,7 @@ const Expense = () => {
           </Pressable>
         </View>
       </View>
+
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ gap: 16, paddingBottom: 24 }}
@@ -144,21 +163,21 @@ const Expense = () => {
 
         <View style={{ gap: 8 }}>
           <CText weight="semibold" size="sm" color="neutral" shade={300}>
-            Group Selection
+            Group
           </CText>
           <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
-            {groups.map((group) => (
+            {groups.map((item) => (
               <Pressable
-                key={group}
-                style={chipStyle(selectedGroup === group)}
-                onPress={() => setSelectedGroup(group)}
+                key={item}
+                style={chipStyle(group === item)}
+                onPress={() => setGroup(item)}
               >
                 <CText
                   size="sm"
-                  color={selectedGroup === group ? "accent" : "neutral"}
-                  shade={selectedGroup === group ? 300 : 300}
+                  color={group === item ? "accent" : "neutral"}
+                  shade={300}
                 >
-                  {group}
+                  {item}
                 </CText>
               </Pressable>
             ))}
@@ -167,21 +186,21 @@ const Expense = () => {
 
         <View style={{ gap: 8 }}>
           <CText weight="semibold" size="sm" color="neutral" shade={300}>
-            Category
+            Paid To
           </CText>
           <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
-            {categories.map((category) => (
+            {recipients.map((item) => (
               <Pressable
-                key={category}
-                style={chipStyle(selectedCategory === category)}
-                onPress={() => setSelectedCategory(category)}
+                key={item}
+                style={chipStyle(recipient === item)}
+                onPress={() => setRecipient(item)}
               >
                 <CText
                   size="sm"
-                  color={selectedCategory === category ? "accent" : "neutral"}
-                  shade={selectedCategory === category ? 300 : 300}
+                  color={recipient === item ? "accent" : "neutral"}
+                  shade={300}
                 >
-                  {category}
+                  {item}
                 </CText>
               </Pressable>
             ))}
@@ -190,21 +209,21 @@ const Expense = () => {
 
         <View style={{ gap: 8 }}>
           <CText weight="semibold" size="sm" color="neutral" shade={300}>
-            Paid By
+            Payment Method
           </CText>
           <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
-            {members.map((member) => (
+            {methods.map((item) => (
               <Pressable
-                key={member}
-                style={chipStyle(paidBy === member)}
-                onPress={() => setPaidBy(member)}
+                key={item}
+                style={chipStyle(method === item)}
+                onPress={() => setMethod(item)}
               >
                 <CText
                   size="sm"
-                  color={paidBy === member ? "accent" : "neutral"}
-                  shade={paidBy === member ? 300 : 300}
+                  color={method === item ? "accent" : "neutral"}
+                  shade={300}
                 >
-                  {member}
+                  {item}
                 </CText>
               </Pressable>
             ))}
@@ -213,30 +232,63 @@ const Expense = () => {
 
         <View style={{ gap: 8 }}>
           <CText weight="semibold" size="sm" color="neutral" shade={300}>
-            Split Between
+            Payment Evidence
           </CText>
-          <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
-            {members.map((member) => {
-              const isSelected = splitBetween.includes(member);
-              return (
-                <Pressable
-                  key={member}
-                  style={chipStyle(isSelected)}
-                  onPress={() => toggleSplitMember(member)}
-                >
-                  <CText
-                    size="sm"
-                    color={isSelected ? "accent" : "neutral"}
-                    shade={isSelected ? 300 : 300}
-                  >
-                    {member}
-                  </CText>
-                </Pressable>
-              );
-            })}
-          </View>
+          {hasEvidence ? (
+            <Image
+              source={{ uri: evidenceUrl.trim() }}
+              style={{
+                width: "100%",
+                height: 180,
+                borderRadius: 14,
+                borderWidth: 1,
+                borderColor: Colors.neutral[700],
+                backgroundColor: Colors.neutral[800],
+              }}
+            />
+          ) : (
+            <View
+              style={{
+                height: 140,
+                borderRadius: 14,
+                borderWidth: 1,
+                borderStyle: "dashed",
+                borderColor: Colors.neutral[700],
+                backgroundColor: Colors.neutral[800],
+                justifyContent: "center",
+                alignItems: "center",
+                paddingHorizontal: 16,
+              }}
+            >
+              <Ionicons
+                name="image-outline"
+                size={28}
+                color={Colors.neutral[500]}
+              />
+              <CText size="sm" color="neutral" shade={500}>
+                Add payment proof image
+              </CText>
+            </View>
+          )}
+
+          <TextInput
+            value={evidenceUrl}
+            onChangeText={setEvidenceUrl}
+            placeholder="Paste evidence image URL"
+            placeholderTextColor={Colors.neutral[600]}
+            autoCapitalize="none"
+            style={{
+              backgroundColor: Colors.neutral[800],
+              borderColor: Colors.neutral[700],
+              borderWidth: 1,
+              borderRadius: 14,
+              paddingHorizontal: 14,
+              paddingVertical: 12,
+              color: Colors.neutral[100],
+            }}
+          />
           <CText size="xs" color="neutral" shade={500}>
-            Equal split: NPR {perPersonAmount} each
+            Camera/gallery picker can be connected here later.
           </CText>
         </View>
 
@@ -247,7 +299,7 @@ const Expense = () => {
           <TextInput
             value={notes}
             onChangeText={setNotes}
-            placeholder="Add note about this expense"
+            placeholder="Add note about this payment"
             placeholderTextColor={Colors.neutral[600]}
             multiline
             textAlignVertical="top"
@@ -263,10 +315,9 @@ const Expense = () => {
             }}
           />
         </View>
-
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-export default Expense;
+export default Pay;

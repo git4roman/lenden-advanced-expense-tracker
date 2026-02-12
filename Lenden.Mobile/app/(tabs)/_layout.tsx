@@ -46,6 +46,7 @@ export default function _layout() {
           options={{
             headerShown: false,
             title: "Groups",
+            popToTopOnBlur: true,
             tabBarIcon: ({ color }) => (
               <FontAwesome5
                 name="users"
@@ -56,7 +57,7 @@ export default function _layout() {
           }}
         />
         <Tabs.Screen
-          name="expense"
+          name="(quickActions)"
           options={{
             title: "",
             tabBarLabel: () => null,
@@ -64,7 +65,7 @@ export default function _layout() {
             tabBarButton: () => (
               <Pressable
                 onPress={() => {
-                  router.push("/(tabs)/(home)/(quickActions)/expense");
+                  router.push("/(tabs)/(quickActions)/expense");
                 }}
                 style={{
                   top: -16,

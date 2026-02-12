@@ -1,26 +1,38 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { Pressable, ScrollView, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { CText } from "@/src/shared/ui/components/CText";
 
-const groups = ["All Groups", "Roommates", "Office Team", "Trip to Pokhara"];
-const periods = ["This Month", "Last Month", "Last 3 Months", "Custom"];
-const formats = ["PDF", "CSV"];
-const includeOptions = ["Expenses", "Payments", "Requests", "Settlements"];
+const groups = ["Roommates", "Office Team", "Trip to Pokhara"];
+const members = ["Roman", "Aayush", "Sita", "Nabin"];
+const dueOptions = ["Today", "Tomorrow", "This Week", "Custom"];
 
-const Statement = () => {
+const Request = () => {
+  const {
+    from,
+    groupId,
+    date,
+    time,
+    categoryKey,
+    description,
+    amount: sourceAmount,
+  } = useLocalSearchParams<{
+    from?: string;
+    groupId?: string;
+    date?: string;
+    time?: string;
+    categoryKey?: string;
+    description?: string;
+    amount?: string;
+  }>();
+
+  const [amount, setAmount] = useState("");
   const [group, setGroup] = useState(groups[0]);
-  const [period, setPeriod] = useState(periods[0]);
-  const [format, setFormat] = useState(formats[0]);
-  const [include, setInclude] = useState<string[]>([
-    "Expenses",
-    "Payments",
-    "Requests",
-  ]);
-  const [email, setEmail] = useState("");
+  const [requestFrom, setRequestFrom] = useState(members[0]);
+  const [dueDate, setDueDate] = useState(dueOptions[0]);
   const [notes, setNotes] = useState("");
 
   const chipStyle = (active: boolean) => ({
@@ -32,31 +44,31 @@ const Statement = () => {
     backgroundColor: active ? Colors.accent[900] : Colors.neutral[900],
   });
 
-  const toggleInclude = (value: string) => {
-    setInclude((prev) => {
-      if (prev.includes(value)) {
-        if (prev.length === 1) return prev;
-        return prev.filter((item) => item !== value);
-      }
-      return [...prev, value];
-    });
-  };
-
-  const previewLine = useMemo(() => {
-    return `${period} - ${group} - ${format}`;
-  }, [period, group, format]);
-
   const handleCancel = () => {
-    router.back();
+    if (from === "groupDetails" && groupId) {
+      router.replace({
+        pathname: "/(tabs)/(groups)/[groupId]/details",
+        params: {
+          groupId,
+          date: date ?? "",
+          time: time ?? "",
+          categoryKey: categoryKey ?? "",
+          description: description ?? "",
+          amount: sourceAmount ?? "",
+        },
+      });
+      return;
+    }
+
+    router.replace("/(tabs)/(home)");
   };
 
-  const handleGenerate = () => {
-    console.log("Generate Statement", {
+  const handleSubmit = () => {
+    console.log("Create Payment Request", {
+      amount,
       group,
-      period,
-      format,
-      include,
-      email,
+      requestFrom,
+      dueDate,
       notes,
     });
   };
@@ -78,7 +90,7 @@ const Statement = () => {
         }}
       >
         <CText weight="bold" size="xmd" color="neutral" shade={200}>
-          Generate Statement
+          Request Payment
         </CText>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
           <Pressable
@@ -97,7 +109,7 @@ const Statement = () => {
             </CText>
           </Pressable>
           <Pressable
-            onPress={handleGenerate}
+            onPress={handleSubmit}
             style={{
               width: 38,
               height: 38,
@@ -116,6 +128,29 @@ const Statement = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ gap: 16, paddingBottom: 24 }}
       >
+        <View style={{ gap: 8 }}>
+          <CText weight="semibold" size="sm" color="neutral" shade={300}>
+            Amount
+          </CText>
+          <TextInput
+            value={amount}
+            onChangeText={setAmount}
+            placeholder="0.00"
+            keyboardType="decimal-pad"
+            placeholderTextColor={Colors.neutral[600]}
+            style={{
+              backgroundColor: Colors.neutral[800],
+              borderColor: Colors.neutral[700],
+              borderWidth: 1,
+              borderRadius: 14,
+              paddingHorizontal: 14,
+              paddingVertical: 12,
+              color: Colors.neutral[100],
+              fontSize: 28,
+            }}
+          />
+        </View>
+
         <View style={{ gap: 8 }}>
           <CText weight="semibold" size="sm" color="neutral" shade={300}>
             Group
@@ -141,18 +176,18 @@ const Statement = () => {
 
         <View style={{ gap: 8 }}>
           <CText weight="semibold" size="sm" color="neutral" shade={300}>
-            Period
+            Request From
           </CText>
           <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
-            {periods.map((item) => (
+            {members.map((item) => (
               <Pressable
                 key={item}
-                style={chipStyle(period === item)}
-                onPress={() => setPeriod(item)}
+                style={chipStyle(requestFrom === item)}
+                onPress={() => setRequestFrom(item)}
               >
                 <CText
                   size="sm"
-                  color={period === item ? "accent" : "neutral"}
+                  color={requestFrom === item ? "accent" : "neutral"}
                   shade={300}
                 >
                   {item}
@@ -164,18 +199,18 @@ const Statement = () => {
 
         <View style={{ gap: 8 }}>
           <CText weight="semibold" size="sm" color="neutral" shade={300}>
-            Format
+            Due Date
           </CText>
           <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
-            {formats.map((item) => (
+            {dueOptions.map((item) => (
               <Pressable
                 key={item}
-                style={chipStyle(format === item)}
-                onPress={() => setFormat(item)}
+                style={chipStyle(dueDate === item)}
+                onPress={() => setDueDate(item)}
               >
                 <CText
                   size="sm"
-                  color={format === item ? "accent" : "neutral"}
+                  color={dueDate === item ? "accent" : "neutral"}
                   shade={300}
                 >
                   {item}
@@ -183,55 +218,6 @@ const Statement = () => {
               </Pressable>
             ))}
           </View>
-        </View>
-
-        <View style={{ gap: 8 }}>
-          <CText weight="semibold" size="sm" color="neutral" shade={300}>
-            Include
-          </CText>
-          <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
-            {includeOptions.map((item) => {
-              const isSelected = include.includes(item);
-              return (
-                <Pressable
-                  key={item}
-                  style={chipStyle(isSelected)}
-                  onPress={() => toggleInclude(item)}
-                >
-                  <CText
-                    size="sm"
-                    color={isSelected ? "accent" : "neutral"}
-                    shade={300}
-                  >
-                    {item}
-                  </CText>
-                </Pressable>
-              );
-            })}
-          </View>
-        </View>
-
-        <View style={{ gap: 8 }}>
-          <CText weight="semibold" size="sm" color="neutral" shade={300}>
-            Send To Email (optional)
-          </CText>
-          <TextInput
-            value={email}
-            onChangeText={setEmail}
-            placeholder="example@email.com"
-            placeholderTextColor={Colors.neutral[600]}
-            autoCapitalize="none"
-            keyboardType="email-address"
-            style={{
-              backgroundColor: Colors.neutral[800],
-              borderColor: Colors.neutral[700],
-              borderWidth: 1,
-              borderRadius: 14,
-              paddingHorizontal: 14,
-              paddingVertical: 12,
-              color: Colors.neutral[100],
-            }}
-          />
         </View>
 
         <View style={{ gap: 8 }}>
@@ -241,7 +227,7 @@ const Statement = () => {
           <TextInput
             value={notes}
             onChangeText={setNotes}
-            placeholder="Any extra detail for this statement"
+            placeholder="Add note about this payment request"
             placeholderTextColor={Colors.neutral[600]}
             multiline
             textAlignVertical="top"
@@ -257,30 +243,9 @@ const Statement = () => {
             }}
           />
         </View>
-
-        <View
-          style={{
-            borderWidth: 1,
-            borderColor: Colors.neutral[700],
-            backgroundColor: Colors.neutral[800],
-            borderRadius: 14,
-            padding: 12,
-            gap: 4,
-          }}
-        >
-          <CText weight="semibold" size="sm" color="neutral" shade={300}>
-            Preview
-          </CText>
-          <CText size="sm" color="neutral" shade={400}>
-            {previewLine}
-          </CText>
-          <CText size="xs" color="neutral" shade={500}>
-            {include.length} sections selected
-          </CText>
-        </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-export default Statement;
+export default Request;

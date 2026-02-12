@@ -1,30 +1,31 @@
 import React, { useMemo, useState } from "react";
-import {
-  Image,
-  Pressable,
-  ScrollView,
-  TextInput,
-  View,
-} from "react-native";
+import { Pressable, ScrollView, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { CText } from "@/src/shared/ui/components/CText";
 
-const groups = ["Roommates", "Office Team", "Trip to Pokhara"];
-const recipients = ["Roman", "Aayush", "Sita", "Nabin"];
-const methods = ["Cash", "Bank Transfer", "eSewa", "Khalti"];
+const groups = ["All Groups", "Roommates", "Office Team", "Trip to Pokhara"];
+const periods = ["This Month", "Last Month", "Last 3 Months", "Custom"];
+const formats = ["PDF", "CSV"];
+const includeOptions = ["Expenses", "Payments", "Requests", "Settlements"];
 
-const Pay = () => {
-  const [amount, setAmount] = useState("");
+const Statement = () => {
+  const { from, groupId } = useLocalSearchParams<{
+    from?: string;
+    groupId?: string;
+  }>();
   const [group, setGroup] = useState(groups[0]);
-  const [recipient, setRecipient] = useState(recipients[0]);
-  const [method, setMethod] = useState(methods[0]);
-  const [evidenceUrl, setEvidenceUrl] = useState("");
+  const [period, setPeriod] = useState(periods[0]);
+  const [format, setFormat] = useState(formats[0]);
+  const [include, setInclude] = useState<string[]>([
+    "Expenses",
+    "Payments",
+    "Requests",
+  ]);
+  const [email, setEmail] = useState("");
   const [notes, setNotes] = useState("");
-
-  const hasEvidence = useMemo(() => evidenceUrl.trim().length > 0, [evidenceUrl]);
 
   const chipStyle = (active: boolean) => ({
     paddingHorizontal: 12,
@@ -35,17 +36,39 @@ const Pay = () => {
     backgroundColor: active ? Colors.accent[900] : Colors.neutral[900],
   });
 
-  const handleCancel = () => {
-    router.back();
+  const toggleInclude = (value: string) => {
+    setInclude((prev) => {
+      if (prev.includes(value)) {
+        if (prev.length === 1) return prev;
+        return prev.filter((item) => item !== value);
+      }
+      return [...prev, value];
+    });
   };
 
-  const handleSubmit = () => {
-    console.log("Create Payment", {
-      amount,
+  const previewLine = useMemo(() => {
+    return `${period} - ${group} - ${format}`;
+  }, [period, group, format]);
+
+  const handleCancel = () => {
+    if (from === "groupDetails" && groupId) {
+      router.replace({
+        pathname: "/(tabs)/(groups)/[groupId]",
+        params: { groupId },
+      });
+      return;
+    }
+
+    router.replace("/(tabs)/(home)");
+  };
+
+  const handleGenerate = () => {
+    console.log("Generate Statement", {
       group,
-      recipient,
-      method,
-      evidenceUrl,
+      period,
+      format,
+      include,
+      email,
       notes,
     });
   };
@@ -67,7 +90,7 @@ const Pay = () => {
         }}
       >
         <CText weight="bold" size="xmd" color="neutral" shade={200}>
-          Record Payment
+          Generate Statement
         </CText>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
           <Pressable
@@ -86,7 +109,7 @@ const Pay = () => {
             </CText>
           </Pressable>
           <Pressable
-            onPress={handleSubmit}
+            onPress={handleGenerate}
             style={{
               width: 38,
               height: 38,
@@ -105,29 +128,6 @@ const Pay = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ gap: 16, paddingBottom: 24 }}
       >
-        <View style={{ gap: 8 }}>
-          <CText weight="semibold" size="sm" color="neutral" shade={300}>
-            Amount
-          </CText>
-          <TextInput
-            value={amount}
-            onChangeText={setAmount}
-            placeholder="0.00"
-            keyboardType="decimal-pad"
-            placeholderTextColor={Colors.neutral[600]}
-            style={{
-              backgroundColor: Colors.neutral[800],
-              borderColor: Colors.neutral[700],
-              borderWidth: 1,
-              borderRadius: 14,
-              paddingHorizontal: 14,
-              paddingVertical: 12,
-              color: Colors.neutral[100],
-              fontSize: 28,
-            }}
-          />
-        </View>
-
         <View style={{ gap: 8 }}>
           <CText weight="semibold" size="sm" color="neutral" shade={300}>
             Group
@@ -153,18 +153,18 @@ const Pay = () => {
 
         <View style={{ gap: 8 }}>
           <CText weight="semibold" size="sm" color="neutral" shade={300}>
-            Paid To
+            Period
           </CText>
           <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
-            {recipients.map((item) => (
+            {periods.map((item) => (
               <Pressable
                 key={item}
-                style={chipStyle(recipient === item)}
-                onPress={() => setRecipient(item)}
+                style={chipStyle(period === item)}
+                onPress={() => setPeriod(item)}
               >
                 <CText
                   size="sm"
-                  color={recipient === item ? "accent" : "neutral"}
+                  color={period === item ? "accent" : "neutral"}
                   shade={300}
                 >
                   {item}
@@ -176,18 +176,18 @@ const Pay = () => {
 
         <View style={{ gap: 8 }}>
           <CText weight="semibold" size="sm" color="neutral" shade={300}>
-            Payment Method
+            Format
           </CText>
           <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
-            {methods.map((item) => (
+            {formats.map((item) => (
               <Pressable
                 key={item}
-                style={chipStyle(method === item)}
-                onPress={() => setMethod(item)}
+                style={chipStyle(format === item)}
+                onPress={() => setFormat(item)}
               >
                 <CText
                   size="sm"
-                  color={method === item ? "accent" : "neutral"}
+                  color={format === item ? "accent" : "neutral"}
                   shade={300}
                 >
                   {item}
@@ -199,51 +199,41 @@ const Pay = () => {
 
         <View style={{ gap: 8 }}>
           <CText weight="semibold" size="sm" color="neutral" shade={300}>
-            Payment Evidence
+            Include
           </CText>
-          {hasEvidence ? (
-            <Image
-              source={{ uri: evidenceUrl.trim() }}
-              style={{
-                width: "100%",
-                height: 180,
-                borderRadius: 14,
-                borderWidth: 1,
-                borderColor: Colors.neutral[700],
-                backgroundColor: Colors.neutral[800],
-              }}
-            />
-          ) : (
-            <View
-              style={{
-                height: 140,
-                borderRadius: 14,
-                borderWidth: 1,
-                borderStyle: "dashed",
-                borderColor: Colors.neutral[700],
-                backgroundColor: Colors.neutral[800],
-                justifyContent: "center",
-                alignItems: "center",
-                paddingHorizontal: 16,
-              }}
-            >
-              <Ionicons
-                name="image-outline"
-                size={28}
-                color={Colors.neutral[500]}
-              />
-              <CText size="sm" color="neutral" shade={500}>
-                Add payment proof image
-              </CText>
-            </View>
-          )}
+          <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
+            {includeOptions.map((item) => {
+              const isSelected = include.includes(item);
+              return (
+                <Pressable
+                  key={item}
+                  style={chipStyle(isSelected)}
+                  onPress={() => toggleInclude(item)}
+                >
+                  <CText
+                    size="sm"
+                    color={isSelected ? "accent" : "neutral"}
+                    shade={300}
+                  >
+                    {item}
+                  </CText>
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
 
+        <View style={{ gap: 8 }}>
+          <CText weight="semibold" size="sm" color="neutral" shade={300}>
+            Send To Email (optional)
+          </CText>
           <TextInput
-            value={evidenceUrl}
-            onChangeText={setEvidenceUrl}
-            placeholder="Paste evidence image URL"
+            value={email}
+            onChangeText={setEmail}
+            placeholder="example@email.com"
             placeholderTextColor={Colors.neutral[600]}
             autoCapitalize="none"
+            keyboardType="email-address"
             style={{
               backgroundColor: Colors.neutral[800],
               borderColor: Colors.neutral[700],
@@ -254,9 +244,6 @@ const Pay = () => {
               color: Colors.neutral[100],
             }}
           />
-          <CText size="xs" color="neutral" shade={500}>
-            Camera/gallery picker can be connected here later.
-          </CText>
         </View>
 
         <View style={{ gap: 8 }}>
@@ -266,7 +253,7 @@ const Pay = () => {
           <TextInput
             value={notes}
             onChangeText={setNotes}
-            placeholder="Add note about this payment"
+            placeholder="Any extra detail for this statement"
             placeholderTextColor={Colors.neutral[600]}
             multiline
             textAlignVertical="top"
@@ -282,9 +269,30 @@ const Pay = () => {
             }}
           />
         </View>
+
+        <View
+          style={{
+            borderWidth: 1,
+            borderColor: Colors.neutral[700],
+            backgroundColor: Colors.neutral[800],
+            borderRadius: 14,
+            padding: 12,
+            gap: 4,
+          }}
+        >
+          <CText weight="semibold" size="sm" color="neutral" shade={300}>
+            Preview
+          </CText>
+          <CText size="sm" color="neutral" shade={400}>
+            {previewLine}
+          </CText>
+          <CText size="xs" color="neutral" shade={500}>
+            {include.length} sections selected
+          </CText>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-export default Pay;
+export default Statement;

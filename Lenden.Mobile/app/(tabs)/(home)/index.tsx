@@ -193,15 +193,24 @@ const BalanceCard = () => (
         // width: "60%",
       }}
     >
-      <IconCover label="Pay" path="/(tabs)/(home)/(quickActions)/pay">
+      <IconCover label="Pay" path="/(tabs)/(quickActions)/pay">
         <Send2 size="28" color={Colors.accent[200]} />
       </IconCover>
-      <IconCover label="Request" path="/(tabs)/(home)/(quickActions)/request">
+      <IconCover
+        label="Request"
+        path={{
+          pathname: "/(tabs)/(quickActions)/request",
+          params: { from: "home" },
+        }}
+      >
         <DirectInbox size="28" color={Colors.accent[200]} />
       </IconCover>
       <IconCover
         label="Statement"
-        path="/(tabs)/(home)/(quickActions)/statement"
+        path={{
+          pathname: "/(tabs)/(quickActions)/statement",
+          params: { from: "home" },
+        }}
       >
         <TableDocument size="28" color={Colors.accent[200]} />
       </IconCover>

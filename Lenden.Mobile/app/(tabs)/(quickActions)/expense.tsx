@@ -1,21 +1,45 @@
-import React, { useState } from "react";
-import { Pressable, ScrollView, TextInput, View } from "react-native";
+import React, { useMemo, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { CText } from "@/src/shared/ui/components/CText";
+import { Pressable, ScrollView, TextInput, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 const groups = ["Roommates", "Office Team", "Trip to Pokhara"];
+const categories = [
+  "Food",
+  "Transport",
+  "Groceries",
+  "Utilities",
+  "Shopping",
+  "Other",
+];
 const members = ["Roman", "Aayush", "Sita", "Nabin"];
-const dueOptions = ["Today", "Tomorrow", "This Week", "Custom"];
 
-const Request = () => {
+const Expense = () => {
   const [amount, setAmount] = useState("");
-  const [group, setGroup] = useState(groups[0]);
-  const [requestFrom, setRequestFrom] = useState(members[0]);
-  const [dueDate, setDueDate] = useState(dueOptions[0]);
+  const [selectedGroup, setSelectedGroup] = useState(groups[0]);
+  const [selectedCategory, setSelectedCategory] = useState(categories[0]);
+  const [paidBy, setPaidBy] = useState(members[0]);
+  const [splitBetween, setSplitBetween] = useState<string[]>(members);
   const [notes, setNotes] = useState("");
+
+  const perPersonAmount = useMemo(() => {
+    const total = Number(amount || "0");
+    if (!splitBetween.length || Number.isNaN(total)) return "0.00";
+    return (total / splitBetween.length).toFixed(2);
+  }, [amount, splitBetween.length]);
+
+  const toggleSplitMember = (member: string) => {
+    setSplitBetween((prev) => {
+      if (prev.includes(member)) {
+        if (prev.length === 1) return prev;
+        return prev.filter((item) => item !== member);
+      }
+      return [...prev, member];
+    });
+  };
 
   const chipStyle = (active: boolean) => ({
     paddingHorizontal: 12,
@@ -26,18 +50,19 @@ const Request = () => {
     backgroundColor: active ? Colors.accent[900] : Colors.neutral[900],
   });
 
-  const handleCancel = () => {
-    router.back();
-  };
-
   const handleSubmit = () => {
-    console.log("Create Payment Request", {
+    console.log("Create Expense", {
       amount,
-      group,
-      requestFrom,
-      dueDate,
+      selectedGroup,
+      selectedCategory,
+      paidBy,
+      splitBetween,
       notes,
     });
+  };
+
+  const handleCancel = () => {
+    router.back();
   };
 
   return (
@@ -57,7 +82,7 @@ const Request = () => {
         }}
       >
         <CText weight="bold" size="xmd" color="neutral" shade={200}>
-          Request Payment
+          Add Expense
         </CText>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
           <Pressable
@@ -90,7 +115,6 @@ const Request = () => {
           </Pressable>
         </View>
       </View>
-
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ gap: 16, paddingBottom: 24 }}
@@ -120,21 +144,21 @@ const Request = () => {
 
         <View style={{ gap: 8 }}>
           <CText weight="semibold" size="sm" color="neutral" shade={300}>
-            Group
+            Group Selection
           </CText>
           <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
-            {groups.map((item) => (
+            {groups.map((group) => (
               <Pressable
-                key={item}
-                style={chipStyle(group === item)}
-                onPress={() => setGroup(item)}
+                key={group}
+                style={chipStyle(selectedGroup === group)}
+                onPress={() => setSelectedGroup(group)}
               >
                 <CText
                   size="sm"
-                  color={group === item ? "accent" : "neutral"}
+                  color={selectedGroup === group ? "accent" : "neutral"}
                   shade={300}
                 >
-                  {item}
+                  {group}
                 </CText>
               </Pressable>
             ))}
@@ -143,21 +167,21 @@ const Request = () => {
 
         <View style={{ gap: 8 }}>
           <CText weight="semibold" size="sm" color="neutral" shade={300}>
-            Request From
+            Category
           </CText>
           <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
-            {members.map((item) => (
+            {categories.map((category) => (
               <Pressable
-                key={item}
-                style={chipStyle(requestFrom === item)}
-                onPress={() => setRequestFrom(item)}
+                key={category}
+                style={chipStyle(selectedCategory === category)}
+                onPress={() => setSelectedCategory(category)}
               >
                 <CText
                   size="sm"
-                  color={requestFrom === item ? "accent" : "neutral"}
+                  color={selectedCategory === category ? "accent" : "neutral"}
                   shade={300}
                 >
-                  {item}
+                  {category}
                 </CText>
               </Pressable>
             ))}
@@ -166,25 +190,54 @@ const Request = () => {
 
         <View style={{ gap: 8 }}>
           <CText weight="semibold" size="sm" color="neutral" shade={300}>
-            Due Date
+            Paid By
           </CText>
           <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
-            {dueOptions.map((item) => (
+            {members.map((member) => (
               <Pressable
-                key={item}
-                style={chipStyle(dueDate === item)}
-                onPress={() => setDueDate(item)}
+                key={member}
+                style={chipStyle(paidBy === member)}
+                onPress={() => setPaidBy(member)}
               >
                 <CText
                   size="sm"
-                  color={dueDate === item ? "accent" : "neutral"}
+                  color={paidBy === member ? "accent" : "neutral"}
                   shade={300}
                 >
-                  {item}
+                  {member}
                 </CText>
               </Pressable>
             ))}
           </View>
+        </View>
+
+        <View style={{ gap: 8 }}>
+          <CText weight="semibold" size="sm" color="neutral" shade={300}>
+            Split Between
+          </CText>
+          <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
+            {members.map((member) => {
+              const isSelected = splitBetween.includes(member);
+              return (
+                <Pressable
+                  key={member}
+                  style={chipStyle(isSelected)}
+                  onPress={() => toggleSplitMember(member)}
+                >
+                  <CText
+                    size="sm"
+                    color={isSelected ? "accent" : "neutral"}
+                    shade={300}
+                  >
+                    {member}
+                  </CText>
+                </Pressable>
+              );
+            })}
+          </View>
+          <CText size="xs" color="neutral" shade={500}>
+            Equal split: NPR {perPersonAmount} each
+          </CText>
         </View>
 
         <View style={{ gap: 8 }}>
@@ -194,7 +247,7 @@ const Request = () => {
           <TextInput
             value={notes}
             onChangeText={setNotes}
-            placeholder="Add note about this payment request"
+            placeholder="Add note about this expense"
             placeholderTextColor={Colors.neutral[600]}
             multiline
             textAlignVertical="top"
@@ -215,4 +268,4 @@ const Request = () => {
   );
 };
 
-export default Request;
+export default Expense;

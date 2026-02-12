@@ -3,7 +3,7 @@ import React from "react";
 import { CText } from "@/src/shared/ui/components/CText";
 import { ActivityItem } from "./activity-item";
 import { Colors } from "@/src/shared/ui/theme/colors";
-import { FontAwesome, FontAwesome6, MaterialIcons } from "@expo/vector-icons";
+import { router, useLocalSearchParams } from "expo-router";
 
 const activityMockData = [
   {
@@ -87,6 +87,8 @@ const activityMockData = [
 ];
 
 const ExpenseTab = () => {
+  const { groupId } = useLocalSearchParams<{ groupId?: string }>();
+
   return (
     <ScrollView
       style={{ borderColor: "transparent" }}
@@ -131,6 +133,19 @@ const ExpenseTab = () => {
           {activityMockData.map((item, index) => (
             <Pressable
               key={index}
+              onPress={() => {
+                router.push({
+                  pathname: "/(tabs)/(groups)/[groupId]/details",
+                  params: {
+                    groupId: groupId ?? "",
+                    date: item.date,
+                    time: item.time,
+                    categoryKey: item.categoryKey,
+                    description: item.description,
+                    amount: item.amount,
+                  },
+                });
+              }}
               style={{
                 backgroundColor: Colors.neutral[800],
                 borderWidth: 1,
