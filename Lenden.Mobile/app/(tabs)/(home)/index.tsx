@@ -8,8 +8,14 @@ import {
   Send2,
   TableDocument,
 } from "iconsax-react-nativejs";
-import React from "react";
-import { FlatList, ImageBackground, Pressable, View } from "react-native";
+import React, { useCallback, useState } from "react";
+import {
+  ImageBackground,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ActivityItem } from "../../../src/modules/groups/components/activity-item";
 import { Href, router } from "expo-router";
@@ -88,7 +94,9 @@ const Header = () => (
       LENDEN
     </CText>
     <View style={{ flex: 1, alignItems: "flex-end", marginRight: 10 }}>
-      <FontAwesome5 name="bell" size={24} color={Colors.accent[300]} />
+      <Pressable onPress={() => router.push("/(tabs)/(home)/notification")}>
+        <FontAwesome5 name="bell" size={24} color={Colors.accent[300]} />
+      </Pressable>
     </View>
   </View>
 );
@@ -219,6 +227,22 @@ const BalanceCard = () => (
 );
 
 const HomeScreen = () => {
+  const [refreshing, setRefreshing] = useState(false);
+  const [activities, setActivities] = useState(activityMockData);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+
+    setTimeout(() => {
+      setActivities((prev) => {
+        if (!prev.length) return prev;
+        const [first, ...rest] = prev;
+        return [...rest, first];
+      });
+      setRefreshing(false);
+    }, 900);
+  }, []);
+
   return (
     <SafeAreaView
       style={{
@@ -227,66 +251,81 @@ const HomeScreen = () => {
         paddingHorizontal: 24,
       }}
     >
-      <Header />
-      <View style={{}}>
-        <BalanceCard />
-      </View>
-
-      <View style={{ paddingTop: 16 }}>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <CText weight="semibold" size="xmd" color="neutral" shade={100}>
-            Activity
-          </CText>
-          <CText size="ssm" color="accent" shade={100}>
-            View All
-          </CText>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 24 }}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={Colors.neutral[200]}
+            colors={[Colors.accent[400]]}
+          />
+        }
+      >
+        <Header />
+        <View>
+          <BalanceCard />
         </View>
-        <View style={{ paddingLeft: 0 }}>
+
+        <View style={{ paddingTop: 16 }}>
           <View
             style={{
               flexDirection: "row",
-              justifyContent: "center",
+              justifyContent: "space-between",
               alignItems: "center",
-              width: "100%",
             }}
           >
-            <View
-              style={{
-                flex: 1,
-                height: 1,
-                backgroundColor: Colors.neutral[500],
-              }}
-            />
-            <CText
-              color="neutral"
-              shade={400}
-              size="xmd"
-              style={{ paddingHorizontal: 10 }}
-            >
-              Today
+            <CText weight="semibold" size="xmd" color="neutral" shade={100}>
+              Activity
             </CText>
+            <CText size="ssm" color="accent" shade={100}>
+              View All
+            </CText>
+          </View>
+
+          <View style={{ paddingLeft: 0 }}>
             <View
               style={{
-                flex: 1,
-                height: 1,
-                backgroundColor: Colors.neutral[500],
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                width: "100%",
               }}
-            />
+            >
+              <View
+                style={{
+                  flex: 1,
+                  height: 1,
+                  backgroundColor: Colors.neutral[500],
+                }}
+              />
+              <CText
+                color="neutral"
+                shade={400}
+                size="xmd"
+                style={{ paddingHorizontal: 10 }}
+              >
+                Today
+              </CText>
+              <View
+                style={{
+                  flex: 1,
+                  height: 1,
+                  backgroundColor: Colors.neutral[500],
+                }}
+              />
+            </View>
+          </View>
+
+          <View>
+            {activities.map((item, i) => (
+              <ActivityItem key={`${item.date}-${item.time}-${i}`} item={item} />
+            ))}
           </View>
         </View>
-
-        <FlatList
-          data={activityMockData}
-          keyExtractor={(_, i) => i.toString()}
-          renderItem={({ item }) => <ActivityItem item={item} />}
-        />
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

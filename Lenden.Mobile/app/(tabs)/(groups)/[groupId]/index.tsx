@@ -1,5 +1,5 @@
-import { View, Pressable, Image, Modal } from "react-native";
-import React, { useState } from "react";
+import { View, Pressable, Image, Modal, ScrollView, RefreshControl } from "react-native";
+import React, { useCallback, useState } from "react";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Colors } from "@/src/shared/ui/theme/colors";
@@ -33,15 +33,35 @@ const GroupScreen = () => {
     groupButtonsLabel[0].key,
   );
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+
+    setTimeout(() => {
+      setRefreshKey((prev) => prev + 1);
+      setRefreshing(false);
+    }, 900);
+  }, []);
+
   const AciveTabScreen = TAB_CONTENT[selectedTab];
   return (
-    <View
+    <ScrollView
       style={{
         flex: 1,
         backgroundColor: Colors.neutral[900],
-        gap: 4,
         position: "relative",
       }}
+      contentContainerStyle={{ flexGrow: 1, gap: 4 }}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor={Colors.neutral[200]}
+          colors={[Colors.accent[400]]}
+        />
+      }
     >
       <Stack.Screen
         options={{
@@ -89,7 +109,7 @@ const GroupScreen = () => {
         style={{ gap: 12, paddingHorizontal: 8, flex: 1, position: "relative" }}
       >
         <GroupTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
-        <AciveTabScreen />
+        <AciveTabScreen key={`${selectedTab}-${refreshKey}`} />
         {/* {selectedTab === "Expenses" && (
           
         )} */}
@@ -214,7 +234,7 @@ const GroupScreen = () => {
           </View>
         </View>
       </Modal>
-    </View>
+    </ScrollView>
   );
 };
 

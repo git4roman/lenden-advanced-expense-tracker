@@ -3,12 +3,13 @@ import {
   Image,
   Pressable,
   ScrollView,
+  RefreshControl,
   ImageBackground,
   Modal,
   TextInput,
   Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
@@ -23,6 +24,15 @@ const GroupScreen = () => {
   const [groupName, setGroupName] = useState("");
   const [groupImageUri, setGroupImageUri] = useState("");
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 900);
+  }, []);
 
   const handleCloseCreateGroup = () => {
     setIsCreateGroupOpen(false);
@@ -120,6 +130,14 @@ const GroupScreen = () => {
           flex: 1,
         }}
         contentContainerStyle={{ gap: 4, paddingBottom: 90 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={Colors.neutral[200]}
+            colors={[Colors.accent[400]]}
+          />
+        }
       >
         {groupsData.map((group, index) => (
           <React.Fragment key={group.id}>

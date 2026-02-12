@@ -1,6 +1,8 @@
 import { Href, useRouter } from "expo-router";
+import { useState } from "react";
 import {
   ImageSourcePropType,
+  Modal,
   Pressable,
   ScrollView,
   View,
@@ -25,9 +27,9 @@ type AcccountItems = {
 };
 
 const accountItems: AcccountItems[] = [
-  { title: "Personal Information", icon: UserIcon, path: "/personalinfo" },
+  { title: "Personal Information", icon: UserIcon, path: "/(tabs)/(account)/personalinfo" },
   // { title: "Payment details", icon: CreditCardIcon, path: "/paymentDetails" },
-  { title: "Security", icon: LockIcon, path: "/security" },
+  { title: "Security", icon: LockIcon, path: "/(tabs)/(account)/security" },
 ];
 
 type SettingItemProps = {
@@ -101,6 +103,8 @@ export function DividedPattern({
 
 export default function Account() {
   const router = useRouter();
+  const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
+  const [isRateModalVisible, setIsRateModalVisible] = useState(false);
 
   return (
     <SafeAreaView
@@ -226,13 +230,13 @@ export default function Account() {
                   leftIcon={BellICon}
                   title="Notification"
                   rightIcon={ChervonRight}
-                  onPress={() => router.push("/notification")}
+                  onPress={() => router.push("/(tabs)/(account)/notification")}
                 />
                 <DividedPattern
                   leftIcon={SettingIcon}
                   title="Settings"
                   rightIcon={ChervonRight}
-                  onPress={() => router.push("/settings")}
+                  onPress={() => router.push("/(tabs)/(account)/settings")}
                 />
               </View>
             </View>
@@ -262,25 +266,187 @@ export default function Account() {
                   leftIcon={StarIcon}
                   title="Rate the App"
                   rightIcon={ChervonRight}
-                  onPress={() => {}}
+                  onPress={() => setIsRateModalVisible(true)}
                 />
                 <DividedPattern
                   leftIcon={InfoIcon}
                   title="About App"
                   rightIcon={ChervonRight}
-                  onPress={() => router.push("/about")}
+                  onPress={() => router.push("/(tabs)/(account)/about")}
                 />
                 <DividedPattern
                   leftIcon={InfoIcon}
                   title="Logout"
                   rightIcon={ChervonRight}
-                  onPress={() => {}}
+                  onPress={() => setIsLogoutModalVisible(true)}
                 />
               </View>
             </View>
           </View>
         </View>
       </ScrollView>
+
+      <Modal
+        transparent
+        animationType="fade"
+        visible={isLogoutModalVisible}
+        onRequestClose={() => setIsLogoutModalVisible(false)}
+      >
+        <View style={{ flex: 1 }}>
+          <Pressable
+            onPress={() => setIsLogoutModalVisible(false)}
+            style={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              bottom: 0,
+              left: 0,
+              backgroundColor: "rgba(0,0,0,0.5)",
+            }}
+          />
+
+          <View
+            style={{
+              marginHorizontal: 20,
+              marginTop: "75%",
+              borderRadius: 14,
+              borderWidth: 1,
+              borderColor: Colors.neutral[700],
+              backgroundColor: Colors.neutral[800],
+              padding: 16,
+              gap: 16,
+            }}
+          >
+            <View style={{ gap: 6 }}>
+              <CText size="md" color={Colors.neutral[100]} weight="bold">
+                Logout
+              </CText>
+              <CText size="sm" color={Colors.neutral[400]}>
+                Are you sure you want to logout?
+              </CText>
+            </View>
+
+            <View style={{ flexDirection: "row", gap: 10 }}>
+              <Pressable
+                onPress={() => setIsLogoutModalVisible(false)}
+                style={{
+                  flex: 1,
+                  borderWidth: 1,
+                  borderColor: Colors.neutral[600],
+                  backgroundColor: Colors.neutral[900],
+                  borderRadius: 10,
+                  paddingVertical: 10,
+                  alignItems: "center",
+                }}
+              >
+                <CText color="neutral" shade={300} weight="semibold">
+                  Cancel
+                </CText>
+              </Pressable>
+
+              <Pressable
+                onPress={() => {
+                  setIsLogoutModalVisible(false);
+                  console.log("logout");
+                }}
+                style={{
+                  flex: 1,
+                  borderRadius: 10,
+                  paddingVertical: 10,
+                  alignItems: "center",
+                  backgroundColor: Colors.warning[500],
+                }}
+              >
+                <CText color="neutral" shade={900} weight="bold">
+                  Logout
+                </CText>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        transparent
+        animationType="fade"
+        visible={isRateModalVisible}
+        onRequestClose={() => setIsRateModalVisible(false)}
+      >
+        <View style={{ flex: 1 }}>
+          <Pressable
+            onPress={() => setIsRateModalVisible(false)}
+            style={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              bottom: 0,
+              left: 0,
+              backgroundColor: "rgba(0,0,0,0.5)",
+            }}
+          />
+
+          <View
+            style={{
+              marginHorizontal: 20,
+              marginTop: "75%",
+              borderRadius: 14,
+              borderWidth: 1,
+              borderColor: Colors.neutral[700],
+              backgroundColor: Colors.neutral[800],
+              padding: 16,
+              gap: 16,
+            }}
+          >
+            <View style={{ gap: 6 }}>
+              <CText size="md" color={Colors.neutral[100]} weight="bold">
+                Rate LenDen
+              </CText>
+              <CText size="sm" color={Colors.neutral[400]}>
+                Enjoying the app? Please rate us in the store.
+              </CText>
+            </View>
+
+            <View style={{ flexDirection: "row", gap: 10 }}>
+              <Pressable
+                onPress={() => setIsRateModalVisible(false)}
+                style={{
+                  flex: 1,
+                  borderWidth: 1,
+                  borderColor: Colors.neutral[600],
+                  backgroundColor: Colors.neutral[900],
+                  borderRadius: 10,
+                  paddingVertical: 10,
+                  alignItems: "center",
+                }}
+              >
+                <CText color="neutral" shade={300} weight="semibold">
+                  Maybe Later
+                </CText>
+              </Pressable>
+
+              <Pressable
+                onPress={() => {
+                  setIsRateModalVisible(false);
+                  console.log("rate-app");
+                }}
+                style={{
+                  flex: 1,
+                  borderRadius: 10,
+                  paddingVertical: 10,
+                  alignItems: "center",
+                  backgroundColor: Colors.accent[500],
+                }}
+              >
+                <CText color="neutral" shade={900} weight="bold">
+                  Rate Now
+                </CText>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
+
+
