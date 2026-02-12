@@ -1,16 +1,15 @@
 import { View, Text } from "react-native";
 import React from "react";
 import { Tabs } from "expo-router";
-import { FontAwesome5 } from "@expo/vector-icons";
-import AccountIcon from "@/src/components/accounts/AccountIcon";
+import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
 // import { Colors } from "@/src/theme/colors";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Colors } from "@/src/shared/ui/theme/colors";
-import { Home2 } from "iconsax-react-nativejs";
+import { Home2, Profile, Profile2User } from "iconsax-react-nativejs";
 
 export default function _layout() {
-  const TAB_ICON_SIZE = 16;
+  const TAB_ICON_SIZE = 18;
 
   return (
     <SafeAreaProvider>
@@ -34,7 +33,7 @@ export default function _layout() {
             headerShown: false,
             title: "Home",
             tabBarIcon: ({ color }) => (
-              <Home2 size={String(TAB_ICON_SIZE)} color={color} />
+              <Home2 size={TAB_ICON_SIZE - 2} color={color} variant="TwoTone" />
             ),
           }}
         />
@@ -44,7 +43,11 @@ export default function _layout() {
             headerShown: false,
             title: "Groups",
             tabBarIcon: ({ color }) => (
-              <FontAwesome5 name="users" size={TAB_ICON_SIZE} color={color} />
+              <FontAwesome5
+                name="users"
+                size={TAB_ICON_SIZE - 2}
+                color={color}
+              />
             ),
           }}
         />
@@ -54,11 +57,7 @@ export default function _layout() {
             headerShown: false,
             title: "Friends", // Optional: set a title for the tab
             tabBarIcon: ({ color }) => (
-              <FontAwesome5
-                name="user-friends"
-                size={TAB_ICON_SIZE}
-                color={color}
-              />
+              <Profile2User size={TAB_ICON_SIZE} color={color} variant="Bold" />
             ),
           }}
         />
@@ -68,7 +67,7 @@ export default function _layout() {
           options={{
             title: "Account",
             tabBarIcon: ({ color }) => (
-              <AccountIcon size={TAB_ICON_SIZE} color={color} />
+              <Profile size={TAB_ICON_SIZE + 1} color={color} variant="Bold" />
             ),
           }}
         />

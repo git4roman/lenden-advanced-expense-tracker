@@ -92,27 +92,9 @@ const GroupScreen = () => {
       >
         <GroupTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
         <AciveTabScreen />
-        {selectedTab === "Expenses" && (
-          <Pressable
-            onPress={() => {
-              console.log("Add Expense");
-            }}
-            style={{
-              backgroundColor: Colors.accent[500],
-              width: "auto",
-              position: "absolute",
-              bottom: 20,
-              right: 10,
-              paddingHorizontal: 20,
-              paddingVertical: 14,
-              borderRadius: 18,
-            }}
-          >
-            <CText weight="bold" size="md">
-              + Add Expense
-            </CText>
-          </Pressable>
-        )}
+        {/* {selectedTab === "Expenses" && (
+          
+        )} */}
       </View>
 
       <Modal

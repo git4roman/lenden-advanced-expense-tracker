@@ -1,7 +1,6 @@
 // app/_layout.tsx
 import { Provider } from "react-redux";
 import { Slot } from "expo-router";
-import { store } from "@/src/store/store";
 import Toast from "react-native-toast-message";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
@@ -40,10 +39,8 @@ export default function RootLayout() {
   if (!loaded) return null;
   return (
     <SafeAreaProvider>
-      <Provider store={store}>
-        <Slot />
-        <Toast />
-      </Provider>
+      <Slot />
+      <Toast />
     </SafeAreaProvider>
   );
 }

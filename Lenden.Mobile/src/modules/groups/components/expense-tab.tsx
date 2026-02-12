@@ -112,8 +112,7 @@ const ExpenseTab = () => {
             weight="medium"
             
           >
-            Fri, FEB 6
-            Fri, FEB 6
+            Fri, FEB 6           
           </CText>
           <View
             style={{

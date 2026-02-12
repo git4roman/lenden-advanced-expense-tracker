@@ -7,6 +7,7 @@ import {
   Profile,
   Send2,
   TableDocument,
+  WalletAdd,
 } from "iconsax-react-nativejs";
 import React from "react";
 import { FlatList, ImageBackground, View } from "react-native";
@@ -187,6 +188,9 @@ const BalanceCard = () => (
         // width: "60%",
       }}
     >
+      <IconCover label="Expense">
+        <WalletAdd size="28" color={Colors.accent[200]} />
+      </IconCover>
       <IconCover label="Pay">
         <Send2 size="28" color={Colors.accent[200]} />
       </IconCover>

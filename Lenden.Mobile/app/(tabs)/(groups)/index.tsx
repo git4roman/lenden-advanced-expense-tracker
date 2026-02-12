@@ -1,6 +1,5 @@
 import {
   View,
-  Text,
   Image,
   Pressable,
   ScrollView,
@@ -10,7 +9,7 @@ import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
-import { ArrowRight2, More } from "iconsax-react-nativejs";
+import { ArrowRight2 } from "iconsax-react-nativejs";
 import { router } from "expo-router";
 import { groupsData } from "./groups.mock";
 
@@ -22,6 +21,7 @@ const GroupScreen = () => {
         paddingHorizontal: 8,
         backgroundColor: Colors.neutral[900],
         gap: 4,
+        position: "relative",
       }}
     >
       <View style={{ justifyContent: "center", alignItems: "center" }}>
@@ -29,40 +29,13 @@ const GroupScreen = () => {
           Groups
         </CText>
       </View>
-      {/* <View
-        style={{
-          flexDirection: "row",
-          gap: 4,
-          justifyContent: "space-between",
-        }}
-      >
-        {groupButtonsLabel.map((item, index) => (
-          <Pressable
-            style={{
-              backgroundColor: Colors.neutral[400],
-              paddingVertical: 8,
-              paddingHorizontal: 12,
-              borderRadius: 8,
-            }}
-            onPress={() => {
-              console.log("first");
-            }}
-          >
-            <CText weight="semibold" size="md" color="neutral" shade={800}>
-              {item}
-            </CText>
-          </Pressable>
-        ))}
-      </View> */}
       <ScrollView
         style={{
-          //   backgroundColor: Colors.neutral[900],
           paddingHorizontal: 8,
-          //   paddingTop: 16,
           borderRadius: 8 + 8,
           flex: 1,
         }}
-        contentContainerStyle={{ gap: 4 }}
+        contentContainerStyle={{ gap: 4, paddingBottom: 90 }}
       >
         {groupsData.map((group, index) => (
           <React.Fragment key={group.id}>
@@ -71,9 +44,7 @@ const GroupScreen = () => {
                 flexDirection: "row",
                 gap: 16,
                 backgroundColor: Colors.neutral[900],
-                // borderWidth: 1,
                 borderRadius: 16,
-                // borderColor: "transparent",
                 justifyContent: "flex-start",
                 alignItems: "center",
                 paddingVertical: 12,
@@ -107,7 +78,6 @@ const GroupScreen = () => {
                   flexDirection: "row",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  // gap: 16,
                   flex: 1,
                 }}
               >
@@ -198,6 +168,24 @@ const GroupScreen = () => {
           </React.Fragment>
         ))}
       </ScrollView>
+      <Pressable
+        onPress={() => {
+          console.log("Add Expense");
+        }}
+        style={{
+          backgroundColor: Colors.accent[500],
+          position: "absolute",
+          bottom: 20,
+          right: 18,
+          paddingHorizontal: 20,
+          paddingVertical: 14,
+          borderRadius: 18,
+        }}
+      >
+        <CText weight="bold" size="md">
+          + Add Expense
+        </CText>
+      </Pressable>
     </SafeAreaView>
   );
 };
