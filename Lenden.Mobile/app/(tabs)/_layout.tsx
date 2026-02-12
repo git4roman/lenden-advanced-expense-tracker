@@ -1,12 +1,16 @@
-import { View, Text } from "react-native";
+import { Pressable, View } from "react-native";
 import React from "react";
-import { Tabs } from "expo-router";
-import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
-// import { Colors } from "@/src/theme/colors";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { router, Tabs } from "expo-router";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Colors } from "@/src/shared/ui/theme/colors";
-import { Home2, Profile, Profile2User } from "iconsax-react-nativejs";
+import {
+  AddCircle,
+  Home2,
+  Profile,
+  Profile2User,
+} from "iconsax-react-nativejs";
 
 export default function _layout() {
   const TAB_ICON_SIZE = 18;
@@ -19,8 +23,8 @@ export default function _layout() {
           tabBarActiveTintColor: Colors.accent[500],
           tabBarInactiveTintColor: Colors.neutral[300],
           tabBarStyle: {
-            // paddingBottom: 5,
             backgroundColor: Colors.neutral[900],
+            height: 64,
           },
           tabBarLabelStyle: { fontSize: 14, marginTop: -4 },
           headerShown: false,
@@ -52,10 +56,45 @@ export default function _layout() {
           }}
         />
         <Tabs.Screen
+          name="expense"
+          options={{
+            title: "",
+            tabBarLabel: () => null,
+            tabBarIcon: () => null,
+            tabBarButton: () => (
+              <Pressable
+                onPress={() => {
+                  router.push("/(tabs)/(home)/(quickActions)/expense");
+                }}
+                style={{
+                  top: -16,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <View
+                  style={{
+                    width: 58,
+                    height: 58,
+                    borderRadius: 999,
+                    backgroundColor: Colors.warning[500],
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderWidth: 4,
+                    borderColor: Colors.neutral[900],
+                  }}
+                >
+                  <AddCircle size="30" color={Colors.accent[200]} />
+                </View>
+              </Pressable>
+            ),
+          }}
+        />
+        <Tabs.Screen
           name="(friends)"
           options={{
             headerShown: false,
-            title: "Friends", // Optional: set a title for the tab
+            title: "Friends",
             tabBarIcon: ({ color }) => (
               <Profile2User size={TAB_ICON_SIZE} color={color} variant="Bold" />
             ),

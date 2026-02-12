@@ -1,8 +1,7 @@
-import { View, Text, FlatList, ScrollView } from "react-native";
+import { View, FlatList, ScrollView } from "react-native";
 import React from "react";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { CText } from "@/src/shared/ui/components/CText";
-import { Feather } from "@expo/vector-icons";
 
 const balanceData = [
   {
@@ -66,12 +65,6 @@ const groupMutualBalance = [
   { from: "John Doe", to: "Jane Smith", balance: 1200 },
   { from: "Alex Johnson", to: "Emily Brown", balance: 540 },
   { from: "Michael Lee", to: "Sara Wilson", balance: 875 },
-  { from: "Olivia Davis", to: "David Clark", balance: 430 },
-  { from: "Sophia Miller", to: "Liam Moore", balance: 150 },
-  { from: "Ethan Taylor", to: "Ava Anderson", balance: 620 },
-  { from: "Isabella Thomas", to: "Noah Martin", balance: 3000 },
-  { from: "Mason Jackson", to: "Emma White", balance: 980 },
-  { from: "Charlotte Harris", to: "Logan Lewis", balance: 450 },
 ];
 
 const BalanceTab = () => {
@@ -99,7 +92,15 @@ const BalanceTab = () => {
           keyExtractor={(_, index) => index.toString()}
           data={groupMutualBalance}
           renderItem={({ item }) => <GroupMemberMutualBalance item={item} />}
-          contentContainerStyle={{ gap: 8 }}
+          contentContainerStyle={{
+            gap: 10,
+            borderWidth: 1,
+            borderRadius: 12,
+            paddingVertical: 10,
+            backgroundColor: Colors.neutral[900],
+            borderColor: Colors.neutral[800],
+            paddingHorizontal: 8,
+          }}
           scrollEnabled={false}
           ItemSeparatorComponent={() => (
             <View
@@ -107,8 +108,8 @@ const BalanceTab = () => {
                 width: "100%",
                 height: 1,
                 backgroundColor: Colors.neutral[600],
-                marginVertical: 8,
-                opacity: 0.5,
+                marginVertical: 4,
+                opacity: 0.3,
               }}
             />
           )}
@@ -178,6 +179,9 @@ function GroupMemberMutualBalance({ item }: { item: any }) {
         justifyContent: "space-between",
         alignItems: "center",
         flex: 1,
+        borderRadius: 12,
+        backgroundColor: Colors.neutral[800],
+        paddingVertical: 8,
       }}
     >
       <View
@@ -189,13 +193,13 @@ function GroupMemberMutualBalance({ item }: { item: any }) {
           paddingHorizontal: 12,
         }}
       >
-        <View>
+        <View style={{ gap: 2 }}>
           <View>
             <CText color="neutral" shade={300} weight="semibold" size="md">
               {item.from}
             </CText>
           </View>
-          <CText color="neutral" shade={300} weight="regular" size="ssm">
+          <CText color="neutral" shade={500} weight="regular" size="ssm">
             owes
           </CText>
           <View>
@@ -204,19 +208,11 @@ function GroupMemberMutualBalance({ item }: { item: any }) {
             </CText>
           </View>
         </View>
-        <View>
-          <CText color="neutral" shade={300} weight="semibold" size="md">
-            {item.balance}
+        <View style={{ alignItems: "flex-end", gap: 2 }}>
+          <CText color="accent" shade={300} weight="bold" size="md">
+            NPR {item.balance}
           </CText>
         </View>
-      </View>
-      <View
-        style={{
-          flex: 0.2,
-          marginHorizontal: 12,
-        }}
-      >
-        <Feather name="more-vertical" size={24} color={Colors.neutral[200]} />
       </View>
     </View>
   );

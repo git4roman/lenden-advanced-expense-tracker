@@ -7,12 +7,12 @@ import {
   Profile,
   Send2,
   TableDocument,
-  WalletAdd,
 } from "iconsax-react-nativejs";
 import React from "react";
-import { FlatList, ImageBackground, View } from "react-native";
+import { FlatList, ImageBackground, Pressable, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ActivityItem } from "../../../src/modules/groups/components/activity-item";
+import { Href, router } from "expo-router";
 
 const activityMockData = [
   {
@@ -41,11 +41,16 @@ const activityMockData = [
 const IconCover = ({
   children,
   label,
+  path,
 }: {
   children: React.ReactNode;
   label: string;
+  path: Href;
 }) => (
-  <View
+  <Pressable
+    onPress={() => {
+      router.push(path);
+    }}
     style={{ justifyContent: "center", alignItems: "center", gap: 4, flex: 1 }}
   >
     <View
@@ -66,7 +71,7 @@ const IconCover = ({
         {label}
       </CText>
     )}
-  </View>
+  </Pressable>
 );
 
 const Header = () => (
@@ -188,16 +193,16 @@ const BalanceCard = () => (
         // width: "60%",
       }}
     >
-      <IconCover label="Expense">
-        <WalletAdd size="28" color={Colors.accent[200]} />
-      </IconCover>
-      <IconCover label="Pay">
+      <IconCover label="Pay" path="/(tabs)/(home)/(quickActions)/pay">
         <Send2 size="28" color={Colors.accent[200]} />
       </IconCover>
-      <IconCover label="Request">
+      <IconCover label="Request" path="/(tabs)/(home)/(quickActions)/request">
         <DirectInbox size="28" color={Colors.accent[200]} />
       </IconCover>
-      <IconCover label="Statement">
+      <IconCover
+        label="Statement"
+        path="/(tabs)/(home)/(quickActions)/statement"
+      >
         <TableDocument size="28" color={Colors.accent[200]} />
       </IconCover>
     </View>
