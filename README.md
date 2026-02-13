@@ -1,64 +1,140 @@
-# Expense Management App 💰
+✅ Fintech Backend (.NET) — Learning Checklist
+🏦 1. Payment Processing Systems
 
-Manage your personal and group expenses effortlessly. Track spending, split bills, and keep everyone on the same page.
+ Understand payment lifecycle states (Pending → Success → Failed)
 
----
+ Design idempotent APIs
 
-## 🔐 Authentication
-- **Email & Password** login
-- **Google OAuth** sign-in
+ Implement retry logic for failed payments
 
-<img width="408" height="689" alt="Login screen" src="https://github.com/user-attachments/assets/54062344-1240-4e6d-a237-4004b4e881de" />
+ Handle payment gateway webhooks
 
----
+ Verify webhook signatures securely
 
-## 💸 Expense Management
-- Add new expenses with **amount, date, and description**
-- Assign expenses to yourself or other group members
+ Implement transaction state machines
 
----
+ Handle concurrency in payment updates
 
-## 👥 Group & Friends Management
-### Create Multiple Groups
-Organize your expenses by different groups like Family, Friends, Trips, etc.
+💰 2. Ledger & Accounting Systems
 
-<img width="460" height="1005" alt="Groups screen" src="https://github.com/user-attachments/assets/9c3eb795-f8bc-4dcd-b916-3bcd0ee1c813" />
+ Understand double-entry accounting basics
 
-### Add Friends from Phone Contacts
-Easily include friends in your groups using your phone contacts.
+ Design immutable transaction tables
 
-<img width="456" height="1008" alt="Add friends" src="https://github.com/user-attachments/assets/096bc4cb-f514-44fb-a92e-f826da4c8c65" />
+ Implement debit/credit ledger structure
 
----
+ Ensure atomic balance updates
 
-## 🧾 Transactions
-### Create Transactions with Multiple Payers
-- Each transaction can have **multiple payers**
-- Split amounts **equally** or by **custom proportions**
+ Learn reconciliation processes
 
-```json
-[
-  {
-    "id": 3,
-    "description": "NPL Tickets",
-    "groupId": 1,
-    "madeBy": {"id": 2, "fullName": "Roman"},
-    "amount": 1200.00,
-    "createdDate": "2025-11-03",
-    "payers": [
-      {"payerId": 2, "payer": {"id": 2, "fullName": "Roman"}, "amount": 1200.00}
-    ]
-  },
-  {
-    "id": 4,
-    "description": "Dinner",
-    "groupId": 1,
-    "madeBy": {"id": 2, "fullName": "Roman"},
-    "amount": 600.00,
-    "createdDate": "2025-11-04",
-    "payers": [
-      {"payerId": 1, "payer": {"id": 1, "fullName": "Admin Admin"}, "amount": 200.00},
-      {"payerId": 2, "payer": {"id": 2, "fullName": "Roman"}, "amount": 400.00}
-    ]
-  }
-]
+ Handle isolation levels in SQL
+
+👤 3. Identity & KYC Systems
+
+ Implement JWT authentication
+
+ Role-based authorization policies
+
+ Multi-factor authentication flow
+
+ Device/session tracking
+
+ KYC verification workflow design
+
+ Third-party API integration patterns
+
+🔐 4. Security & Compliance
+
+ Encrypt sensitive data
+
+ Secure secrets management
+
+ Implement audit logging
+
+ Prevent common attacks (SQL injection, XSS, CSRF)
+
+ Implement rate limiting
+
+ Understand regulatory logging needs
+
+🔄 5. Background Processing
+
+ Implement scheduled jobs
+
+ Queue-based background workers
+
+ Retry failed background jobs
+
+ Batch transaction processing
+
+ Async event processing
+
+⚡ 6. Reliability & Distributed Systems
+
+ Implement retry policies
+
+ Circuit breaker pattern
+
+ Timeout handling strategies
+
+ Event-driven architecture basics
+
+ Outbox pattern understanding
+
+ Eventual consistency concepts
+
+📊 7. Reporting & Analytics
+
+ Design reporting databases
+
+ Optimize aggregation queries
+
+ Implement caching strategies
+
+ Generate financial reports
+
+ Handle real-time dashboards
+
+🔌 8. API Integration & Management
+
+ Design versioned APIs
+
+ Implement API rate limiting
+
+ Handle third-party API failures
+
+ Secure partner API access
+
+ Webhook management patterns
+
+🚨 9. Fraud & Risk Systems (Advanced)
+
+ Design rule-based fraud detection
+
+ Transaction pattern monitoring
+
+ Risk scoring integration
+
+ Alerting systems for suspicious activity
+
+⭐ Core .NET Skills Required for Fintech
+
+ Async programming mastery
+
+ EF Core performance tuning
+
+ Transaction handling in SQL Server
+
+ Caching (Redis / Memory)
+
+ Message queues (RabbitMQ / Service Bus)
+
+ Background services in ASP.NET Core
+
+📌 Optional: Industry System Understanding
+
+ Learn how payment gateways work
+
+ Understand settlement cycles
+
+ Learn banking reconciliation flows
