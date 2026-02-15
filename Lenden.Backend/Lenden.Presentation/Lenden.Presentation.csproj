@@ -17,4 +17,10 @@
       <ProjectReference Include="..\Lenden.Infrastructure\Lenden.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Controllers\" />
+      <Folder Include="DTOMappers\" />
+      <Folder Include="Filters\" />
+    </ItemGroup>
+
 </Project>
