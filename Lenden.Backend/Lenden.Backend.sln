@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lenden.Domain", "Lenden.Dom
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lenden.Infrastructure", "Lenden.Infrastructure\Lenden.Infrastructure.csproj", "{315A73B8-FB66-4992-808A-A8278EFC7A9B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lenden.Presentation", "Lenden.Presentation\Lenden.Presentation.csproj", "{787326ED-A646-43DF-84EB-FFCBB9E33729}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{315A73B8-FB66-4992-808A-A8278EFC7A9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{315A73B8-FB66-4992-808A-A8278EFC7A9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{315A73B8-FB66-4992-808A-A8278EFC7A9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{787326ED-A646-43DF-84EB-FFCBB9E33729}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{787326ED-A646-43DF-84EB-FFCBB9E33729}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{787326ED-A646-43DF-84EB-FFCBB9E33729}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{787326ED-A646-43DF-84EB-FFCBB9E33729}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
