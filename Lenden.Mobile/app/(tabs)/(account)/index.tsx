@@ -347,7 +347,7 @@ export default function Account() {
               <Pressable
                 onPress={() => {
                   setIsLogoutModalVisible(false);
-                  console.log("logout");
+                  router.replace("/(auth)/login");
                 }}
                 style={{
                   flex: 1,

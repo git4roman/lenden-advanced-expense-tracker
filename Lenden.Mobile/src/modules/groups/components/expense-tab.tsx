@@ -1,4 +1,4 @@
-import { View, ScrollView, Pressable, FlatList } from "react-native";
+import { View, ScrollView, Pressable } from "react-native";
 import React from "react";
 import { CText } from "@/src/shared/ui/components/CText";
 import { ActivityItem } from "./activity-item";
@@ -92,17 +92,17 @@ const ExpenseTab = () => {
   return (
     <ScrollView
       style={{ borderColor: "transparent" }}
-      contentContainerStyle={{ paddingBottom: 50 }}      
+      contentContainerStyle={{ paddingTop: 4, paddingBottom: 64 }}
       showsVerticalScrollIndicator={false}
     >
-     
-      <View style={{ gap: 5 }}>
+      <View style={{ gap: 12 }}>
         <View
           style={{
             flexDirection: "row",
             justifyContent: "center",
             alignItems: "center",
             width: "100%",
+            marginBottom: 4,
           }}
         >
           <CText
@@ -126,8 +126,8 @@ const ExpenseTab = () => {
         </View>
         <View
           style={{
-            borderRadius: 8,
-            gap: 8,
+            borderRadius: 10,
+            gap: 10,
           }}
         >
           {activityMockData.map((item, index) => (
@@ -149,9 +149,10 @@ const ExpenseTab = () => {
               style={{
                 backgroundColor: Colors.neutral[800],
                 borderWidth: 1,
-                borderRadius: 8,
+                borderRadius: 12,
                 borderColor: Colors.neutral[700],
-                paddingHorizontal: 8,
+                paddingHorizontal: 10,
+                paddingVertical: 2,
               }}
             >
               <ActivityItem item={item} />

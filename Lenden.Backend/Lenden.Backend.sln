@@ -6,6 +6,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lenden.Data", "Lenden.Data\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lenden.Core", "Lenden.Core\Lenden.Core.csproj", "{EE49C180-75DF-45FA-B370-273A46C38146}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lenden.Domain", "Lenden.Domain\Lenden.Domain.csproj", "{77ECEC62-38D3-46F9-947C-57F5994836B4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lenden.Infrastructure", "Lenden.Infrastructure\Lenden.Infrastructure.csproj", "{315A73B8-FB66-4992-808A-A8278EFC7A9B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +28,13 @@ Global
 		{EE49C180-75DF-45FA-B370-273A46C38146}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE49C180-75DF-45FA-B370-273A46C38146}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE49C180-75DF-45FA-B370-273A46C38146}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77ECEC62-38D3-46F9-947C-57F5994836B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77ECEC62-38D3-46F9-947C-57F5994836B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77ECEC62-38D3-46F9-947C-57F5994836B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77ECEC62-38D3-46F9-947C-57F5994836B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{315A73B8-FB66-4992-808A-A8278EFC7A9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{315A73B8-FB66-4992-808A-A8278EFC7A9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{315A73B8-FB66-4992-808A-A8278EFC7A9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{315A73B8-FB66-4992-808A-A8278EFC7A9B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
