@@ -121,7 +121,7 @@ namespace Lenden.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_AuthProvider_UserId",
                 table: "AuthProvider",
-                column: "UserId");
+                column: "PublicId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_users_PublicId",
@@ -132,7 +132,7 @@ namespace Lenden.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_UserSessions_UserId",
                 table: "UserSessions",
-                column: "UserId");
+                column: "PublicId");
         }
 
         /// <inheritdoc />

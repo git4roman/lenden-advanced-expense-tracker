@@ -46,7 +46,7 @@ public class GroupEntity
 
 
     // Optional: remove user
-    public void RemoveUser(Guid userId)
+    public void RemoveUser(long userId)
     {
         // Find the active membership
         var userGroup = _userGroups
@@ -56,6 +56,18 @@ public class GroupEntity
         {
             userGroup.RemoveMember();
         }
+    }
+
+
+    public void UpdateInfo(string? name, string? imageUrl)
+    {
+        if (!string.IsNullOrWhiteSpace(name))
+            Name = name;
+
+        if (imageUrl is not null)
+            ImageUrl = imageUrl;
+        
+        UpdatedAt = DateTimeOffset.UtcNow;
     }
 
 }

@@ -2,7 +2,7 @@
 
 public class UserGroupEntity
 {
-    public Guid UserId { get; private set; }
+    public long UserId { get; private set; }
     public UserEntity User { get; private set; }
 
     public long GroupId { get; private set; }  // Group PK is long
@@ -13,10 +13,10 @@ public class UserGroupEntity
     public DateTimeOffset JoinedAt { get; private set; }
     public DateTimeOffset? LeftAt { get; private set; }
 
-    public Guid? InvitedByUserId { get; private set; }
+    public long? InvitedByUserId { get; private set; }
     public UserEntity InvitedByUser { get; private set; }
 
-    public UserGroupEntity(Guid userId, long groupId, UserGroupRole role = null, Guid? invitedByUserId = null)
+    public UserGroupEntity(long userId, long groupId, UserGroupRole role = null, long? invitedByUserId = null)
     {
         UserId = userId;
         GroupId = groupId;

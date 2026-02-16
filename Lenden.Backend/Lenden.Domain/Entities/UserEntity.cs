@@ -12,8 +12,6 @@ public class UserEntity
     }
     public UserEntity(Email email, string givenName, string familyName, string passwordHash=null)
     {
-        Id = Guid.NewGuid();
-        PublicId = GeneratePublicId();
         Email = email;
         PasswordHash = passwordHash;
         Status = UserStatus.Disabled;
@@ -28,8 +26,8 @@ public class UserEntity
 
     }
     
-    public Guid Id { get; private set; } 
-    public string PublicId { get; private set; } = GeneratePublicId();
+    public long Id { get; private set; } 
+    public Guid PublicId { get; private set; } = Guid.NewGuid();
     public Email Email { get; private set; }
     public string? PasswordHash { get; private set; }
     public string GivenName { get; private set; }
@@ -58,10 +56,7 @@ public class UserEntity
     }
 
     
-    private static string GeneratePublicId()
-    {
-        return $"usr_{Ulid.NewUlid()}";
-    }
+    
     public void LinkUserInfo(Guid userInfoId)
     {
         UserInfoId = userInfoId;

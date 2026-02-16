@@ -30,7 +30,7 @@ public class AuthenticationService: IAuthService
         var refreshToken = Guid.NewGuid().ToString(); 
         
         var session = new AuthSessionEntity(
-            userId: user.Id,
+            userId: user.PublicId,
             refreshToken: refreshToken,
             deviceInfo: dto.deviceInfo,
             ipAddress: dto.ipAddress,
@@ -64,14 +64,14 @@ public class AuthenticationService: IAuthService
         
         session.Revoke();
 
-        var user = await _unitOfWork.UserRepository.GetUserByIdAsync(session.UserId);
+        var user = await _unitOfWork.UserRepository.GetUserByUserIdAsync(session.UserId);
         if (user == null) return null;
 
         var newAccessToken = _tokenService.GenerateToken(user);
 
         var newRefreshToken = Guid.NewGuid().ToString();
         var newSession = new AuthSessionEntity(
-            userId: user.Id,
+            userId: user.PublicId,
             refreshToken: newRefreshToken,
             deviceInfo: request.DeviceInfo,
             ipAddress: request.IpAddress,

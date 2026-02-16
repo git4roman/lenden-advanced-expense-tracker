@@ -23,7 +23,7 @@ public class TokenService
     {
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.PublicId),
+            new Claim(JwtRegisteredClaimNames.Sub, user.PublicId.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email.Value),
             new Claim("role", user.Role.Name),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())

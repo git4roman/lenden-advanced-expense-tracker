@@ -20,13 +20,12 @@ public class UserRepository:IUserRepository
        await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<UserEntity> GetUserByEmailAsync(string email)
+    public async Task<UserEntity> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
         var entity = await _dbContext.Users.FirstOrDefaultAsync<UserEntity>(u=> u.Email  == Email.Create(email));
        return entity;
     }
-
-    public async Task<UserEntity?> GetUserByIdAsync(Guid id)
+    public async Task<UserEntity?> GetUserByUserIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var entity = await _dbContext.Users.FirstOrDefaultAsync<UserEntity>(u=> u.UserInfoId == id);
         return entity;

@@ -6,5 +6,6 @@ public interface IUnitOfWork
 {
     IUserRepository UserRepository { get; }
     IAuthRepository AuthRepository { get; }
-    Task<int> SaveChangesAsync(); 
+    IGroupRepository GroupRepository { get; }
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default); 
 }

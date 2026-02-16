@@ -46,12 +46,12 @@ namespace Lenden.Infrastructure.Migrations
                     b.Property<DateTime?>("RevokedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("PublicId")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("PublicId");
 
                     b.ToTable("AuthSessions");
                 });
@@ -170,7 +170,7 @@ namespace Lenden.Infrastructure.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("longtext");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("PublicId")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
@@ -195,19 +195,19 @@ namespace Lenden.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("PublicId")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("PublicId");
 
                     b.ToTable("AuthProvider");
                 });
 
             modelBuilder.Entity("UserGroupEntity", b =>
                 {
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("PublicId")
                         .HasColumnType("char(36)");
 
                     b.Property<long>("GroupId")
@@ -228,7 +228,7 @@ namespace Lenden.Infrastructure.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.HasKey("UserId", "GroupId");
+                    b.HasKey("PublicId", "GroupId");
 
                     b.HasIndex("GroupId");
 
@@ -241,7 +241,7 @@ namespace Lenden.Infrastructure.Migrations
                 {
                     b.HasOne("Lenden.Domain.Entities.UserEntity", null)
                         .WithMany("Sessions")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("PublicId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -250,7 +250,7 @@ namespace Lenden.Infrastructure.Migrations
                 {
                     b.HasOne("Lenden.Domain.Entities.UserEntity", null)
                         .WithMany("AuthProviders")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("PublicId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -270,7 +270,7 @@ namespace Lenden.Infrastructure.Migrations
 
                     b.HasOne("Lenden.Domain.Entities.UserEntity", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("PublicId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
