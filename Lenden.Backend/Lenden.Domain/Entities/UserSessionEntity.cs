@@ -1,4 +1,7 @@
-﻿namespace Lenden.Domain.Entities;
+﻿using System.Security.Cryptography;
+using System.Text;
+
+namespace Lenden.Domain.Entities;
 
 public class UserSessionEntity
 {
@@ -31,6 +34,14 @@ public class UserSessionEntity
     public void Revoke()
     {
         RevokedAt = DateTime.UtcNow;
+    }
+    
+    public static string HashToken(string token)
+    {
+        using var sha = SHA256.Create();
+        var bytes = Encoding.UTF8.GetBytes(token);
+        var hash = sha.ComputeHash(bytes);
+        return Convert.ToBase64String(hash);
     }
 
     public bool IsActive()

@@ -45,4 +45,36 @@ public class AuthenticationService: IAuthService
         await _userRepository.CreateUserAsync(entity);
         return;
     }
+    
+    public async Task<RefreshTokenResponse?> RefreshTokenAsync(RefreshTokenRequest request)
+    {
+       
+        var hashedToken = UserSessionEntity.HashToken(request.RefreshToken);
+        UserSessionEntity session = await _userRepository
+            .GetActiveSessionByRefreshTokenHashAsync(hashedToken);
+        if (session == null || !session.IsActive())
+            return null;
+        
+        session.Revoke();
+
+        var user = await _userRepository.GetUserByIdAsync(session.UserId);
+        if (user == null) return null;
+
+        var newAccessToken = _tokenService.GenerateToken(user);
+
+        var newRefreshToken = Guid.NewGuid().ToString();
+        var newSession = new UserSessionEntity(
+            userId: user.Id,
+            refreshTokenHash: newRefreshToken,
+            deviceInfo: request.DeviceInfo,
+            ipAddress: request.IpAddress,
+            expiresAt: DateTime.UtcNow.AddDays(7)
+        );
+
+        await _userRepository.AddSessionAsync(newSession);
+        await _unitOfWork.SaveChangesAsync();
+
+        return new RefreshTokenResponse(newAccessToken, newRefreshToken);
+    }
+
 }

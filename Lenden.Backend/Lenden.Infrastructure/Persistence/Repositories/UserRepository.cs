@@ -31,4 +31,9 @@ public class UserRepository:IUserRepository
        var entity = await _dbContext.UserSessions.AddAsync(userSession);
        await _dbContext.SaveChangesAsync();
     }
+
+    public async Task<UserSessionEntity> GetActiveSessionByRefreshTokenHashAsync(string refreshTokenHash)
+    {
+        throw new NotImplementedException();
+    }
 }

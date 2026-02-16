@@ -33,6 +33,17 @@ namespace Lenden.Presentation.Controllers
             await _authService.RegisterAsync(request);
             return Ok();
         }
+        
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
+        {
+            var tokens = await _authService.RefreshTokenAsync(request);
+            if (tokens == null)
+                return Unauthorized("Invalid or expired refresh token");
+
+            return Ok(tokens);
+        }
+
     }
     }
 
