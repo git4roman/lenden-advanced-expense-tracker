@@ -12,11 +12,15 @@ public class AppDbContext: DbContext
     }
     public DbSet<UserEntity> Users { get; set; }
     public DbSet<UserInfoEntity> UserInfos { get; set; }
-    public DbSet<UserSessionEntity> UserSessions { get; set; }
+    public DbSet<GroupEntity> Groups { get; set; }
+    public DbSet<UserGroupEntity> UserGroups { get; set; }
+    public DbSet<AuthSessionEntity> AuthSessions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfiguration(new UserConfiguration());
+        modelBuilder.ApplyConfiguration(new UserGroupEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new GroupEntityConfiguration());
     }
 }

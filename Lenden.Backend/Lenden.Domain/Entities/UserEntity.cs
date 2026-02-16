@@ -7,7 +7,7 @@ public class UserEntity
 {
     private UserEntity() 
     {
-        _sessions = new List<UserSessionEntity>();
+        _sessions = new List<AuthSessionEntity>();
         _authProviders = new List<AuthProvider>();
     }
     public UserEntity(Email email, string givenName, string familyName, string passwordHash=null)
@@ -18,7 +18,7 @@ public class UserEntity
         PasswordHash = passwordHash;
         Status = UserStatus.Disabled;
         EmailConfirmed = false;
-        _sessions = new List<UserSessionEntity>();
+        _sessions = new List<AuthSessionEntity>();
         _authProviders = new List<AuthProvider>();
         CreatedAt = DateTimeOffset.UtcNow;
         UpdatedAt = DateTimeOffset.UtcNow;
@@ -43,8 +43,8 @@ public class UserEntity
     public DateTimeOffset UpdatedAt { get; private set; }
     public bool EmailConfirmed { get; private set; }
 
-    private readonly List<UserSessionEntity> _sessions ;
-    public IReadOnlyCollection<UserSessionEntity> Sessions => _sessions.AsReadOnly();
+    private readonly List<AuthSessionEntity> _sessions ;
+    public IReadOnlyCollection<AuthSessionEntity> Sessions => _sessions.AsReadOnly();
     
     private readonly List<AuthProvider> _authProviders ;
     public IReadOnlyCollection<AuthProvider> AuthProviders => _authProviders.AsReadOnly();

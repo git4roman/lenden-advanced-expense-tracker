@@ -1,17 +1,43 @@
-﻿namespace Lenden.Domain.Entities;
+﻿using Lenden.Domain.Entities;
 
 public class UserGroupEntity
 {
-    protected UserGroupEntity() { }
+    public Guid UserId { get; private set; }
+    public UserEntity User { get; private set; }
 
-    public UserGroupEntity(int userId, int groupId)
+    public long GroupId { get; private set; }  // Group PK is long
+    public GroupEntity Group { get; private set; }
+
+    public UserGroupRole Role { get; private set; }
+    public MembershipStatus Status { get; private set; }
+    public DateTimeOffset JoinedAt { get; private set; }
+    public DateTimeOffset? LeftAt { get; private set; }
+
+    public Guid? InvitedByUserId { get; private set; }
+    public UserEntity InvitedByUser { get; private set; }
+
+    public UserGroupEntity(Guid userId, long groupId, UserGroupRole role = null, Guid? invitedByUserId = null)
     {
         UserId = userId;
         GroupId = groupId;
+        Role = role ?? UserGroupRole.Member;
+        InvitedByUserId = invitedByUserId;
+        JoinedAt = DateTimeOffset.UtcNow;
+        Status = MembershipStatus.Active;
     }
-    
-    public int UserId { get; set; }
-    public int GroupId { get; set; }
-    public UserEntity User { get; set; }
-    public GroupEntity Group { get; set; }
+
+    public void PromoteToAdmin() => Role = UserGroupRole.Admin;
+    public void DemoteToMember() => Role = UserGroupRole.Member;
+
+    public void RemoveMember()
+    {
+        Status = MembershipStatus.Disabled;
+        LeftAt = DateTimeOffset.UtcNow;
+    }
+
+    public void BanMember()
+    {
+        Status = MembershipStatus.Banned;
+        LeftAt = DateTimeOffset.UtcNow;
+    }
 }

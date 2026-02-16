@@ -26,14 +26,11 @@ public class UserRepository:IUserRepository
        return entity;
     }
 
-    public async Task AddSessionAsync(UserSessionEntity userSession)
+    public async Task<UserEntity?> GetUserByIdAsync(Guid id)
     {
-       var entity = await _dbContext.UserSessions.AddAsync(userSession);
-       await _dbContext.SaveChangesAsync();
+        var entity = await _dbContext.Users.FirstOrDefaultAsync<UserEntity>(u=> u.UserInfoId == id);
+        return entity;
     }
 
-    public async Task<UserSessionEntity> GetActiveSessionByRefreshTokenHashAsync(string refreshTokenHash)
-    {
-        throw new NotImplementedException();
-    }
+  
 }

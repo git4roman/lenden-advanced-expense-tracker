@@ -1,8 +1,11 @@
 ﻿using Lenden.Application.Interfaces;
+using Lenden.Application.Interfaces.Repositories;
 using Lenden.Application.Interfaces.Services;
 using Lenden.Application.Services;
+using Lenden.Infrastructure.Persistence;
 using Lenden.Infrastructure.Persistence.Repositories;
 using Microsoft.Extensions.DependencyInjection;
+using IUserRepository = Lenden.Application.Interfaces.IUserRepository;
 
 namespace Lenden.Infrastructure.Config;
 
@@ -13,7 +16,9 @@ public static class DependencyInjection
        
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IAuthService, AuthenticationService>();
+        services.AddScoped<IAuthRepository, AuthRepository>();
         services.AddScoped<TokenService>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 
         return services;

@@ -3,9 +3,9 @@ using System.Text;
 
 namespace Lenden.Domain.Entities;
 
-public class UserSessionEntity
+public class AuthSessionEntity
 {
-    private UserSessionEntity() { }
+    private AuthSessionEntity() { }
     public Guid Id { get; private set; }
     public Guid UserId { get; private set; }
 
@@ -19,12 +19,12 @@ public class UserSessionEntity
     public DateTime? RevokedAt { get; private set; }
 
 
-    public UserSessionEntity(Guid userId, string refreshTokenHash,
+    public AuthSessionEntity(Guid userId, string refreshToken,
         string deviceInfo, string ipAddress, DateTime expiresAt)
     {
         Id = Guid.NewGuid();
         UserId = userId;
-        RefreshTokenHash = refreshTokenHash;
+        RefreshTokenHash= HashToken(refreshToken);
         DeviceInfo = deviceInfo;
         IpAddress = ipAddress;
         ExpiresAt = expiresAt;
