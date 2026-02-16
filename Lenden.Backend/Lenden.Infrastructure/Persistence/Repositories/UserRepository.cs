@@ -25,4 +25,10 @@ public class UserRepository:IUserRepository
         var entity = await _dbContext.Users.FirstOrDefaultAsync<UserEntity>(u=> u.Email  == Email.Create(email));
        return entity;
     }
+
+    public async Task AddSessionAsync(UserSessionEntity userSession)
+    {
+       var entity = await _dbContext.UserSessions.AddAsync(userSession);
+       await _dbContext.SaveChangesAsync();
+    }
 }

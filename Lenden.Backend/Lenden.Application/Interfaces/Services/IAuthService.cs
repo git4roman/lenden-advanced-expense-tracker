@@ -4,6 +4,6 @@ namespace Lenden.Application.Interfaces.Services;
 
 public interface IAuthService
 {
-   Task<string> LoginAsync(LoginRequestDto dto);
+   Task<AuthResponse> LoginAsync(LoginRequestDto dto);
    Task RegisterAsync(RegisterRequestDto dto);
 }

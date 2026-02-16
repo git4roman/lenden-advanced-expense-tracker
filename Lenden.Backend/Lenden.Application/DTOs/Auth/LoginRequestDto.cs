@@ -5,5 +5,7 @@ namespace Lenden.Application.DTOs;
 
 public record LoginRequestDto(
     [Required][EmailAddress] string Email,
-    [Required] string Password
+    [Required] string Password,
+    string deviceInfo,
+        string ipAddress
 );
