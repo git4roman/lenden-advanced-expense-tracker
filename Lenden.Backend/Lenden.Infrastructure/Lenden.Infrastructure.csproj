@@ -8,8 +8,6 @@
 
     <ItemGroup>
       <Folder Include="ExternalService\Email\" />
-      <Folder Include="Persistence\Repositories\" />
-      <Folder Include="Persistence\SeedData\" />
     </ItemGroup>
 
     <ItemGroup>
@@ -19,6 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Lenden.Application\Lenden.Application.csproj" />
       <ProjectReference Include="..\Lenden.Domain\Lenden.Domain.csproj" />
     </ItemGroup>
 

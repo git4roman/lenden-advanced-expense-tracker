@@ -10,7 +10,7 @@ public class UserEntity
         _sessions = new List<UserSessionEntity>();
         _authProviders = new List<AuthProvider>();
     }
-    public UserEntity(Email email, string passwordHash=null)
+    public UserEntity(Email email, string givenName, string familyName, string passwordHash=null)
     {
         Id = Guid.NewGuid();
         PublicId = GeneratePublicId();
@@ -22,6 +22,9 @@ public class UserEntity
         _authProviders = new List<AuthProvider>();
         CreatedAt = DateTimeOffset.UtcNow;
         UpdatedAt = DateTimeOffset.UtcNow;
+        GivenName = givenName;
+        FamilyName = familyName;
+        Role = UserRole.Customer;
 
     }
     
@@ -29,6 +32,9 @@ public class UserEntity
     public string PublicId { get; private set; } = GeneratePublicId();
     public Email Email { get; private set; }
     public string? PasswordHash { get; private set; }
+    public string GivenName { get; private set; }
+    public string FamilyName { get; private set; }
+    public UserRole Role { get; private set; }
 
     public bool EmailVerified { get; private set; }
     public UserStatus Status { get; private set; }

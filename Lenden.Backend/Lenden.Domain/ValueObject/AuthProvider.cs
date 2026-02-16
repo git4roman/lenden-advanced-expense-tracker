@@ -3,6 +3,7 @@
 public class AuthProvider
 {
     public int Id { get; private set; }
+    public Guid UserId { get; private set; }
     public string Provider { get; private set; }  
     public string ProviderUserId { get; private set; }
     public DateTimeOffset LinkedAt { get; private set; }
@@ -14,5 +15,9 @@ public class AuthProvider
         Provider = provider;
         ProviderUserId = providerUserId;
         LinkedAt = DateTimeOffset.UtcNow;
+    }
+    public void LinkToUser(Guid userId)
+    {
+        UserId = userId;
     }
 }

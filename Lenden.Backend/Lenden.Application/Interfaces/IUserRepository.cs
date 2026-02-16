@@ -1,6 +1,9 @@
-﻿namespace Lenden.Application.Interfaces;
+﻿using Lenden.Domain.Entities;
 
-public class IUserRepository
+namespace Lenden.Application.Interfaces;
+
+public interface IUserRepository
 {
-    
+    Task CreateUserAsync(UserEntity user);
+    Task<UserEntity> GetUserByEmailAsync(string email);
 }
