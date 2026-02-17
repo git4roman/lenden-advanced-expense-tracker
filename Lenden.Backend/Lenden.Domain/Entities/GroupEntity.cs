@@ -27,14 +27,12 @@ public class GroupEntity
     public IReadOnlyCollection<UserGroupEntity> UserGroups => _userGroups.AsReadOnly();
 
     // Add user to the group
-    public void AddUser(UserEntity user, UserEntity invitedBy = null)
+    public void AddUser(UserEntity user, UserEntity invitedBy = null, bool isCreator = false)
     {
         if (_userGroups.Any(ug => ug.UserId == user.Id && ug.Status == MembershipStatus.Active))
             return; // already an active member
 
-        var role = (_userGroups.Count == 0 || invitedBy == null) 
-            ? UserGroupRole.Admin 
-            : UserGroupRole.Member;
+        var role = isCreator ? UserGroupRole.Admin : UserGroupRole.Member;
 
         _userGroups.Add(new UserGroupEntity(
             userId: user.Id,
@@ -56,6 +54,7 @@ public class GroupEntity
         {
             userGroup.RemoveMember();
         }
+       
     }
 
 
@@ -69,5 +68,9 @@ public class GroupEntity
         
         UpdatedAt = DateTimeOffset.UtcNow;
     }
+    
+   
+    
+    
 
 }

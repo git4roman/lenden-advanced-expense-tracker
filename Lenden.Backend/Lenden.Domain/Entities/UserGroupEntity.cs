@@ -28,6 +28,8 @@ public class UserGroupEntity
 
     public void PromoteToAdmin() => Role = UserGroupRole.Admin;
     public void DemoteToMember() => Role = UserGroupRole.Member;
+    
+    
 
     public void RemoveMember()
     {

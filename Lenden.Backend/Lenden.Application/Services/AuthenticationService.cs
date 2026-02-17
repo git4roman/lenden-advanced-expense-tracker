@@ -64,7 +64,7 @@ public class AuthenticationService: IAuthService
         
         session.Revoke();
 
-        var user = await _unitOfWork.UserRepository.GetUserByUserIdAsync(session.UserId);
+        var user = await _unitOfWork.UserRepository.GetUserByPublicIdAsync(session.UserId);
         if (user == null) return null;
 
         var newAccessToken = _tokenService.GenerateToken(user);
