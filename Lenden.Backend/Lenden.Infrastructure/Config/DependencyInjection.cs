@@ -1,6 +1,7 @@
 ﻿using Lenden.Application.Interfaces;
 using Lenden.Application.Interfaces.Repositories;
 using Lenden.Application.Interfaces.Services;
+using Lenden.Application.Managers;
 using Lenden.Application.Services;
 using Lenden.Infrastructure.Persistence;
 using Lenden.Infrastructure.Persistence.Repositories;
@@ -19,6 +20,9 @@ public static class DependencyInjection
         services.AddScoped<IAuthRepository, AuthRepository>();
         services.AddScoped<TokenService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<AuthManager>();
+        services.AddScoped<GroupManager>();
+
 
 
         return services;
