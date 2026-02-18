@@ -178,7 +178,7 @@ namespace Lenden.Infrastructure.Migrations
                     b.ToTable("UserInfos");
                 });
 
-            modelBuilder.Entity("Lenden.Domain.ValueObject.AuthProvider", b =>
+            modelBuilder.Entity("Lenden.Domain.ValueObjects.AuthProvider", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -246,7 +246,7 @@ namespace Lenden.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Lenden.Domain.ValueObject.AuthProvider", b =>
+            modelBuilder.Entity("Lenden.Domain.ValueObjects.AuthProvider", b =>
                 {
                     b.HasOne("Lenden.Domain.Entities.UserEntity", null)
                         .WithMany("AuthProviders")

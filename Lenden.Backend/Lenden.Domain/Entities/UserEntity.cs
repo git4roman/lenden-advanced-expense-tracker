@@ -1,4 +1,4 @@
-﻿using Lenden.Domain.ValueObject;
+﻿using Lenden.Domain.ValueObjects;
 using NUlid;
 
 namespace Lenden.Domain.Entities;

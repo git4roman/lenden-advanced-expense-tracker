@@ -1,6 +1,6 @@
 ﻿using Lenden.Application.Interfaces;
 using Lenden.Domain.Entities;
-using Lenden.Domain.ValueObject;
+using Lenden.Domain.ValueObjects;
 using Lenden.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
 

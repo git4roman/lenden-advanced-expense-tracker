@@ -1,5 +1,5 @@
 ﻿using Lenden.Domain.Entities;
-using Lenden.Domain.ValueObject;
+using Lenden.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

@@ -3,7 +3,7 @@ using Lenden.Application.Interfaces;
 using Lenden.Application.Interfaces.Repositories;
 using Lenden.Application.Interfaces.Services;
 using Lenden.Domain.Entities;
-using Lenden.Domain.ValueObject;
+using Lenden.Domain.ValueObjects;
 using IUserRepository = Lenden.Application.Interfaces.IUserRepository;
 
 namespace Lenden.Application.Services;

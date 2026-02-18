@@ -9,17 +9,19 @@ public class UnitOfWork : IUnitOfWork
 {
     private readonly AppDbContext _context;
 
-    public UnitOfWork(AppDbContext context, IUserRepository userRepository, IAuthRepository authRepository, IGroupRepository groupRepository)
+    public UnitOfWork(AppDbContext context, IUserRepository userRepository, IAuthRepository authRepository, IGroupRepository groupRepository, IUserBalanceRepository userBalanceRepository)
     {
         _context = context;
         UserRepository = userRepository;
         AuthRepository = authRepository;
         GroupRepository = groupRepository;
+        UserBalanceRepository = userBalanceRepository;
     }
 
     public IUserRepository UserRepository { get; private set; }
     public IAuthRepository AuthRepository { get; private set; }
     public IGroupRepository GroupRepository { get; private set; }
+    public IUserBalanceRepository UserBalanceRepository { get; private set; }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

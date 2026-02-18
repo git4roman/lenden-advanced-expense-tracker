@@ -14,6 +14,7 @@ public class AppDbContext: DbContext
     public DbSet<UserInfoEntity> UserInfos { get; set; }
     public DbSet<GroupEntity> Groups { get; set; }
     public DbSet<UserGroupEntity> UserGroups { get; set; }
+    public DbSet<UserBalanceEntity> UserBalances { get; set; }
     public DbSet<AuthSessionEntity> AuthSessions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
