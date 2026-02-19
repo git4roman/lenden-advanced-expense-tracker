@@ -33,8 +33,10 @@ public class ExpenseApiController : ControllerBase
         CancellationToken ct = default)
     {
         await _authManager.ValidateUserAsync(User, ct);
+        await _groupManager.GetGroupByPublicIdAsync(groupId, ct);
         await _groupManager.EnsureGroupMemberAsync(groupId, User, ct);
-
+        
+        //create expense transaction
         await _expenseService.CreateExpenseAsync(groupId, request, ct);
 
         return Ok();

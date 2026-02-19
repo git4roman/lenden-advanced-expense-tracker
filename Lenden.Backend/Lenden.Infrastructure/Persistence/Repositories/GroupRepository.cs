@@ -49,4 +49,16 @@ public class GroupRepository : IGroupRepository
     {
         _context.Groups.Remove(group);
     }
+
+    public async Task<UserEntity?> GetGroupMemberByUserPublicIdAsync(long groupId, long userId, CancellationToken ct = default)
+    {
+        var user = await _context.UserGroups.Where(g => g.GroupId == groupId && g.UserId == userId).Select(g => g.User).FirstOrDefaultAsync(ct);
+        return user;
+    }
+
+    public async Task<GroupEntity?> GetGroupByUserPublicIdAsync(Guid groupId, Guid userId, CancellationToken ct = default)
+    {
+        var group = await _context.Groups.FirstOrDefaultAsync(u => u.PublicId == groupId, ct);
+        return group;
+    }
 }

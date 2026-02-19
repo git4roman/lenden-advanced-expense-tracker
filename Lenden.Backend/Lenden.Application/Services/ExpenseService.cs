@@ -7,6 +7,7 @@ using Lenden.Domain.ValueObjects;
 using Lenden.Application.DTOs;
 using Lenden.Application.Interfaces;
 using Lenden.Application.Interfaces.Services;
+using Lenden.Application.Managers;
 using Lenden.Domain.Entities;
 
 namespace Lenden.Application.Services;
@@ -14,25 +15,28 @@ namespace Lenden.Application.Services;
 public class ExpenseService : IExpenseService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IGroupService _groupService;
 
-    public ExpenseService(IUnitOfWork unitOfWork)
+    public ExpenseService(IUnitOfWork unitOfWork, IGroupService groupService)
     {
         _unitOfWork = unitOfWork;
+        _groupService = groupService;
     }
 
     public async Task CreateExpenseAsync(Guid groupId, CreateExpenseRequest request, CancellationToken ct = default)
     {
-        var group = await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId, ct);
-        if (group is null)
-            throw new Exception("Group not found");
+        var payers = request.Payers.ToList();
+        var splitters = request.Splitters.ToList();
+        
+        var allParticipantIds = request.Payers
+            .Select(p => p.UserPublicId)
+            .Concat(request.Splitters.Select(s => s.UserPublicId))
+            .Distinct();
 
-        var payers = request.Payers
-            .Select(x => new ExpenseParticipant(x.UserId, x.Amount))
-            .ToList();
-
-        var splitters = request.Splitters
-            .Select(x => new ExpenseParticipant(x.UserId, x.Amount))
-            .ToList();
+        foreach (var allParticipantId in allParticipantIds)
+        {
+            await _groupService.
+        }
 
         var expense = ExpenseEntity.Create(
             groupId,

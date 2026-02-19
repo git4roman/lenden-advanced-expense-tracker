@@ -1,15 +1,13 @@
-﻿namespace Lenden.Application.DTOs;
+﻿using Lenden.Domain.ValueObjects;
+
+namespace Lenden.Application.DTOs;
 
 public record CreateExpenseRequest(
     decimal TotalAmount,
     int Category,
     string? Description,
     string? ImageUrl,
-    List<ExpenseParticipantRequest> Payers,
-    List<ExpenseParticipantRequest> Splitters
+    List<ExpenseParticipant> Payers,
+    List<ExpenseParticipant> Splitters
 );
 
-public record ExpenseParticipantRequest(
-    Guid UserId,
-    decimal Amount
-);

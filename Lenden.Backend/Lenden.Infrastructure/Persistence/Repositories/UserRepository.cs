@@ -31,5 +31,9 @@ public class UserRepository:IUserRepository
         return entity;
     }
 
-  
+    public async Task<UserEntity> GetUserByIdAsync(long userId, CancellationToken ct = default)
+    {
+        var entity = await _dbContext.Users.FirstOrDefaultAsync<UserEntity>(u=> u.Id == userId);
+        return entity;
+    }
 }

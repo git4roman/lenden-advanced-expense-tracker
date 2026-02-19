@@ -41,4 +41,13 @@ public class GroupManager
             throw new UnauthorizedAccessException("User is not a member of the group.");
         }
     }
+    
+    public async Task<GroupEntity> GetGroupByPublicIdAsync(Guid groupId, CancellationToken ct = default)
+    {
+        var group = await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId, ct);
+        if (group is null)
+            throw new KeyNotFoundException("Group not found.");
+        return group;
+    }
+ 
 }
