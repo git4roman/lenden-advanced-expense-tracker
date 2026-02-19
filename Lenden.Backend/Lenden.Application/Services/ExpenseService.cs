@@ -35,7 +35,7 @@ public class ExpenseService : IExpenseService
 
         foreach (var allParticipantId in allParticipantIds)
         {
-            await _groupService.
+            await _groupService.GetGroupMemberByPublicId(groupId, allParticipantId, ct); // throws if not found (404)
         }
 
         var expense = ExpenseEntity.Create(
