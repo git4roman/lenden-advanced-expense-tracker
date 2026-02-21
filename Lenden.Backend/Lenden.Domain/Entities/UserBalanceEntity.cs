@@ -3,15 +3,18 @@
 public class UserBalanceEntity
 {
     public Guid Id { get; private set; }                // PK
-    public Guid GroupPublicId { get; private set; }     // Group reference
+    public long GroupPublicId { get; private set; }     // Group reference
     public long CreditorId { get; private set; }       // Internal DB Id of user who should receive
+    public UserEntity Creditor { get; private set; } = null!;
     public long DebtorId { get; private set; }         // Internal DB Id of user who should pay
+    public UserEntity Debtor { get; private set; } = null!;
+    
     public decimal Balance { get; private set; }       // Positive → Creditor receives, Negative → Creditor pays
     public DateTimeOffset UpdatedAt { get; private set; }
 
     private UserBalanceEntity() { } // EF
 
-    private UserBalanceEntity(Guid groupId, long userId1, long userId2)
+    private UserBalanceEntity(long groupId, long userId1, long userId2)
     {
         Id = Guid.NewGuid();
         GroupPublicId = groupId;
@@ -33,15 +36,16 @@ public class UserBalanceEntity
     }
 
     // Factory method
-    public static UserBalanceEntity Create(Guid groupId, long userId1, long userId2)
+    public static UserBalanceEntity Create(long groupId, long userId1, long userId2)
     {
         return new UserBalanceEntity(groupId, userId1, userId2);
     }
 
     // Update balance: Positive → Creditor should receive, Negative → Creditor should pay
-    public void UpdateBalance(decimal amount)
+    public void UpdateBalance(decimal amount, long creditorId, long debtorId)
     {
-        Balance += amount;
+        if(creditorId == CreditorId) Balance += amount;
+        else Balance -= amount;
         UpdatedAt = DateTimeOffset.UtcNow;
     }
 

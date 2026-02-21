@@ -14,30 +14,31 @@ public class ExpenseApiController : ControllerBase
     private readonly IExpenseService _expenseService;
     private readonly AuthManager _authManager;
     private readonly GroupManager _groupManager;
+    private readonly IAuthService _authService;
 
     public ExpenseApiController(
         IExpenseService expenseService,
         AuthManager authManager,
-        GroupManager groupManager)
+        GroupManager groupManager, IAuthService authService)
     {
         _expenseService = expenseService;
         _authManager = authManager;
         _groupManager = groupManager;
+        _authService = authService;
     }
 
-    // Create expense inside a group
     [HttpPost("{groupId:Guid}")]
     public async Task<IActionResult> CreateExpense(
         Guid groupId,
         CreateExpenseRequest request,
         CancellationToken ct = default)
     {
-        await _authManager.ValidateUserAsync(User, ct);
-        await _groupManager.GetGroupByPublicIdAsync(groupId, ct);
-        await _groupManager.EnsureGroupMemberAsync(groupId, User, ct);
+        var currentUser = await _authService.ValidateUserAsync(User, ct);
+        // await _groupManager.GetGroupByPublicIdAsync(groupId, ct);
+        await _groupManager.EnsureCurrentUserIsGroupMemberAsync(groupId, User, ct);
         
         //create expense transaction
-        await _expenseService.CreateExpenseAsync(groupId, request, ct);
+        await _expenseService.CreateExpenseAsync(request, ct);
 
         return Ok();
     }
@@ -48,8 +49,8 @@ public class ExpenseApiController : ControllerBase
         Guid groupId,
         CancellationToken ct = default)
     {
-        await _authManager.ValidateUserAsync(User, ct);
-        await _groupManager.EnsureGroupMemberAsync(groupId, User, ct);
+        await _authService.ValidateUserAsync(User, ct);
+        await _groupManager.EnsureCurrentUserIsGroupMemberAsync(groupId, User, ct);
 
         var result = await _expenseService.GetGroupExpensesAsync(groupId, ct);
         return Ok(result);
@@ -61,7 +62,7 @@ public class ExpenseApiController : ControllerBase
         Guid expenseId,
         CancellationToken ct = default)
     {
-        await _authManager.ValidateUserAsync(User, ct);
+        await _authService.ValidateUserAsync(User, ct);
 
         await _expenseService.DeleteExpenseAsync(expenseId, ct);
         return NoContent();

@@ -2,7 +2,9 @@
 
 public class GroupEntity
 {
-    protected GroupEntity() { } // EF Core
+    protected GroupEntity()
+    {
+    } // EF Core
 
     public GroupEntity(string name, string imageUrl, long createdBy)
     {
@@ -26,10 +28,13 @@ public class GroupEntity
     private readonly List<UserGroupEntity> _userGroups;
     public IReadOnlyCollection<UserGroupEntity> UserGroups => _userGroups.AsReadOnly();
 
-    // Add user to the group
+    // Navigation property
+    private readonly List<UserBalanceEntity> _userBalances;
+    public IReadOnlyCollection<UserBalanceEntity> UserBalances => _userBalances.AsReadOnly();
+
     public void AddUser(UserEntity user, UserEntity invitedBy = null, bool isCreator = false)
     {
-        if (_userGroups.Any(ug => ug.UserId == user.Id && ug.Status == MembershipStatus.Active))
+        if (_userGroups.Any(ug => ug.UserId == user.Id && ug.Status == GroupMembershipStatus.Active))
             return; // already an active member
 
         var role = isCreator ? UserGroupRole.Admin : UserGroupRole.Member;
@@ -42,21 +47,16 @@ public class GroupEntity
         ));
     }
 
-
-    // Optional: remove user
     public void RemoveUser(long userId)
     {
-        // Find the active membership
         var userGroup = _userGroups
-            .FirstOrDefault(ug => ug.UserId == userId && ug.Status == MembershipStatus.Active);
+            .FirstOrDefault(ug => ug.UserId == userId && ug.Status == GroupMembershipStatus.Active);
 
         if (userGroup != null)
         {
             userGroup.RemoveMember();
         }
-       
     }
-
 
     public void UpdateInfo(string? name, string? imageUrl)
     {
@@ -65,12 +65,16 @@ public class GroupEntity
 
         if (imageUrl is not null)
             ImageUrl = imageUrl;
-        
+
         UpdatedAt = DateTimeOffset.UtcNow;
     }
-    
-   
-    
-    
 
+    public bool IsActiveMember(Guid userId)
+    { return _userGroups.Any(ug => ug.User.PublicId == userId && ug.Status == GroupMembershipStatus.Active);
+    }
+
+    public UserBalanceEntity CreateUserBalance(long groupId, long creditorId, long debtorId)
+    {
+        return  UserBalanceEntity.Create(groupId, creditorId, debtorId);
+    }
 }

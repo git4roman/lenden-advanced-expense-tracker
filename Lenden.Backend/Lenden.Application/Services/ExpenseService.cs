@@ -7,7 +7,9 @@ using Lenden.Domain.ValueObjects;
 using Lenden.Application.DTOs;
 using Lenden.Application.Interfaces;
 using Lenden.Application.Interfaces.Services;
+using Lenden.Application.Interfaces.Validators;
 using Lenden.Application.Managers;
+using Lenden.Application.Validatiors;
 using Lenden.Domain.Entities;
 
 namespace Lenden.Application.Services;
@@ -16,67 +18,98 @@ public class ExpenseService : IExpenseService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IGroupService _groupService;
+    private readonly IGroupValidators _groupValidator;
 
-    public ExpenseService(IUnitOfWork unitOfWork, IGroupService groupService)
+    public ExpenseService(IUnitOfWork unitOfWork, IGroupService groupService, IGroupValidators groupValidator)
     {
         _unitOfWork = unitOfWork;
         _groupService = groupService;
+        _groupValidator = groupValidator;
     }
 
-    public async Task CreateExpenseAsync(Guid groupId, CreateExpenseRequest request, CancellationToken ct = default)
+    public async Task CreateExpenseAsync(CreateExpenseRequest request, CancellationToken ct = default)
+{
+    var group = await _groupService.GetGroupByPublicIdAsync(request.GroupPublicId, ct);
+    if (group is null) throw new Exception("Group not found");
+
+    var payers = request.Payers.ToList();
+    var splitters = request.Splitters.ToList();
+    
+    var userIdByPublicId = group.UserGroups
+        .ToDictionary(ug => ug.User.PublicId, ug => ug.UserId);
+    
+    var payerIds = payers.Select(p =>
+            userIdByPublicId.TryGetValue(p.UserPublicId, out var id)
+                ? id
+                : throw new Exception($"Payer {p.UserPublicId} not found in group."))
+        .ToList();
+    
+    var splitterIds = splitters.Select(s =>
+            userIdByPublicId.TryGetValue(s.UserPublicId, out var id)
+                ? id
+                : throw new Exception($"Splitter {s.UserPublicId} not found in group."))
+        .ToList();
+    
+    var balanceByPair = group.UserBalances
+        .ToDictionary(b => (b.CreditorId, b.DebtorId));
+
+    var allParticipantIds = request.Payers
+        .Select(p => p.UserPublicId)
+        .Concat(request.Splitters.Select(s => s.UserPublicId))
+        .Distinct();
+
+    foreach (var allParticipantId in allParticipantIds)
     {
-        var payers = request.Payers.ToList();
-        var splitters = request.Splitters.ToList();
-        
-        var allParticipantIds = request.Payers
-            .Select(p => p.UserPublicId)
-            .Concat(request.Splitters.Select(s => s.UserPublicId))
-            .Distinct();
+        if (!group.IsActiveMember(allParticipantId))
+            throw new Exception($"User {allParticipantId} is not an active member of the group.");
+    }
 
-        foreach (var allParticipantId in allParticipantIds)
-        {
-            await _groupService.GetGroupMemberByPublicId(groupId, allParticipantId, ct); // throws if not found (404)
-        }
-
+    // Begin transaction
+    await using var transaction = await _unitOfWork.BeginTransactionAsync(ct);
+    try
+    {
+        // Create expense
         var expense = ExpenseEntity.Create(
-            groupId,
+            group.PublicId,
             request.TotalAmount,
             request.Category,
             payers,
             splitters,
             request.Description,
-            request.ImageUrl);
-
+            request.ImageUrl
+        );
         await _unitOfWork.ExpenseRepository.AddAsync(expense, ct);
 
-        // 🔥 Update UserBalances
-        foreach (var splitter in splitters)
+        for (var i = 0; i < splitters.Count; i++)
         {
-            foreach (var payer in payers)
+            var debtorId = splitterIds[i];
+            var amount = splitters[i].Amount;
+
+            for (var j = 0; j < payers.Count; j++)
             {
-                if (splitter.UserPublicId == payer.UserInternalId)
-                    continue;
+                var creditorId = payerIds[j];
 
-                var balance = await _unitOfWork.UserBalanceRepository
-                    .GetByUsersAsync(groupId, splitter.UserPublicId, payer.UserPublicId, ct);
-
-                if (balance is null)
+                if (!balanceByPair.TryGetValue((creditorId, debtorId), out var balance))
                 {
-                    balance = UserBalance.Create(groupId, splitter.UserInternalId, payer.UserInternalId);
+                    balance = group.CreateUserBalance(group.Id, creditorId, debtorId);
                     await _unitOfWork.UserBalanceRepository.AddAsync(balance, ct);
+                    balanceByPair[(creditorId, debtorId)] = balance; // keep dict in sync
                 }
 
-                // splitter owes payer → payer receives
-                var amount = splitter.Amount;
-                if (payer.UserInternalId < splitter.UserInternalId)
-                    balance.UpdateBalance(amount);
-                else
-                    balance.UpdateBalance(-amount);
+                if (amount > 0) balance.UpdateBalance(amount, creditorId, debtorId);
             }
         }
 
+        // Commit transaction
         await _unitOfWork.SaveChangesAsync(ct);
+        await transaction.CommitAsync(ct);
     }
+    catch
+    {
+        await transaction.RollbackAsync(ct);
+        throw; 
+    }
+}
 
     public async Task<IEnumerable<ExpenseDto>> GetGroupExpensesAsync(Guid groupId, CancellationToken ct = default)
     {
@@ -106,4 +139,10 @@ public class ExpenseService : IExpenseService
 
         await _unitOfWork.SaveChangesAsync(ct);
     }
+    
+    // private async Task EnsureGroupMemberByPublicIdAsync(Guid groupId, Guid userId, CancellationToken ct = default)
+    // {
+    //    await _unitOfWork.UserGroupRepository.EnsureUserInGroupAndActiveAsync( groupId,userId, ct);
+    // }
+    
 }

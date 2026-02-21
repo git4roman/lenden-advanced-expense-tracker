@@ -16,12 +16,16 @@ public static class DependencyInjection
     {
        
         services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IAuthService, AuthenticationService>();
+        services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IAuthRepository, AuthRepository>();
         services.AddScoped<TokenService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<AuthManager>();
         services.AddScoped<GroupManager>();
+        services.AddScoped<IGroupService, GroupService>();
+        services.AddScoped<IUserBalanceRepository, UserBalanceRepository>();
+        services.AddScoped<IUserGroupRepository, UserGroupRepository>();
+        
 
 
 

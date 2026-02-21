@@ -9,7 +9,7 @@ public class UserGroupEntity
     public GroupEntity Group { get; private set; }
 
     public UserGroupRole Role { get; private set; }
-    public MembershipStatus Status { get; private set; }
+    public GroupMembershipStatus Status { get; private set; }
     public DateTimeOffset JoinedAt { get; private set; }
     public DateTimeOffset? LeftAt { get; private set; }
 
@@ -23,7 +23,7 @@ public class UserGroupEntity
         Role = role ?? UserGroupRole.Member;
         InvitedByUserId = invitedByUserId;
         JoinedAt = DateTimeOffset.UtcNow;
-        Status = MembershipStatus.Active;
+        Status = GroupMembershipStatus.Active;
     }
 
     public void PromoteToAdmin() => Role = UserGroupRole.Admin;
@@ -33,13 +33,13 @@ public class UserGroupEntity
 
     public void RemoveMember()
     {
-        Status = MembershipStatus.Disabled;
+        Status = GroupMembershipStatus.Disabled;
         LeftAt = DateTimeOffset.UtcNow;
     }
 
     public void BanMember()
     {
-        Status = MembershipStatus.Banned;
+        Status = GroupMembershipStatus.Banned;
         LeftAt = DateTimeOffset.UtcNow;
     }
 }

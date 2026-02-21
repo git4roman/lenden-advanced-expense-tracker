@@ -53,7 +53,7 @@ public class GroupApiController : ControllerBase
     public async Task<IActionResult> LeaveGroup(Guid groupId, Guid userId,CancellationToken ct = default)
     {
         await _authManager.ValidateUserAsync(User, ct);
-        await _groupManager.EnsureGroupMemberAsync(groupId, User, ct);
+        await _groupManager.EnsureCurrentUserIsGroupMemberAsync(groupId, User, ct);
         await _groupService.LeaveGroupAsync(groupId, userId);
         return NoContent();
     }

@@ -48,7 +48,7 @@ public class ExpenseEntity
         PublicId = Guid.NewGuid();
         GroupPublicId = groupPublicId;
         TotalAmount = totalAmount;
-        Category = category;
+        Category= category;
         Description = description;
         ImageUrl = imageUrl;
         CreatedAt = DateTimeOffset.UtcNow;
@@ -62,7 +62,7 @@ public class ExpenseEntity
     public static ExpenseEntity Create(
         Guid groupPublicId,
         decimal totalAmount,
-        ExpenseCategory category,
+        int category,
         List<ExpenseParticipant> payers,
         List<ExpenseParticipant> splitters,
         string? description,
@@ -71,7 +71,7 @@ public class ExpenseEntity
         return new ExpenseEntity(
             groupPublicId,
             totalAmount,
-            category,
+            ExpenseCategory.FromValue(category),
             payers,
             splitters,
             description,

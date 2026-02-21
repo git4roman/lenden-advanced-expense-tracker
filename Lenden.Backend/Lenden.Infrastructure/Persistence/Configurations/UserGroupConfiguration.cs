@@ -43,7 +43,7 @@ public class UserGroupEntityConfiguration : IEntityTypeConfiguration<UserGroupEn
             .IsRequired();
 
         builder.Property(ug => ug.Status)
-            .HasConversion(new SmartEnumConverter<MembershipStatus>())
+            .HasConversion(new SmartEnumConverter<GroupMembershipStatus>())
             .IsRequired();
     }
 }

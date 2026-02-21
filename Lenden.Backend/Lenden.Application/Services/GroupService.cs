@@ -77,4 +77,12 @@ public class GroupService : IGroupService
             throw new KeyNotFoundException("User is not a member of the group.");
         return user;
     }
+
+    public async Task<GroupEntity?> GetGroupByPublicIdAsync(Guid groupId, CancellationToken ct = default)
+    {
+        var group = await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId, ct);
+        if (group is null)
+            throw new KeyNotFoundException("Group not found.");
+        return group;
+    }
 }

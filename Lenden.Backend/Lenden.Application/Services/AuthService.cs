@@ -1,4 +1,5 @@
-﻿using Lenden.Application.DTOs;
+﻿using System.Security.Claims;
+using Lenden.Application.DTOs;
 using Lenden.Application.Interfaces;
 using Lenden.Application.Interfaces.Repositories;
 using Lenden.Application.Interfaces.Services;
@@ -8,13 +9,13 @@ using IUserRepository = Lenden.Application.Interfaces.IUserRepository;
 
 namespace Lenden.Application.Services;
 
-public class AuthenticationService: IAuthService
+public class AuthService: IAuthService
 {
     private readonly TokenService _tokenService;
     private readonly IUnitOfWork _unitOfWork;
    
     
-    public AuthenticationService( TokenService tokenService, IUnitOfWork unitOfWork)
+    public AuthService( TokenService tokenService, IUnitOfWork unitOfWork)
     {
        
         _tokenService = tokenService;
@@ -82,6 +83,23 @@ public class AuthenticationService: IAuthService
         await _unitOfWork.SaveChangesAsync();
 
         return new RefreshTokenResponse(newAccessToken, newRefreshToken);
+    }
+    
+    public async Task<UserEntity> ValidateUserAsync(ClaimsPrincipal userClaims, CancellationToken ct = default)
+    {
+        if (userClaims?.Identity?.IsAuthenticated != true)
+            throw new UnauthorizedAccessException("User is not authenticated.");
+
+        var userIdClaim = userClaims.FindFirst(ClaimTypes.NameIdentifier);
+
+        if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
+            throw new UnauthorizedAccessException("Invalid user token.");
+
+        var user = await _unitOfWork.UserRepository.GetUserByPublicIdAsync(userId, ct);
+        if (user == null || user.Status != UserStatus.Active)
+            throw new UnauthorizedAccessException("User not found or inactive.");
+
+        return user;
     }
 
     

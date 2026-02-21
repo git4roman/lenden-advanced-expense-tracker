@@ -22,13 +22,13 @@ public class GroupManager
 
         if (!group.UserGroups.Any(ug => ug.UserId == user.Id && 
                                         ug.Role == UserGroupRole.Admin && 
-                                        ug.Status == MembershipStatus.Active))
+                                        ug.Status == GroupMembershipStatus.Active))
         {
             throw new UnauthorizedAccessException("User is not a group admin.");
         }
     }
     
-    public async Task EnsureGroupMemberAsync(Guid groupId, ClaimsPrincipal userClaims, CancellationToken ct = default)
+    public async Task EnsureCurrentUserIsGroupMemberAsync(Guid groupId, ClaimsPrincipal userClaims, CancellationToken ct = default)
     {
         var user = await _authManager.ValidateUserAsync(userClaims, ct);
         var group = await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId, ct);
@@ -36,7 +36,7 @@ public class GroupManager
             throw new KeyNotFoundException("Group not found.");
 
         if (!group.UserGroups.Any(ug => ug.UserId == user.Id &&
-                                        ug.Status == MembershipStatus.Active))
+                                        ug.Status == GroupMembershipStatus.Active))
         {
             throw new UnauthorizedAccessException("User is not a member of the group.");
         }
