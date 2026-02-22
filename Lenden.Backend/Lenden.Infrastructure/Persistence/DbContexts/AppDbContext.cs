@@ -24,5 +24,6 @@ public class AppDbContext: DbContext
         modelBuilder.ApplyConfiguration(new UserConfiguration());
         modelBuilder.ApplyConfiguration(new UserGroupEntityConfiguration());
         modelBuilder.ApplyConfiguration(new GroupEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new ExpenseEntityConfiguration());
     }
 }

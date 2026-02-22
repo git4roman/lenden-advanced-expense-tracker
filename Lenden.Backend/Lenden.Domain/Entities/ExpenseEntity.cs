@@ -11,7 +11,7 @@ public class ExpenseEntity
 
     public decimal TotalAmount { get; private set; }
 
-    public ExpenseCategory Category { get; private set; }
+    public ExpenseCategory Category { get; private set; } = null!;
 
     public string? Description { get; private set; }
 
@@ -19,11 +19,15 @@ public class ExpenseEntity
 
     public DateTimeOffset CreatedAt { get; private set; }
 
-    private readonly List<ExpenseParticipant> _payers = new();
-    public IReadOnlyCollection<ExpenseParticipant> Payers => _payers.AsReadOnly();
+    private readonly List<ExpenseParticipantEntity> _participants = new();
+    public IReadOnlyCollection<ExpenseParticipantEntity> Participants => _participants.AsReadOnly();
 
-    private readonly List<ExpenseParticipant> _splitters = new();
-    public IReadOnlyCollection<ExpenseParticipant> Splitters => _splitters.AsReadOnly();
+    // Filtered views by type
+    public IReadOnlyCollection<ExpenseParticipantEntity> Payers =>
+        _participants.Where(p => p.Type == ExpenseParticipantType.Payer).ToList().AsReadOnly();
+
+    public IReadOnlyCollection<ExpenseParticipantEntity> Splitters =>
+        _participants.Where(p => p.Type == ExpenseParticipantType.Splitter).ToList().AsReadOnly();
 
     private ExpenseEntity() { } // EF
 
@@ -31,8 +35,8 @@ public class ExpenseEntity
         Guid groupPublicId,
         decimal totalAmount,
         ExpenseCategory category,
-        List<ExpenseParticipant> payers,
-        List<ExpenseParticipant> splitters,
+        List<ExpenseParticipantEntity> payers,
+        List<ExpenseParticipantEntity> splitters,
         string? description,
         string? imageUrl)
     {
@@ -53,8 +57,12 @@ public class ExpenseEntity
         ImageUrl = imageUrl;
         CreatedAt = DateTimeOffset.UtcNow;
 
-        _payers = payers;
-        _splitters = splitters;
+        _participants = payers
+            .Select(p =>
+                new ExpenseParticipantEntity(PublicId, p.GroupId, p.UserInternalId, p.Amount,
+                    ExpenseParticipantType.Payer)).Concat(splitters.Select(s =>
+                new ExpenseParticipantEntity(PublicId, s.GroupId, s.UserInternalId, s.Amount,
+                    ExpenseParticipantType.Splitter))).ToList();
 
         ValidateTotals();
     }
@@ -63,8 +71,8 @@ public class ExpenseEntity
         Guid groupPublicId,
         decimal totalAmount,
         int category,
-        List<ExpenseParticipant> payers,
-        List<ExpenseParticipant> splitters,
+        List<ExpenseParticipantEntity> payers,
+        List<ExpenseParticipantEntity> splitters,
         string? description,
         string? imageUrl)
     {
@@ -83,8 +91,8 @@ public class ExpenseEntity
         Guid groupPublicId,
         decimal totalAmount,
         int category,
-        List<ExpenseParticipant> payers,
-        List<ExpenseParticipant> splitters,
+        List<ExpenseParticipantEntity> payers,
+        List<ExpenseParticipantEntity> splitters,
         string? description,
         string? imageUrl)
     {
@@ -100,10 +108,10 @@ public class ExpenseEntity
 
     private void ValidateTotals()
     {
-        if (_payers.Sum(x => x.Amount) != TotalAmount)
+        if (Payers.Sum(x => x.Amount) != TotalAmount)
             throw new ArgumentException("Payer total mismatch.");
 
-        if (_splitters.Sum(x => x.Amount) != TotalAmount)
+        if (Splitters.Sum(x => x.Amount) != TotalAmount)
             throw new ArgumentException("Split total mismatch.");
     }
     
