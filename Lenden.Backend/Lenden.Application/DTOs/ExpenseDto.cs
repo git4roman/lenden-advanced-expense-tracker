@@ -12,3 +12,14 @@ public record CreateExpenseRequest(
     List<ExpenseParticipant> Splitters
 );
 
+public record UpdateExpenseRequest(
+    Guid ExpensePublicId,
+    Guid GroupPublicId,
+    decimal TotalAmount,
+    int Category,
+    string? Description,
+    string? ImageUrl,
+    List<ExpenseParticipant> Payers,
+    List<ExpenseParticipant> Splitters
+);
+

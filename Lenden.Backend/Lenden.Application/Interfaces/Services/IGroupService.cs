@@ -11,11 +11,11 @@ public interface IGroupService
 
     Task AddMemberAsync(Guid groupId, AddMemberRequest request, CancellationToken ct = default);
 
-    Task LeaveGroupAsync(Guid groupId, Guid userId, CancellationToken ct = default);
+    // Task LeaveGroupAsync(Guid groupId, Guid userId, CancellationToken ct = default);
 
     Task DeleteGroupAsync(Guid groupId, CancellationToken ct = default);
     
-    Task<UserEntity?> GetGroupMemberByPublicId(Guid groupId, Guid userId, CancellationToken ct = default);
+    // Task<UserEntity?> GetGroupMemberByPublicId(Guid groupId, Guid userId, CancellationToken ct = default);
     
     Task<GroupEntity?> GetGroupByPublicIdAsync(Guid groupId, CancellationToken ct = default);
 }

@@ -31,6 +31,10 @@ public class GroupEntity
     // Navigation property
     private readonly List<UserBalanceEntity> _userBalances;
     public IReadOnlyCollection<UserBalanceEntity> UserBalances => _userBalances.AsReadOnly();
+    
+    // Navigation property
+    private readonly List<ExpenseEntity> _expenses;
+    public IReadOnlyCollection<ExpenseEntity> Expenses => _expenses.AsReadOnly();
 
     public void AddUser(UserEntity user, UserEntity invitedBy = null, bool isCreator = false)
     {
@@ -77,4 +81,13 @@ public class GroupEntity
     {
         return  UserBalanceEntity.Create(groupId, creditorId, debtorId);
     }
+
+    public void RemoveExpense(ExpenseEntity expense)
+    {
+        
+        _expenses.Remove(expense);
+        
+    }
+    
+   
 }

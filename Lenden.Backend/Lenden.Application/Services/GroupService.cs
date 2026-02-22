@@ -9,12 +9,10 @@ namespace Lenden.Application.Services;
 public class GroupService : IGroupService
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly GroupManager _groupManager;
 
-    public GroupService(IUnitOfWork unitOfWork, GroupManager groupManager)
+    public GroupService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
-        _groupManager = groupManager;
     }
 
     public async Task CreateGroupAsync(CreateGroupRequest request, CancellationToken ct = default)
@@ -44,39 +42,38 @@ public class GroupService : IGroupService
 
     public async Task AddMemberAsync(Guid groupId, AddMemberRequest request, CancellationToken ct = default)
     {
-      var group= await _groupManager.GetGroupByPublicIdAsync(groupId, ct);
+      var group= await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId, ct);
         var user = await _unitOfWork.UserRepository.GetUserByPublicIdAsync(request.UserId, ct);
         if (user is null)
             throw new Exception("User not found");
 
         group.AddUser(user, user);
-
         await _unitOfWork.SaveChangesAsync(ct);
     }
 
-    public async Task LeaveGroupAsync(Guid groupId, Guid userId, CancellationToken ct = default)
-    {
-        var group= await _groupManager.GetGroupByPublicIdAsync(groupId, ct);
-        var user = await _unitOfWork.UserRepository.GetUserByPublicIdAsync(userId, ct);
-        group.RemoveUser(user.Id);
-
-        await _unitOfWork.SaveChangesAsync(ct);
-    }
+    // public async Task LeaveGroupAsync(Guid groupId, Guid userId, CancellationToken ct = default)
+    // {
+    //     var group= await _groupManager.GetGroupByPublicIdAsync(groupId, ct);
+    //     var user = await _unitOfWork.UserRepository.GetUserByPublicIdAsync(userId, ct);
+    //     group.RemoveUser(user.Id);
+    //
+    //     await _unitOfWork.SaveChangesAsync(ct);
+    // }
 
     public async Task DeleteGroupAsync(Guid groupId, CancellationToken ct = default)
     {
-        var group= await _groupManager.GetGroupByPublicIdAsync(groupId, ct);
+        var group= await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId, ct);
         _unitOfWork.GroupRepository.Remove(group);
         await _unitOfWork.SaveChangesAsync(ct);
     }
 
-    public async Task<UserEntity?> GetGroupMemberByPublicId(Guid groupId, Guid userId, CancellationToken ct = default)
-    {
-        var user = await _unitOfWork.GroupRepository.GetGroupMemberByUserPublicIdAsync(groupId,userId, ct);
-        if (user is null)
-            throw new KeyNotFoundException("User is not a member of the group.");
-        return user;
-    }
+    // public async Task<UserEntity?> GetGroupMemberByPublicId(Guid groupId, Guid userId, CancellationToken ct = default)
+    // {
+    //     var user = await _unitOfWork.GroupRepository.GetGroupMemberByUserPublicIdAsync(groupId,userId, ct);
+    //     if (user is null)
+    //         throw new KeyNotFoundException("User is not a member of the group.");
+    //     return user;
+    // }
 
     public async Task<GroupEntity?> GetGroupByPublicIdAsync(Guid groupId, CancellationToken ct = default)
     {

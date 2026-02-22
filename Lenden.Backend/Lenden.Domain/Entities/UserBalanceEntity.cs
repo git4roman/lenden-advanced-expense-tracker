@@ -40,8 +40,6 @@ public class UserBalanceEntity
     {
         return new UserBalanceEntity(groupId, userId1, userId2);
     }
-
-    // Update balance: Positive → Creditor should receive, Negative → Creditor should pay
     public void UpdateBalance(decimal amount, long creditorId, long debtorId)
     {
         if(creditorId == CreditorId) Balance += amount;

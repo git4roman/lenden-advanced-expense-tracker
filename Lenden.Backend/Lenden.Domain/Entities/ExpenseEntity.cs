@@ -77,6 +77,26 @@ public class ExpenseEntity
             description,
             imageUrl);
     }
+    
+    public ExpenseEntity Update(
+        Guid expenseId,
+        Guid groupPublicId,
+        decimal totalAmount,
+        int category,
+        List<ExpenseParticipant> payers,
+        List<ExpenseParticipant> splitters,
+        string? description,
+        string? imageUrl)
+    {
+        return new ExpenseEntity(
+            groupPublicId,
+            totalAmount,
+            ExpenseCategory.FromValue(category),
+            payers,
+            splitters,
+            description,
+            imageUrl);
+    }
 
     private void ValidateTotals()
     {
@@ -86,4 +106,5 @@ public class ExpenseEntity
         if (_splitters.Sum(x => x.Amount) != TotalAmount)
             throw new ArgumentException("Split total mismatch.");
     }
+    
 }
