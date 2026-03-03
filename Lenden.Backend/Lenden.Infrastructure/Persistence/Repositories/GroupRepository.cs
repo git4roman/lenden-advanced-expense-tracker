@@ -13,7 +13,6 @@ public class GroupRepository : IGroupRepository
     {
         _context = context;
     }
-
     public async Task AddAsync(GroupEntity group, CancellationToken ct = default)
     {
         await _context.Groups.AddAsync(group, ct);
@@ -21,41 +20,29 @@ public class GroupRepository : IGroupRepository
 
     public async Task<GroupEntity?> GetByIdAsync(long id, CancellationToken ct = default)
     {
-        return await _context.Groups
-            .Include(g => g.UserGroups) // needed for membership logic
-            .FirstOrDefaultAsync(g => g.Id == id, ct);
-    }public async Task<GroupEntity?> GetByPublicIdAsync(long id, CancellationToken ct = default)
-    {
-        return await _context.Groups
-            .Include(g => g.UserGroups) // needed for membership logic
-            .FirstOrDefaultAsync(g => g.Id == id, ct);
+        throw new NotImplementedException();
     }
 
-    
+   
+
+    public async Task<IEnumerable<GroupEntity?>> GetByUserPublicIdAsync(Guid publicId, CancellationToken ct = default)
+    {
+        return await _context.Groups.Where(g=>g.Members.Any(m=>m.User.PublicId == publicId)).ToListAsync(ct);
+    }
 
     public async Task<GroupEntity?> GetByPublicIdAsync(Guid publicId, CancellationToken ct = default)
     {
         return await _context.Groups
-            .Include(g => g.UserGroups)
             .FirstOrDefaultAsync(g => g.PublicId == publicId, ct);
     }
-
     public async Task<bool> ExistsAsync(long id, CancellationToken ct = default)
     {
         return await _context.Groups.AnyAsync(g => g.Id == id, ct);
     }
-
     public void Remove(GroupEntity group)
     {
         _context.Groups.Remove(group);
     }
-
-    // public async Task<UserEntity?> GetGroupMemberByUserPublicIdAsync(Guid groupId, Guid userId, CancellationToken ct = default)
-    // {
-    //     var user = await _context.UserGroups.Where(g => g.GroupId == groupId && g.UserId == userId).Select(g => g.User).FirstOrDefaultAsync(ct);
-    //     return user;
-    // }
-
     public async Task<GroupEntity?> GetGroupByUserPublicIdAsync(Guid groupId, Guid userId, CancellationToken ct = default)
     {
         var group = await _context.Groups.FirstOrDefaultAsync(u => u.PublicId == groupId, ct);

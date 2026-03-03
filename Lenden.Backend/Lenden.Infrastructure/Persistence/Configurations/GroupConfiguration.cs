@@ -36,7 +36,7 @@ public class GroupEntityConfiguration : IEntityTypeConfiguration<GroupEntity>
             .IsRequired();
 
         // Navigation
-        builder.HasMany(g => g.UserGroups)
+        builder.HasMany(g => g.Members)
             .WithOne(ug => ug.Group)
             .HasForeignKey(ug => ug.GroupId)
             .OnDelete(DeleteBehavior.Cascade);

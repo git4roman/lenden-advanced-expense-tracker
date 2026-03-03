@@ -1,10 +1,15 @@
-﻿using Lenden.Domain.Entities;
+﻿using Lenden.Application.DTOs;
+using Lenden.Domain.Entities;
 
-namespace Lenden.Application.Interfaces.Repositories;
+namespace Lenden.Application.Interfaces;
 
 public interface IUserRepository
 {
-    Task<UserEntity> GetUserByIdAsync(int id);
-    Task<UserEntity> GetUserByEmailAsync(string email);
-    Task<UserEntity> CreateUserAsync(UserEntity user);
+    Task CreateUserAsync(UserEntity user);
+    Task<UserEntity> GetUserByEmailAsync(string email, CancellationToken ct = default);
+    Task<UserEntity> GetUserByPublicIdAsync(Guid userId, CancellationToken ct = default);
+    Task<UserEntity> GetUserByIdAsync(long userId, CancellationToken ct = default);
+    
+    Task<List<UserIdandPublicIdDto>> GetUsersIdsInBulkWithPublicIdAsync(List<Guid> publicIds, CancellationToken ct = default);
+   
 }

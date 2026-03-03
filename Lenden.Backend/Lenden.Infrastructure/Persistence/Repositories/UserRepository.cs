@@ -1,4 +1,5 @@
-﻿using Lenden.Application.Interfaces;
+﻿using Lenden.Application.DTOs;
+using Lenden.Application.Interfaces;
 using Lenden.Domain.Entities;
 using Lenden.Domain.ValueObjects;
 using Lenden.Infrastructure.Persistence.DbContexts;
@@ -6,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lenden.Infrastructure.Persistence.Repositories;
 
-public class UserRepository:IUserRepository
+public class UserRepository: IUserRepository
 {
     
     private readonly AppDbContext _dbContext;
@@ -36,4 +37,13 @@ public class UserRepository:IUserRepository
         var entity = await _dbContext.Users.FirstOrDefaultAsync<UserEntity>(u=> u.Id == userId);
         return entity;
     }
+
+    public async Task<List<UserIdandPublicIdDto>> GetUsersIdsInBulkWithPublicIdAsync(List<Guid> publicIds, CancellationToken ct = default)
+    {
+         return await _dbContext.Users
+            .Where(u => publicIds.Contains(u.PublicId))
+            .Select(u => new UserIdandPublicIdDto(u.Id, u.PublicId))
+            .ToListAsync();
+    }
+    
 }

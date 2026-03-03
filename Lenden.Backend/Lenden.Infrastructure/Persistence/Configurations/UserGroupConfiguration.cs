@@ -22,7 +22,7 @@ public class UserGroupEntityConfiguration : IEntityTypeConfiguration<UserGroupEn
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(ug => ug.Group)
-            .WithMany(g => g.UserGroups)
+            .WithMany(g => g.Members)
             .HasForeignKey(ug => ug.GroupId)
             .OnDelete(DeleteBehavior.Cascade);
 

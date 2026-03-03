@@ -8,8 +8,7 @@ public record CreateExpenseRequest(
     int Category,
     string? Description,
     string? ImageUrl,
-    List<ExpenseParticipant> Payers,
-    List<ExpenseParticipant> Splitters
+    List<ExpenseParticipantDto> Users
 );
 
 public record UpdateExpenseRequest(
@@ -19,7 +18,6 @@ public record UpdateExpenseRequest(
     int Category,
     string? Description,
     string? ImageUrl,
-    List<ExpenseParticipant> Payers,
-    List<ExpenseParticipant> Splitters
+    List<ExpenseParticipantDto> Users
 );
 

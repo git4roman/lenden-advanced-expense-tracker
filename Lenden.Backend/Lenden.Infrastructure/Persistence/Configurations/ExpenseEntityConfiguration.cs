@@ -19,7 +19,7 @@ namespace Lenden.Infrastructure.Persistence.Configurations
             builder.Property(e => e.PublicId)
                    .IsRequired();
 
-            builder.Property(e => e.GroupPublicId)
+            builder.Property(e => e.GroupId)
                    .IsRequired();
 
             builder.Property(e => e.TotalAmount)
@@ -66,7 +66,7 @@ namespace Lenden.Infrastructure.Persistence.Configurations
             // });
 
             // Indexes (optional, for fast lookups)
-            builder.HasIndex(e => e.GroupPublicId);
+            builder.HasIndex(e => e.GroupId);
             builder.HasIndex(e => e.PublicId).IsUnique();
         }
     }

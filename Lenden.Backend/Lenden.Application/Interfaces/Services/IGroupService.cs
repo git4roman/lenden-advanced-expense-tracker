@@ -18,4 +18,5 @@ public interface IGroupService
     // Task<UserEntity?> GetGroupMemberByPublicId(Guid groupId, Guid userId, CancellationToken ct = default);
     
     Task<GroupEntity?> GetGroupByPublicIdAsync(Guid groupId, CancellationToken ct = default);
+    Task<IEnumerable<GroupEntity?>> GetGroupsByUserIdAsync(Guid userId, CancellationToken ct = default);
 }

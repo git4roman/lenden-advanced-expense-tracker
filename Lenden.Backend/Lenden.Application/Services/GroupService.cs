@@ -23,7 +23,7 @@ public class GroupService : IGroupService
 
         var group = new GroupEntity(request.Name, request.ImageUrl, creator.Id);
 
-        group.AddUser(creator); 
+        group.AddMembers(creator); 
         await _unitOfWork.GroupRepository.AddAsync(group, ct);
         await _unitOfWork.SaveChangesAsync(ct);
         return;
@@ -47,7 +47,7 @@ public class GroupService : IGroupService
         if (user is null)
             throw new Exception("User not found");
 
-        group.AddUser(user, user);
+        group.AddMembers(user, user);
         await _unitOfWork.SaveChangesAsync(ct);
     }
 
@@ -55,7 +55,7 @@ public class GroupService : IGroupService
     // {
     //     var group= await _groupManager.GetGroupByPublicIdAsync(groupId, ct);
     //     var user = await _unitOfWork.UserRepository.GetUserByPublicIdAsync(userId, ct);
-    //     group.RemoveUser(user.Id);
+    //     group.RemoveMember(user.Id);
     //
     //     await _unitOfWork.SaveChangesAsync(ct);
     // }
@@ -81,5 +81,10 @@ public class GroupService : IGroupService
         if (group is null)
             throw new KeyNotFoundException("Group not found.");
         return group;
+    }
+
+    public async Task<IEnumerable<GroupEntity?>> GetGroupsByUserIdAsync(Guid userId,CancellationToken ct = default)
+    {
+        return await _unitOfWork.GroupRepository.GetByUserPublicIdAsync(userId);
     }
 }

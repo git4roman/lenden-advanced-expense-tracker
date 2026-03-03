@@ -7,9 +7,9 @@ public interface IGroupRepository
     Task AddAsync(GroupEntity group, CancellationToken ct = default);
 
     Task<GroupEntity?> GetByIdAsync(long id, CancellationToken ct = default);
-    Task<GroupEntity?> GetByPublicIdAsync(long id, CancellationToken ct = default);
+    Task<GroupEntity?> GetByPublicIdAsync(Guid id, CancellationToken ct = default);
 
-    Task<GroupEntity?> GetByPublicIdAsync(Guid publicId, CancellationToken ct = default);
+    Task<IEnumerable<GroupEntity?>> GetByUserPublicIdAsync(Guid publicId, CancellationToken ct = default);
 
     Task<bool> ExistsAsync(long id, CancellationToken ct = default);
 

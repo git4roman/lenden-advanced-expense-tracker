@@ -23,6 +23,14 @@ public class GroupApiController : ControllerBase
         _authService = authService;
     }
 
+    [HttpGet("/")]
+    public async Task<IActionResult> GetGroups(CancellationToken ct = default)
+    {
+        var currentUser = await _authService.ValidateUserAsync(User, ct);
+        var groups = await _groupService.GetGroupsByUserIdAsync(currentUser.PublicId,ct);
+        return Ok(groups);
+    }
+
     [HttpPost]
     public async Task<IActionResult> CreateGroup(CreateGroupRequest request, CancellationToken ct = default)
     {

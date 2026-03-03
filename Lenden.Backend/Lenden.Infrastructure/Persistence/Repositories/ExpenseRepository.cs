@@ -22,4 +22,9 @@ public class ExpenseRepository: IExpenseRepository
     {
         return await _dbContext.Expenses.FirstOrDefaultAsync(e => e.PublicId == id, ct);
     }
+
+    public async Task<IEnumerable<ExpenseEntity>> GetByGroupAsync(Guid groupId, CancellationToken ct = default)
+    {
+        return await _dbContext.Expenses.Where(e=>e.Group.PublicId == groupId).ToListAsync(ct);
+    }
 }

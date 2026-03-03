@@ -4,8 +4,7 @@ public class GroupEntity
 {
     protected GroupEntity()
     {
-    } // EF Core
-
+    } 
     public GroupEntity(string name, string imageUrl, long createdBy)
     {
         Name = name;
@@ -13,37 +12,33 @@ public class GroupEntity
         CreatedBy = createdBy;
         CreatedAt = DateTimeOffset.UtcNow;
         UpdatedAt = DateTimeOffset.UtcNow;
-        _userGroups = new List<UserGroupEntity>();
+        _members = new List<UserGroupEntity>();
     }
-
-    public long Id { get; private set; } // PK
-    public Guid PublicId { get; private set; } = Guid.NewGuid(); // for API
+    public long Id { get; private set; } 
+    public Guid PublicId { get; private set; } = Guid.NewGuid(); 
     public string Name { get; private set; }
     public string ImageUrl { get; private set; }
-    public long CreatedBy { get; private set; } // FK to User
+    public long CreatedBy { get; private set; } 
     public DateTimeOffset CreatedAt { get; private set; }
     public DateTimeOffset UpdatedAt { get; private set; }
 
-    // Navigation property
-    private readonly List<UserGroupEntity> _userGroups;
-    public IReadOnlyCollection<UserGroupEntity> UserGroups => _userGroups.AsReadOnly();
+    private readonly List<UserGroupEntity> _members;
+    public IReadOnlyCollection<UserGroupEntity> Members => _members.AsReadOnly();
 
-    // Navigation property
     private readonly List<UserBalanceEntity> _userBalances;
     public IReadOnlyCollection<UserBalanceEntity> UserBalances => _userBalances.AsReadOnly();
     
-    // Navigation property
-    private readonly List<ExpenseEntity> _expenses;
-    public IReadOnlyCollection<ExpenseEntity> Expenses => _expenses.AsReadOnly();
+    // private readonly List<ExpenseEntity> _expenses;
+    // public IReadOnlyCollection<ExpenseEntity> Expenses => _expenses.AsReadOnly();
 
-    public void AddUser(UserEntity user, UserEntity invitedBy = null, bool isCreator = false)
+    public void AddMembers(UserEntity user, UserEntity invitedBy = null, bool isCreator = false)
     {
-        if (_userGroups.Any(ug => ug.UserId == user.Id && ug.Status == GroupMembershipStatus.Active))
-            return; // already an active member
+        if (_members.Any(ug => ug.UserId == user.Id && ug.Status == GroupMembershipStatus.Active))
+            return; 
 
         var role = isCreator ? UserGroupRole.Admin : UserGroupRole.Member;
 
-        _userGroups.Add(new UserGroupEntity(
+        _members.Add(new UserGroupEntity(
             userId: user.Id,
             groupId: Id,
             role: role,
@@ -51,9 +46,9 @@ public class GroupEntity
         ));
     }
 
-    public void RemoveUser(long userId)
+    public void RemoveMember(long userId)
     {
-        var userGroup = _userGroups
+        var userGroup = _members
             .FirstOrDefault(ug => ug.UserId == userId && ug.Status == GroupMembershipStatus.Active);
 
         if (userGroup != null)
@@ -74,7 +69,7 @@ public class GroupEntity
     }
 
     public bool IsActiveMember(Guid userId)
-    { return _userGroups.Any(ug => ug.User.PublicId == userId && ug.Status == GroupMembershipStatus.Active);
+    { return _members.Any(ug => ug.User.PublicId == userId && ug.Status == GroupMembershipStatus.Active);
     }
 
     public UserBalanceEntity CreateUserBalance(long groupId, long creditorId, long debtorId)
@@ -82,12 +77,12 @@ public class GroupEntity
         return  UserBalanceEntity.Create(groupId, creditorId, debtorId);
     }
 
-    public void RemoveExpense(ExpenseEntity expense)
-    {
-        
-        _expenses.Remove(expense);
-        
-    }
+    // public void RemoveExpense(ExpenseEntity expense)
+    // {
+    //     
+    //     _expenses.Remove(expense);
+    //     
+    // }
     
    
 }
