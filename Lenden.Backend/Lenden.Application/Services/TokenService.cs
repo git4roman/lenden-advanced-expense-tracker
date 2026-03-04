@@ -3,6 +3,8 @@ using Lenden.Domain.Entities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Lenden.Application.DTOs;
+using Lenden.Application.Interfaces;
 using Lenden.Application.Interfaces.Services;
 
 using Microsoft.Extensions.Configuration;
@@ -13,10 +15,12 @@ namespace Lenden.Application.Services;
 public class TokenService
 {
     private readonly IConfiguration _configuration;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public TokenService(IConfiguration configuration)
+    public TokenService(IConfiguration configuration, IUnitOfWork unitOfWork)
     {
         _configuration = configuration;
+        _unitOfWork = unitOfWork;
     }
 
     public string GenerateToken(UserEntity user)
@@ -42,5 +46,22 @@ public class TokenService
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+    
+    public async Task<AuthResponseDto> DispatchAccessAndRefreshToken(UserEntity user, AuthRequest request)
+    {
+        var accessToken = GenerateToken(user);
+        var refreshToken = Guid.NewGuid().ToString(); 
+        
+        user.AddAuthSession(
+            refreshToken: refreshToken,
+            deviceInfo: request.deviceInfo,
+            ipAddress: request.ipAddress,
+            expiresAt: DateTime.UtcNow.AddDays(7) 
+        );
+        
+        await _unitOfWork.SaveChangesAsync();
+        
+        return new AuthResponseDto(accessToken, refreshToken);
     }
 }

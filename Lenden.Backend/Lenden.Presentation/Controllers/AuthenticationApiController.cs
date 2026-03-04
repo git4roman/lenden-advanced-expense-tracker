@@ -18,24 +18,21 @@ namespace Lenden.Presentation.Controllers
             this._authService = _authService;
         }
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
+        public async Task<IActionResult> Login(LoginRequestDto request)
         {
             var token =await _authService.LoginAsync(request);
             return Ok(token);
         }
         
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterRequestDto request)
+        public async Task<IActionResult> Register(RegisterRequestDto request)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            await _authService.RegisterAsync(request);
-            return Ok();
+            var token =await _authService.RegisterAsync(request);
+            return Ok(token);
         }
         
         [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
+        public async Task<IActionResult> RefreshToken(RefreshTokenRequest request)
         {
             var tokens = await _authService.RefreshTokenAsync(request);
             if (tokens == null)

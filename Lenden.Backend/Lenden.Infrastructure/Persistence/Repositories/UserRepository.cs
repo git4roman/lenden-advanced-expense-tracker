@@ -18,7 +18,6 @@ public class UserRepository: IUserRepository
     public async Task CreateUserAsync(UserEntity user)
     {
        await _dbContext.Users.AddAsync(user);
-       await _dbContext.SaveChangesAsync();
     }
 
     public async Task<UserEntity> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default)

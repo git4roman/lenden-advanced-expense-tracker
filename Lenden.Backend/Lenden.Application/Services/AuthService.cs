@@ -22,34 +22,24 @@ public class AuthService: IAuthService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<AuthResponse?> LoginAsync(LoginRequestDto dto)
+    public async Task<AuthResponseDto> LoginAsync(LoginRequestDto dto)
     {
         var user = await _unitOfWork.UserRepository.GetUserByEmailAsync(dto.Email);
         if (user == null) return null;
-        
-        var accessToken = _tokenService.GenerateToken(user);
-        var refreshToken = Guid.NewGuid().ToString(); 
-        
-        user.AddAuthSession(
-            refreshToken: refreshToken,
-            deviceInfo: dto.deviceInfo,
-            ipAddress: dto.ipAddress,
-            expiresAt: DateTime.UtcNow.AddDays(7) 
-        );
-        
-        await _unitOfWork.SaveChangesAsync();
-        
-        return new AuthResponse(accessToken, refreshToken);
-
+        var requestDto = new AuthRequest(dto.deviceInfo, dto.ipAddress);
+        return await _tokenService.DispatchAccessAndRefreshToken(user,requestDto);
     }
 
-    public async Task RegisterAsync(RegisterRequestDto dto)
+    public async Task<AuthResponseDto> RegisterAsync(RegisterRequestDto dto)
     {
-
+        var user = await _unitOfWork.UserRepository.GetUserByEmailAsync(dto.Email);
+        if (user != null) throw new Exception("User already exists.");
         var entity = new UserEntity(Email.Create(dto.Email), dto.FirstName, dto.LastName, dto.Password);
         await _unitOfWork.UserRepository.CreateUserAsync(entity);
+        var requestDto = new AuthRequest(dto.deviceInfo, dto.ipAddress);
+        var session = await _tokenService.DispatchAccessAndRefreshToken(user,requestDto);
         await _unitOfWork.SaveChangesAsync();
-        return;
+        return session;
     }
     
     public async Task<RefreshTokenResponse?> RefreshTokenAsync(RefreshTokenRequest request)
@@ -99,6 +89,4 @@ public class AuthService: IAuthService
     }
 
     
-
-  
 }
