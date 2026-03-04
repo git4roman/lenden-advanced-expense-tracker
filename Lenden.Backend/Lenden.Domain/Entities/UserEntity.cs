@@ -36,7 +36,7 @@ public class UserEntity
 
     public bool EmailVerified { get; private set; }
     public UserStatus Status { get; private set; }
-    public Guid UserInfoId { get; private set; }
+    public Guid? UserInfoId { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; }
     public DateTimeOffset UpdatedAt { get; private set; }
     public bool EmailConfirmed { get; private set; }

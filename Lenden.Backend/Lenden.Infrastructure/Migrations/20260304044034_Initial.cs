@@ -75,7 +75,7 @@ namespace Lenden.Infrastructure.Migrations
                     Role = table.Column<int>(type: "int", nullable: false),
                     EmailVerified = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    UserInfoId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    UserInfoId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
                     CreatedAt = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: false),
                     EmailConfirmed = table.Column<bool>(type: "tinyint(1)", nullable: false)

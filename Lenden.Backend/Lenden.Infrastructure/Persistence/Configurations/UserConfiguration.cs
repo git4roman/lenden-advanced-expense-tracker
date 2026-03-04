@@ -53,7 +53,7 @@ public class UserConfiguration : IEntityTypeConfiguration<UserEntity>
 
         // UserInfoId foreign key
         builder.Property(u => u.UserInfoId)
-            .IsRequired();
+            .IsRequired(false);
 
         // CreatedAt & UpdatedAt
         builder.Property(u => u.CreatedAt)

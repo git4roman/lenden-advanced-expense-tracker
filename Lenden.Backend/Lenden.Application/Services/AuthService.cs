@@ -28,6 +28,7 @@ public class AuthService: IAuthService
         if (user == null) throw new Exception("User not found.");
         var requestDto = new AuthRequest(dto.deviceInfo, dto.ipAddress);
         var session =await _tokenService.DispatchAccessAndRefreshToken(user,requestDto);
+       
         await _unitOfWork.SaveChangesAsync();
         return session;
         

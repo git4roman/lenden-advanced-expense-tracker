@@ -22,7 +22,6 @@ public class AuthSessionEntity
     private AuthSessionEntity(long userId, string refreshToken,
         string deviceInfo, string ipAddress, DateTime expiresAt)
     {
-        Id = Guid.NewGuid();
         UserId = userId;
         RefreshTokenHash= HashToken(refreshToken);
         DeviceInfo = deviceInfo;

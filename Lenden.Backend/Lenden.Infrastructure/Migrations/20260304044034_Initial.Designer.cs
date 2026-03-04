@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lenden.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260304025822_Initial")]
+    [Migration("20260304044034_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -243,7 +243,7 @@ namespace Lenden.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("UserInfoId")
+                    b.Property<Guid?>("UserInfoId")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");

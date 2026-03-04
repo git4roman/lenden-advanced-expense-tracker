@@ -11,10 +11,8 @@ namespace Lenden.Presentation.Controllers
     public class AuthenticationApiController : ControllerBase
     {
         private readonly IAuthService _authService;
-        private readonly AppDbContext _context;
-        public AuthenticationApiController(AppDbContext _context, IAuthService _authService)
+        public AuthenticationApiController( IAuthService _authService)
         {
-            this._context = _context;
             this._authService = _authService;
         }
         [HttpPost("login")]

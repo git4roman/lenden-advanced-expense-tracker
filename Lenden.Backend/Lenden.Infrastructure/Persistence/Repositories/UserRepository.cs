@@ -22,7 +22,7 @@ public class UserRepository: IUserRepository
 
     public async Task<UserEntity> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
-        var entity = await _dbContext.Users.FirstOrDefaultAsync<UserEntity>(u=> u.Email  == Email.Create(email));
+        var entity = await _dbContext.Users.Include(u=>u.Sessions).FirstOrDefaultAsync<UserEntity>(u=> u.Email  == Email.Create(email));
        return entity;
     }
     public async Task<UserEntity?> GetUserByPublicIdAsync(Guid id, CancellationToken cancellationToken = default)

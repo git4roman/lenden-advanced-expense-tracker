@@ -240,7 +240,7 @@ namespace Lenden.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("UserInfoId")
+                    b.Property<Guid?>("UserInfoId")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
