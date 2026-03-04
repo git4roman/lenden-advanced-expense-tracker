@@ -18,7 +18,10 @@ namespace Lenden.Infrastructure.Persistence.Configurations
             // Properties
             builder.Property(e => e.PublicId)
                    .IsRequired();
-
+            
+            builder.Property(e => e.CreatorId)
+                   .IsRequired();
+            
             builder.Property(e => e.GroupId)
                    .IsRequired();
 
@@ -38,6 +41,11 @@ namespace Lenden.Infrastructure.Persistence.Configurations
 
             builder.Property(e => e.CreatedAt)
                    .IsRequired();
+
+            builder.HasOne(e => e.Creator)
+                          .WithMany()
+                   .HasForeignKey(e => e.CreatorId)
+                          .IsRequired();
 
             // // Payers (value objects)
             // builder.OwnsMany(e => e.Payers, pb =>

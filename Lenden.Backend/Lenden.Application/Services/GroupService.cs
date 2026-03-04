@@ -15,9 +15,9 @@ public class GroupService : IGroupService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task CreateGroupAsync(CreateGroupRequest request, CancellationToken ct = default)
+    public async Task CreateGroupAsync(Guid CreatorId,CreateGroupRequest request, CancellationToken ct = default)
     {
-        var creator = await _unitOfWork.UserRepository.GetUserByPublicIdAsync(request.CreatorUserId, ct);
+        var creator = await _unitOfWork.UserRepository.GetUserByPublicIdAsync(CreatorId, ct);
         if (creator is null)
             throw new Exception("Creator not found");
 

@@ -27,7 +27,7 @@ public class UserRepository: IUserRepository
     }
     public async Task<UserEntity?> GetUserByPublicIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var entity = await _dbContext.Users.FirstOrDefaultAsync<UserEntity>(u=> u.UserInfoId == id);
+        var entity = await _dbContext.Users.FirstOrDefaultAsync<UserEntity>(u=> u.PublicId == id);
         return entity;
     }
 

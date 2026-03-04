@@ -9,7 +9,8 @@ public class ExpenseEntity
 
     public long GroupId { get; private set; }
     public GroupEntity Group { get; private set; } 
-
+    public long CreatorId { get; private set; }
+    public UserEntity Creator { get; private set; }
     public decimal TotalAmount { get; private set; }
 
     public ExpenseCategory Category { get; private set; } = null!;
@@ -25,6 +26,7 @@ public class ExpenseEntity
     private ExpenseEntity() { } 
 
     private ExpenseEntity(
+        long creatorId,
         long groupId,
         decimal totalAmount,
         ExpenseCategory category,
@@ -44,6 +46,7 @@ public class ExpenseEntity
     }
 
     public static ExpenseEntity Create(
+        long creatorId,
         long groupId,
         decimal totalAmount,
         int category,
@@ -51,6 +54,7 @@ public class ExpenseEntity
         string? imageUrl)
     {
         return new ExpenseEntity(
+            creatorId,
             groupId,
             totalAmount,
             ExpenseCategory.FromValue(category),

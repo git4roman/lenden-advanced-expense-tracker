@@ -15,9 +15,9 @@ namespace Lenden.Presentation.Controllers;
 public class GroupApiController : ControllerBase
 {
     private readonly IGroupService _groupService;
-    private readonly AuthService _authService;
+    private readonly IAuthService _authService;
 
-    public GroupApiController(IGroupService groupService, AuthService authService)
+    public GroupApiController(IGroupService groupService, IAuthService authService)
     {
         _groupService = groupService;
         _authService = authService;
@@ -34,8 +34,9 @@ public class GroupApiController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateGroup(CreateGroupRequest request, CancellationToken ct = default)
     {
-        await _authService.ValidateUserAsync(User, ct);
-        await _groupService.CreateGroupAsync(request);
+        var currentUser = await _authService.ValidateUserAsync(User, ct);
+        
+        await _groupService.CreateGroupAsync(currentUser.PublicId,request);
         return Ok();
     }
 

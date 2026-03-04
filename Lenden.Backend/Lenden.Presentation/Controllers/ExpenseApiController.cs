@@ -32,7 +32,7 @@ public class ExpenseApiController : ControllerBase
         CancellationToken ct = default)
     {
         var currentUser = await _authService.ValidateUserAsync(User, ct);
-        await _expenseService.CreateExpenseAsync(request, ct);
+        await _expenseService.CreateExpenseAsync(currentUser.Id,request, ct);
         return Ok();
     }
     

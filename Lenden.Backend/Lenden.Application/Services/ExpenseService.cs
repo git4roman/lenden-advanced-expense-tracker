@@ -19,7 +19,7 @@ public class ExpenseService : IExpenseService
         _groupValidator = groupValidator;
     }
 
-    public async Task CreateExpenseAsync(CreateExpenseRequest request, CancellationToken ct = default)
+    public async Task CreateExpenseAsync(long creatorId,CreateExpenseRequest request, CancellationToken ct = default)
 {
     var group = await _groupService.GetGroupByPublicIdAsync(request.GroupPublicId, ct);
     if (group is null) throw new Exception("Group not found");
@@ -37,6 +37,7 @@ public class ExpenseService : IExpenseService
         var userMap = users.ToDictionary(x => x.PublicId, x => x.UserId);
 
         var expenseEntity = ExpenseEntity.Create(
+            creatorId,
             group.Id,
             request.TotalAmount,
             request.Category,

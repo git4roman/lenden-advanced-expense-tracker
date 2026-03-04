@@ -5,7 +5,7 @@ namespace Lenden.Application.Interfaces.Services;
 
 public interface IGroupService
 {
-    Task CreateGroupAsync(CreateGroupRequest request, CancellationToken ct = default);
+    Task CreateGroupAsync(Guid CreatorId, CreateGroupRequest request, CancellationToken ct = default);
 
     Task UpdateGroupAsync(Guid groupId, UpdateGroupRequest request, CancellationToken ct = default);
 
