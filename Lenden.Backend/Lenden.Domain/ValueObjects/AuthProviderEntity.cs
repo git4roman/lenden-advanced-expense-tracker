@@ -1,6 +1,6 @@
 ﻿namespace Lenden.Domain.ValueObjects;
 
-public class AuthProvider
+public class AuthProviderEntity
 {
     public int Id { get; private set; }
     public long UserId { get; private set; }
@@ -8,9 +8,9 @@ public class AuthProvider
     public string ProviderUserId { get; private set; }
     public DateTimeOffset LinkedAt { get; private set; }
 
-    protected AuthProvider() { }
+    protected AuthProviderEntity() { }
 
-    private AuthProvider(long userId, string provider, string providerUserId)
+    private AuthProviderEntity(long userId, string provider, string providerUserId)
     {
         UserId = userId;
         Provider = provider;
@@ -18,9 +18,9 @@ public class AuthProvider
         LinkedAt = DateTimeOffset.UtcNow;
     }
 
-    internal void Create(long userId, string provider, string providerUserId)
+    internal static AuthProviderEntity Create(long userId, string provider, string providerUserId)
     {
-        new AuthProvider(userId, provider, providerUserId);
+        return new AuthProviderEntity(userId, provider, providerUserId);
     }
     
 }

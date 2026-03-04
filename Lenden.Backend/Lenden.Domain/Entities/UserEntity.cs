@@ -8,7 +8,7 @@ public class UserEntity
     private UserEntity() 
     {
         _sessions = new List<AuthSessionEntity>();
-        _authProviders = new List<AuthProvider>();
+        _authProviders = new List<AuthProviderEntity>();
     }
     public UserEntity(Email email, string givenName, string familyName, string passwordHash=null)
     {
@@ -17,7 +17,7 @@ public class UserEntity
         Status = UserStatus.Disabled;
         EmailConfirmed = false;
         _sessions = new List<AuthSessionEntity>();
-        _authProviders = new List<AuthProvider>();
+        _authProviders = new List<AuthProviderEntity>();
         CreatedAt = DateTimeOffset.UtcNow;
         UpdatedAt = DateTimeOffset.UtcNow;
         GivenName = givenName;
@@ -44,14 +44,14 @@ public class UserEntity
     private readonly List<AuthSessionEntity> _sessions ;
     public IReadOnlyCollection<AuthSessionEntity> Sessions => _sessions.AsReadOnly();
     
-    private readonly List<AuthProvider> _authProviders ;
-    public IReadOnlyCollection<AuthProvider> AuthProviders => _authProviders.AsReadOnly();
+    private readonly List<AuthProviderEntity> _authProviders ;
+    public IReadOnlyCollection<AuthProviderEntity> AuthProviders => _authProviders.AsReadOnly();
     
     public void AddGoogleProvider(string googleUid)
     {
         if (_authProviders.Any(a => a.Provider == "Google" && a.ProviderUserId == googleUid))
             return; 
-        _authProviders.Add(AuthProvider.Create("Google", googleUid));
+        _authProviders.Add(AuthProviderEntity.Create(Id,"Google", googleUid));
         UpdatedAt = DateTimeOffset.UtcNow;
     }
     
@@ -84,7 +84,6 @@ public class UserEntity
             ipAddress,
             expiresAt);
         _sessions.Add(session);
-        return S
     }
     
     
