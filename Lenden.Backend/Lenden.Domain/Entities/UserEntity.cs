@@ -51,11 +51,9 @@ public class UserEntity
     {
         if (_authProviders.Any(a => a.Provider == "Google" && a.ProviderUserId == googleUid))
             return; 
-        _authProviders.Add(new AuthProvider("Google", googleUid));
+        _authProviders.Add(AuthProvider.Create("Google", googleUid));
         UpdatedAt = DateTimeOffset.UtcNow;
     }
-
-    
     
     public void LinkUserInfo(Guid userInfoId)
     {
@@ -77,4 +75,17 @@ public class UserEntity
         EmailConfirmed = true;
         UpdatedAt = DateTimeOffset.UtcNow;
     }
+
+    public void AddAuthSession(string refreshToken, string deviceInfo, string ipAddress, DateTime expiresAt)
+    {
+        var session = AuthSessionEntity.Create(Id,
+            refreshToken,
+            deviceInfo,
+            ipAddress,
+            expiresAt);
+        _sessions.Add(session);
+        return S
+    }
+    
+    
 }

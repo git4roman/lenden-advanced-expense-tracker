@@ -30,15 +30,13 @@ public class AuthService: IAuthService
         var accessToken = _tokenService.GenerateToken(user);
         var refreshToken = Guid.NewGuid().ToString(); 
         
-        var session = new AuthSessionEntity(
-            userId: user.PublicId,
+        user.AddAuthSession(
             refreshToken: refreshToken,
             deviceInfo: dto.deviceInfo,
             ipAddress: dto.ipAddress,
             expiresAt: DateTime.UtcNow.AddDays(7) 
         );
         
-        await _unitOfWork.AuthRepository.AddSessionAsync(session);
         await _unitOfWork.SaveChangesAsync();
         
         return new AuthResponse(accessToken, refreshToken);
@@ -65,21 +63,19 @@ public class AuthService: IAuthService
         
         session.Revoke();
 
-        var user = await _unitOfWork.UserRepository.GetUserByPublicIdAsync(session.UserId);
+        var user = await _unitOfWork.UserRepository.GetUserByIdAsync(session.UserId);
         if (user == null) return null;
 
         var newAccessToken = _tokenService.GenerateToken(user);
 
         var newRefreshToken = Guid.NewGuid().ToString();
-        var newSession = new AuthSessionEntity(
-            userId: user.PublicId,
+        user.AddAuthSession(
             refreshToken: newRefreshToken,
             deviceInfo: request.DeviceInfo,
             ipAddress: request.IpAddress,
             expiresAt: DateTime.UtcNow.AddDays(7)
         );
 
-        await _unitOfWork.AuthRepository.AddSessionAsync(newSession);
         await _unitOfWork.SaveChangesAsync();
 
         return new RefreshTokenResponse(newAccessToken, newRefreshToken);

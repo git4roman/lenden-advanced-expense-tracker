@@ -7,7 +7,7 @@ public class AuthSessionEntity
 {
     private AuthSessionEntity() { }
     public Guid Id { get; private set; }
-    public Guid UserId { get; private set; }
+    public long UserId { get; private set; }
 
     public string RefreshTokenHash { get; private set; }
 
@@ -19,7 +19,7 @@ public class AuthSessionEntity
     public DateTime? RevokedAt { get; private set; }
 
 
-    public AuthSessionEntity(Guid userId, string refreshToken,
+    private AuthSessionEntity(long userId, string refreshToken,
         string deviceInfo, string ipAddress, DateTime expiresAt)
     {
         Id = Guid.NewGuid();
@@ -29,6 +29,21 @@ public class AuthSessionEntity
         IpAddress = ipAddress;
         ExpiresAt = expiresAt;
         CreatedAt = DateTime.UtcNow;
+    }
+
+    internal static AuthSessionEntity Create(
+        long userId,
+        string refreshToken,
+        string deviceInfo,
+        string ipAddress,
+        DateTime expiresAt)
+    {
+        return new AuthSessionEntity(
+            userId,
+            refreshToken,
+            deviceInfo,
+            ipAddress,
+            expiresAt);
     }
 
     public void Revoke()
