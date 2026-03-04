@@ -23,7 +23,7 @@ public class GroupApiController : ControllerBase
         _authService = authService;
     }
 
-    [HttpGet("/")]
+    [HttpGet]
     public async Task<IActionResult> GetGroups(CancellationToken ct = default)
     {
         var currentUser = await _authService.ValidateUserAsync(User, ct);

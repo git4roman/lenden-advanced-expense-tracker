@@ -60,8 +60,8 @@ public class TokenService
             expiresAt: DateTime.UtcNow.AddDays(7) 
         );
         
-        await _unitOfWork.SaveChangesAsync();
+        var authresponse = new AuthResponseDto(accessToken, refreshToken);
         
-        return new AuthResponseDto(accessToken, refreshToken);
+        return authresponse;
     }
 }

@@ -25,9 +25,12 @@ public class AuthService: IAuthService
     public async Task<AuthResponseDto> LoginAsync(LoginRequestDto dto)
     {
         var user = await _unitOfWork.UserRepository.GetUserByEmailAsync(dto.Email);
-        if (user == null) return null;
+        if (user == null) throw new Exception("User not found.");
         var requestDto = new AuthRequest(dto.deviceInfo, dto.ipAddress);
-        return await _tokenService.DispatchAccessAndRefreshToken(user,requestDto);
+        var session =await _tokenService.DispatchAccessAndRefreshToken(user,requestDto);
+        await _unitOfWork.SaveChangesAsync();
+        return session;
+        
     }
 
     public async Task<AuthResponseDto> RegisterAsync(RegisterRequestDto dto)
@@ -37,7 +40,7 @@ public class AuthService: IAuthService
         var entity = new UserEntity(Email.Create(dto.Email), dto.FirstName, dto.LastName, dto.Password);
         await _unitOfWork.UserRepository.CreateUserAsync(entity);
         var requestDto = new AuthRequest(dto.deviceInfo, dto.ipAddress);
-        var session = await _tokenService.DispatchAccessAndRefreshToken(user,requestDto);
+        var session = await _tokenService.DispatchAccessAndRefreshToken(entity,requestDto);
         await _unitOfWork.SaveChangesAsync();
         return session;
     }

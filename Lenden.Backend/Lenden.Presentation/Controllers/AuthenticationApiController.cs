@@ -20,7 +20,7 @@ namespace Lenden.Presentation.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequestDto request)
         {
-            var token =await _authService.LoginAsync(request);
+            AuthResponseDto token =await _authService.LoginAsync(request);
             return Ok(token);
         }
         
