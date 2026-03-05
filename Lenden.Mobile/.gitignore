@@ -33,6 +33,8 @@ yarn-error.*
 # local env files
 .env
 .env*.local
+.env.production
+.env.development
 
 # typescript
 *.tsbuildinfo
@@ -46,3 +48,7 @@ app-example
 google-services.json
 
 .vscode/
+.vs/
+
+package-lock.json
+yarn.lock
