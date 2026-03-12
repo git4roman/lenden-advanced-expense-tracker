@@ -1,5 +1,6 @@
 ﻿using Lenden.Application.Interfaces;
 using Lenden.Application.Interfaces.Repositories;
+using Lenden.Infrastructure.Persistence;
 using Lenden.Infrastructure.Persistence.DbContexts;
 using Lenden.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,7 @@ public static class DependencyInjection
         services.AddScoped<IUserBalanceRepository, UserBalanceRepository>();
         services.AddScoped<IUserGroupRepository, UserGroupRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
         return services;
     }
 }
