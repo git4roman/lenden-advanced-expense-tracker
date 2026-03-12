@@ -1,13 +1,9 @@
 using Lenden.Application.DTOs;
-using Lenden.Application.Interfaces;
 using Lenden.Application.Interfaces.Services;
-using Lenden.Application.Managers;
-using Lenden.Application.Services;
-using Lenden.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Lenden.Presentation.Controllers;
+namespace Lenden.Web.Controllers.API;
 
 [Route("api/v1/[controller]")]
 [ApiController]

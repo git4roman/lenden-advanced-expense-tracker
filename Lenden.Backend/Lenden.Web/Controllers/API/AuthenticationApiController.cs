@@ -1,10 +1,8 @@
 using Lenden.Application.DTOs;
 using Lenden.Application.Interfaces.Services;
-using Lenden.Infrastructure.Persistence.DbContexts;
-
 using Microsoft.AspNetCore.Mvc;
 
-namespace Lenden.Presentation.Controllers
+namespace Lenden.Web.Controllers.API
 {
     [Route("api/v1/[controller]")]
     [ApiController]
@@ -18,8 +16,18 @@ namespace Lenden.Presentation.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequestDto request)
         {
-            AuthResponseDto token =await _authService.LoginAsync(request);
-            return Ok(token);
+            try
+            {
+                AuthResponseDto token = await _authService.LoginAsync(request);
+                if (token == null)
+                    return Unauthorized(new { message = "Invalid email or password." });
+
+                return Ok(token);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized(new { message = "Invalid email or password." });
+            }
         }
         
         [HttpPost("register")]

@@ -1,6 +1,6 @@
 ﻿using Microsoft.OpenApi.Models;
 
-namespace Lenden.API.ServiceCollectionExtensions;
+namespace Lenden.Web.ServiceCollectionExtensions;
 
 public static class AddSwaggerDocumentaion
 {

@@ -1,7 +1,8 @@
-﻿namespace Lenden.API.ServiceCollectionExtensions;
-using System.Text;
+﻿using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+
+namespace Lenden.Web.ServiceCollectionExtensions;
 
 public static class AddJwtAuthenticationExtensions
 {

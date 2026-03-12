@@ -4,7 +4,7 @@ using Lenden.Application.Managers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Lenden.Presentation.Controllers;
+namespace Lenden.Web.Controllers.API;
 
 [Route("api/v1/[controller]")]
 [ApiController]

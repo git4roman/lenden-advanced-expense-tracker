@@ -1,6 +1,6 @@
-using Lenden.API.ServiceCollectionExtensions;
 using Lenden.Application;
 using Lenden.Infrastructure;
+using Lenden.Web.ServiceCollectionExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +13,8 @@ builder.Services.AddAuthorization();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddCorsPolicies();
+builder.Services.AddSwaggerDocumentation(); 
+builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
@@ -24,12 +26,18 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.MapControllers();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

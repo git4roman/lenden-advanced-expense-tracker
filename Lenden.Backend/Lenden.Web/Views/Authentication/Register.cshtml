@@ -1,0 +1,86 @@
+﻿@model Lenden.Web.Models.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h4 class="card-title text-center mb-4">Register</h4>
+                    <div id="error-msg" class="alert alert-danger d-none"></div>
+                    <div class="mb-3">
+                        <input asp-for="FirstName" class="form-control" placeholder="First Name" />
+                    </div>
+                    <div class="mb-3">
+                        <input asp-for="LastName" class="form-control" placeholder="Last Name" />
+                    </div>
+                    <div class="mb-3">
+                        <input asp-for="Email" class="form-control" placeholder="Email" />
+                    </div>
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <input asp-for="Password" id="Password" type="password" class="form-control" placeholder="Password" />
+                            <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                <i id="eyeIcon" class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button id="registerBtn" class="btn btn-primary w-100">Register</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+document.getElementById('togglePassword').addEventListener('click', function () {
+    const password = document.getElementById('Password');
+    const eyeIcon = document.getElementById('eyeIcon');
+    if (password.type === 'password') {
+        password.type = 'text';
+        eyeIcon.classList.replace('bi-eye', 'bi-eye-slash');
+    } else {
+        password.type = 'password';
+        eyeIcon.classList.replace('bi-eye-slash', 'bi-eye');
+    }
+});
+
+document.getElementById('registerBtn').addEventListener('click', async function () {
+    const errorMsg = document.getElementById('error-msg');
+    errorMsg.classList.add('d-none');
+
+    try {
+        const response = await fetch('/api/v1/AuthenticationApi/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                firstName: document.getElementById('FirstName').value,
+                lastName: document.getElementById('LastName').value,
+                email: document.getElementById('Email').value,
+                password: document.getElementById('Password').value,
+                deviceInfo: navigator.userAgent,
+                ipAddress: '' // optionally fetch server-side
+            })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            sessionStorage.setItem('token', data.token);
+            sessionStorage.setItem('refreshToken', data.refreshToken);
+            window.location.href = '/Home/Index';
+        } else {
+            const err = await response.json().catch(() => null);
+            errorMsg.textContent = err?.message ?? 'Registration failed.';
+            errorMsg.classList.remove('d-none');
+        }
+    } catch (e) {
+        errorMsg.textContent = 'A network error occurred. Please try again.';
+        errorMsg.classList.remove('d-none');
+    }
+});
+</script>
+}

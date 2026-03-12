@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace Lenden.API.ServiceCollectionExtensions
+﻿namespace Lenden.Web.ServiceCollectionExtensions
 {
     public static class CorsServiceCollectionExtensions
     {
