@@ -7,10 +7,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Lenden.API\Lenden.API.csproj" />
       <ProjectReference Include="..\Lenden.Application\Lenden.Application.csproj" />
       <ProjectReference Include="..\Lenden.Domain\Lenden.Domain.csproj" />
       <ProjectReference Include="..\Lenden.Infrastructure\Lenden.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="DTOMappers\" />
+      <Folder Include="Filters\" />
     </ItemGroup>
 
 </Project>

@@ -4,8 +4,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lenden.Domain", "Lenden.Dom
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lenden.Infrastructure", "Lenden.Infrastructure\Lenden.Infrastructure.csproj", "{315A73B8-FB66-4992-808A-A8278EFC7A9B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lenden.API", "Lenden.API\Lenden.API.csproj", "{787326ED-A646-43DF-84EB-FFCBB9E33729}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lenden.Application", "Lenden.Application\Lenden.Application.csproj", "{169365FB-6298-4903-A8E0-E343468EA449}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lenden.Web", "Lenden.Web\Lenden.Web.csproj", "{4C37FE3A-3A89-4826-B7BC-E50B99C66F27}"
@@ -24,10 +22,6 @@ Global
 		{315A73B8-FB66-4992-808A-A8278EFC7A9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{315A73B8-FB66-4992-808A-A8278EFC7A9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{315A73B8-FB66-4992-808A-A8278EFC7A9B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{787326ED-A646-43DF-84EB-FFCBB9E33729}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{787326ED-A646-43DF-84EB-FFCBB9E33729}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{787326ED-A646-43DF-84EB-FFCBB9E33729}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{787326ED-A646-43DF-84EB-FFCBB9E33729}.Release|Any CPU.Build.0 = Release|Any CPU
 		{169365FB-6298-4903-A8E0-E343468EA449}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{169365FB-6298-4903-A8E0-E343468EA449}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{169365FB-6298-4903-A8E0-E343468EA449}.Release|Any CPU.ActiveCfg = Release|Any CPU

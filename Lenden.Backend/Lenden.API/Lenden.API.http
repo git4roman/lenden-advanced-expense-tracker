@@ -1,6 +1,0 @@
-@Lenden.Presentation_HostAddress = http://localhost:5255
-
-GET {{Lenden.Presentation_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
