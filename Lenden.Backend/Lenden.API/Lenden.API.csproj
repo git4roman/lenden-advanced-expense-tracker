@@ -4,6 +4,8 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <AssemblyName>Lenden.API</AssemblyName>
+        <RootNamespace>Lenden.API</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

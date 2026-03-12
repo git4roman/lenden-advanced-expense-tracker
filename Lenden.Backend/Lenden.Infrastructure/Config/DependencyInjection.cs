@@ -1,34 +1,27 @@
 ﻿using Lenden.Application.Interfaces;
 using Lenden.Application.Interfaces.Repositories;
-using Lenden.Application.Interfaces.Services;
-using Lenden.Application.Managers;
-using Lenden.Application.Services;
-using Lenden.Infrastructure.Persistence;
+using Lenden.Infrastructure.Persistence.DbContexts;
 using Lenden.Infrastructure.Persistence.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using IUserRepository = Lenden.Application.Interfaces.IUserRepository;
 
-namespace Lenden.Infrastructure.Config;
+namespace Lenden.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IAuthService, AuthService>();
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+        services.AddDbContext<AppDbContext>(options =>
+            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+        
         services.AddScoped<IAuthRepository, AuthRepository>();
-        services.AddScoped<TokenService>();
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
-        services.AddScoped<AuthManager>();
-        services.AddScoped<IGroupService, GroupService>();
+        services.AddScoped<IExpenseRepository, ExpenseRepository>();
+        services.AddScoped<IGroupRepository, GroupRepository>();
         services.AddScoped<IUserBalanceRepository, UserBalanceRepository>();
         services.AddScoped<IUserGroupRepository, UserGroupRepository>();
-        services.AddScoped<IGroupRepository, GroupRepository>();
-        services.AddScoped<IExpenseRepository, ExpenseRepository>();
-        
-
-
-
+        services.AddScoped<IUserRepository, UserRepository>();
         return services;
     }
 }
