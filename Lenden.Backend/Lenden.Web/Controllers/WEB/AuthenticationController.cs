@@ -1,21 +1,41 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace Lenden.Web.Controllers.WEB;
+﻿using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
+using Lenden.Application.DTOs;
+using Lenden.Web.Models;
+using Microsoft.AspNetCore.Mvc;
 
 public class AuthenticationController : Controller
 {
-    // GET
-    public IActionResult Index()
+    private readonly IHttpClientFactory _httpClientFactory;
+    
+    public AuthenticationController(IHttpClientFactory httpClientFactory)
     {
-        return View();
+        _httpClientFactory = httpClientFactory;
     }
 
-    public IActionResult Login()
+    [HttpPost]
+    public async Task<IActionResult> Login(LoginViewModel model)
     {
-        return View();
-    }
-    public IActionResult Register()
-    {
-        return View();
+        var client = _httpClientFactory.CreateClient();
+        var content = new StringContent(
+            JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
+
+        var response = await client.PostAsync("/api/v1/AuthenticationApi/login", content);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            ModelState.AddModelError("", "Invalid email or password");
+            return View(model);
+        }
+
+        var data = await JsonSerializer.DeserializeAsync<AuthResponseDto>(
+            await response.Content.ReadAsStreamAsync());
+
+        // store tokens in session
+        HttpContext.Session.SetString("token", data.AccessToken);
+        HttpContext.Session.SetString("refreshToken", data.RefreshToken);
+
+        return RedirectToAction("Index", "Home");
     }
 }
