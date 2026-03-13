@@ -1,4 +1,4 @@
-import { api } from "../base-api";
+import { api } from "./client";
 
 const groupApi = api.injectEndpoints({
   endpoints: (builder) => ({

@@ -1,10 +1,10 @@
-import { api } from "../base-api";
+import { api } from "./client";
 
-const authApi = api.injectEndpoints({
+const expenseApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    login: builder.mutation({
+    createExpense: builder.mutation({
       query: (payload) => ({
-        url: "/AuthenticationApi/login",
+        url: "ExpenseApi",
         method: "POST",
         payload,
       }),
@@ -19,4 +19,4 @@ const authApi = api.injectEndpoints({
   }),
 });
 
-export const { useLoginMutation, useRegisterMutation } = authApi;
+export const { useCreateExpenseMutation, useRegisterMutation } = expenseApi;

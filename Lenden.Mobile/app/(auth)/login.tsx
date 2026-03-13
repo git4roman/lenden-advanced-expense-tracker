@@ -1,20 +1,27 @@
 import React, { useState } from "react";
-import { Pressable, TextInput, View } from "react-native";
+import { Pressable, TextInput, View, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
+import { useLoginHandler } from "@/src/modules/auth/hooks/use-login- handler-hook";
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { email, setEmail, password, setPassword, handleLogin, isLoading } =
+    useLoginHandler();
 
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: Colors.neutral[900], padding: 20 }}
     >
-      <View style={{ flex: 1, justifyContent: "space-between", paddingVertical: 18 }}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "space-between",
+          paddingVertical: 18,
+        }}
+      >
         <View style={{ gap: 24 }}>
           <View style={{ gap: 10 }}>
             <CText size="xlg" weight="extrabold" color="neutral" shade={100}>
@@ -73,19 +80,22 @@ export default function LoginScreen() {
           </View>
 
           <Pressable
-            onPress={() => {
-              router.replace("/(tabs)/(home)");
-            }}
+            onPress={handleLogin}
             style={{
               backgroundColor: Colors.accent[500],
               borderRadius: 12,
               paddingVertical: 13,
               alignItems: "center",
             }}
+            disabled={isLoading}
           >
-            <CText weight="bold" color="neutral" shade={900}>
-              Login
-            </CText>
+            {isLoading ? (
+              <ActivityIndicator />
+            ) : (
+              <CText weight="bold" color="neutral" shade={900}>
+                Login
+              </CText>
+            )}
           </Pressable>
 
           <View
@@ -96,11 +106,23 @@ export default function LoginScreen() {
               gap: 10,
             }}
           >
-            <View style={{ flex: 1, height: 1, backgroundColor: Colors.neutral[700] }} />
+            <View
+              style={{
+                flex: 1,
+                height: 1,
+                backgroundColor: Colors.neutral[700],
+              }}
+            />
             <CText size="xs" color="neutral" shade={500}>
               or Continue with
             </CText>
-            <View style={{ flex: 1, height: 1, backgroundColor: Colors.neutral[700] }} />
+            <View
+              style={{
+                flex: 1,
+                height: 1,
+                backgroundColor: Colors.neutral[700],
+              }}
+            />
           </View>
 
           <Pressable
@@ -126,7 +148,9 @@ export default function LoginScreen() {
           </Pressable>
         </View>
 
-        <View style={{ flexDirection: "row", justifyContent: "center", gap: 6 }}>
+        <View
+          style={{ flexDirection: "row", justifyContent: "center", gap: 6 }}
+        >
           <CText size="sm" color="neutral" shade={400}>
             Don't have an account?
           </CText>

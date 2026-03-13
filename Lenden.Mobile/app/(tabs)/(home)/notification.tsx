@@ -1,3 +1,4 @@
+import { useTheme } from "@/src/shared/providers/ThemeProviders";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { Feather } from "@expo/vector-icons";
@@ -108,7 +109,8 @@ export default function HomeNotificationScreen() {
   const [toInput, setToInput] = useState(defaultToDate);
   const [fromFilter, setFromFilter] = useState(defaultFromDate);
   const [toFilter, setToFilter] = useState(defaultToDate);
-
+  const { Colors } = useTheme();
+  
   const onRefresh = useCallback(() => {
     setRefreshing(true);
 

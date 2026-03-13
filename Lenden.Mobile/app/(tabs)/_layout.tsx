@@ -85,7 +85,7 @@ export default function _layout() {
                     borderColor: Colors.neutral[900],
                   }}
                 >
-                  <AddCircle size="30" color={Colors.accent[200]} />
+                  <AddCircle size={30} color={Colors.accent[200]} />
                 </View>
               </Pressable>
             ),

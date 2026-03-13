@@ -19,6 +19,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ActivityItem } from "../../../src/modules/groups/components/activity-item";
 import { Href, router } from "expo-router";
+import { useTheme } from "@/src/shared/providers/ThemeProviders";
 
 const activityMockData = [
   {
@@ -135,13 +136,13 @@ const BalanceCard = () => (
           style={{
             width: 38,
             height: 38,
-            borderRadius: "50%",
+            borderRadius: 19,
             justifyContent: "center",
             alignItems: "center",
             backgroundColor: Colors.neutral[100],
           }}
         >
-          <Profile size="32" color={Colors.accent[500]} />
+          <Profile size={32} color={Colors.accent[500]} />
         </View>
         <View style={{ flex: 1, justifyContent: "flex-end" }}>
           <CText weight="semibold" size="md">
@@ -202,7 +203,7 @@ const BalanceCard = () => (
       }}
     >
       <IconCover label="Pay" path="/(tabs)/(quickActions)/pay">
-        <Send2 size="28" color={Colors.accent[200]} />
+        <Send2 size={28} color={Colors.accent[200]} />
       </IconCover>
       <IconCover
         label="Request"
@@ -211,7 +212,7 @@ const BalanceCard = () => (
           params: { from: "home" },
         }}
       >
-        <DirectInbox size="28" color={Colors.accent[200]} />
+        <DirectInbox size={28} color={Colors.accent[200]} />
       </IconCover>
       <IconCover
         label="Statement"
@@ -220,7 +221,7 @@ const BalanceCard = () => (
           params: { from: "home" },
         }}
       >
-        <TableDocument size="28" color={Colors.accent[200]} />
+        <TableDocument size={28} color={Colors.accent[200]} />
       </IconCover>
     </View>
   </ImageBackground>
@@ -229,6 +230,7 @@ const BalanceCard = () => (
 const HomeScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [activities, setActivities] = useState(activityMockData);
+  const { Colors } = useTheme();
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -321,7 +323,10 @@ const HomeScreen = () => {
 
           <View>
             {activities.map((item, i) => (
-              <ActivityItem key={`${item.date}-${item.time}-${i}`} item={item} />
+              <ActivityItem
+                key={`${item.date}-${item.time}-${i}`}
+                item={item}
+              />
             ))}
           </View>
         </View>

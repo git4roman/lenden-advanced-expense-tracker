@@ -1,8 +1,8 @@
 // app/_layout.tsx
-import { Provider } from "react-redux";
-import { Slot } from "expo-router";
+import { Provider, useSelector } from "react-redux";
+import { Stack } from "expo-router";
 import Toast from "react-native-toast-message";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
 
 import {
@@ -19,6 +19,26 @@ import {
   Urbanist_900Black,
   Urbanist_900Black_Italic,
 } from "@expo-google-fonts/urbanist";
+import { ThemeProvider } from "@/src/shared/providers/ThemeProviders";
+import { persistor, store, RootState } from "@/src/shared/store/store";
+import { PersistGate } from "redux-persist/integration/react";
+
+function RootNavigator() {
+  const token = useSelector((state: RootState) => state.auth.token);
+  const isLoggedIn = Boolean(token);
+
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Protected guard={isLoggedIn}>
+        <Stack.Screen name="(tabs)" />
+      </Stack.Protected>
+
+      <Stack.Protected guard={!isLoggedIn}>
+        <Stack.Screen name="(auth)" />
+      </Stack.Protected>
+    </Stack>
+  );
+}
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -37,10 +57,17 @@ export default function RootLayout() {
   });
 
   if (!loaded) return null;
+
   return (
-    <SafeAreaProvider>
-      <Slot />
-      <Toast />
-    </SafeAreaProvider>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <SafeAreaProvider>
+          <ThemeProvider>
+            <RootNavigator />
+            <Toast />
+          </ThemeProvider>
+        </SafeAreaProvider>
+      </PersistGate>
+    </Provider>
   );
 }

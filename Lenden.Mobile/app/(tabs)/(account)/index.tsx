@@ -1,5 +1,6 @@
 import { Href, useRouter } from "expo-router";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import {
   ImageSourcePropType,
   Modal,
@@ -19,6 +20,8 @@ import { CText } from "@/src/shared/ui/components/CText";
 
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { logout } from "@/src/shared/store/slices/auth-slice";
+import { clearAuth } from "@/src/shared/services/storage/auth-storage";
 
 type AcccountItems = {
   title: string;
@@ -27,7 +30,11 @@ type AcccountItems = {
 };
 
 const accountItems: AcccountItems[] = [
-  { title: "Personal Information", icon: UserIcon, path: "/(tabs)/(account)/personalinfo" },
+  {
+    title: "Personal Information",
+    icon: UserIcon,
+    path: "/(tabs)/(account)/personalinfo",
+  },
   // { title: "Payment details", icon: CreditCardIcon, path: "/paymentDetails" },
   { title: "Security", icon: LockIcon, path: "/(tabs)/(account)/security" },
 ];
@@ -103,8 +110,17 @@ export function DividedPattern({
 
 export default function Account() {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
   const [isRateModalVisible, setIsRateModalVisible] = useState(false);
+
+  const handleLogout = () => {
+    console.log("I am clicked");
+    setIsLogoutModalVisible(false);
+    dispatch(logout());
+    clearAuth();
+    router.push("/(auth)/login");
+  };
 
   return (
     <SafeAreaView
@@ -347,6 +363,9 @@ export default function Account() {
               <Pressable
                 onPress={() => {
                   setIsLogoutModalVisible(false);
+                  console.log("I am clicked");
+                  dispatch(logout());
+                  clearAuth();
                   router.replace("/(auth)/login");
                 }}
                 style={{
@@ -448,5 +467,3 @@ export default function Account() {
     </SafeAreaView>
   );
 }
-
-
