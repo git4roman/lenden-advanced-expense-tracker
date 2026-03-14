@@ -19,7 +19,7 @@ export const api = createApi({
     });
 
     const result = await rawBaseQuery(args, apiApi, extraOptions);
-    console.log("RTK Query result:", JSON.stringify(result));
+    // console.log("RTK Query result:", JSON.stringify(result));
     return result;
   },
 

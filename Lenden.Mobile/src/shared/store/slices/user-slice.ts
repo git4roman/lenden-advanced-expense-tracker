@@ -1,14 +1,21 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type UserInfoState = {
-  userInfo: {
-    firstName: string;
-    lastName: string;
-  } | null;
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
+  phone: string;
+  memberSince: string;
 };
 
 const initialState: UserInfoState = {
-  userInfo: null,
+  firstName: "",
+  lastName: "",
+  username: "",
+  email: "",
+  phone: "",
+  memberSince: "",
 };
 
 const userSlice = createSlice({
@@ -16,7 +23,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUserInfo: (state, action: PayloadAction<UserInfoState>) => {
-      state.userInfo = action.payload.userInfo ?? null;
+      Object.assign(state, action.payload);
     },
   },
 });

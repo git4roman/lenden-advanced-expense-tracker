@@ -1,6 +1,6 @@
 import { Href, useRouter } from "expo-router";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   ImageSourcePropType,
   Modal,
@@ -22,6 +22,8 @@ import { Colors } from "@/src/shared/ui/theme/colors";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { logout } from "@/src/shared/store/slices/auth-slice";
 import { clearAuth } from "@/src/shared/services/storage/auth-storage";
+import { RootState } from "@/src/shared/store/store";
+import { formatDate } from "@/src/shared/utils/format-date.utils";
 
 type AcccountItems = {
   title: string;
@@ -114,12 +116,16 @@ export default function Account() {
   const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
   const [isRateModalVisible, setIsRateModalVisible] = useState(false);
 
-  const handleLogout = () => {
-    console.log("I am clicked");
-    setIsLogoutModalVisible(false);
-    dispatch(logout());
-    clearAuth();
-    router.push("/(auth)/login");
+  const userInfo = useSelector((state: RootState) => state.userInfo);
+
+  const infoRows = {
+    fullName: `${userInfo.firstName} ${userInfo.lastName}` || "-",
+    username: userInfo.username || "-",
+    phone: userInfo.phone || "-",
+    memberSince: userInfo.memberSince
+      ? formatDate(userInfo.memberSince, { month: "long", year: "numeric" })
+      : "-",
+    email: userInfo.email || "-",
   };
 
   return (
@@ -168,15 +174,18 @@ export default function Account() {
               }}
             >
               <CText size="sm" color="accent" shade={300} weight="bold">
-                SN
+                {infoRows.fullName
+                  .split(" ")
+                  .map((word) => word[0])
+                  .join("")}
               </CText>
             </View>
             <CText size="sm" color={Colors.neutral[100]} weight="bold">
-              Some Name
+              {infoRows.fullName}
             </CText>
             <Pressable onPress={() => router.push("/notificationyes")}>
               <CText size="sm" color={Colors.neutral[400]}>
-                Member since November 2025
+                Member Since {infoRows.memberSince}
               </CText>
             </Pressable>
           </View>

@@ -19,9 +19,16 @@ export const useGroupHandler = (onClose: () => void) => {
 
   const handleCreateGroup = async () => {
     try {
+      console.log("Create Group", {
+        groupName,
+        groupImageUri,
+        members: selectedMembers,
+      });
+
       const response = await createGroup({
         groupName,
         groupImageUri,
+        members: selectedMembers,
       }).unwrap();
       Toast.show({ type: "success", text1: "Group Creation Successful" });
       setGroupName("");

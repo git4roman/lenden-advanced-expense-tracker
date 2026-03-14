@@ -1,17 +1,23 @@
+import { RootState } from "@/src/shared/store/store";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-const infoRows = [
-  { label: "Full Name", value: "Some Name" },
-  { label: "Username", value: "@somename" },
-  { label: "Email", value: "some.name@example.com" },
-  { label: "Phone", value: "+1 (555) 123-4567" },
-  { label: "Member Since", value: "November 2025" },
-];
+import { useSelector } from "react-redux";
 
 export default function PersonalInfoScreen() {
+  const userInfo = useSelector((state: RootState) => state.userInfo);
+
+  const infoRows = [
+    {
+      label: "Full Name",
+      value: userInfo ? `${userInfo.firstName} ${userInfo.lastName}` : "-",
+    },
+    { label: "Username", value: userInfo?.username ?? "-" },
+    { label: "Email", value: userInfo?.email ?? "-" },
+    { label: "Phone", value: userInfo?.phone ?? "-" },
+    { label: "Member Since", value: userInfo?.memberSince ?? "-" },
+  ];
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.neutral[950] }}>
       <ScrollView

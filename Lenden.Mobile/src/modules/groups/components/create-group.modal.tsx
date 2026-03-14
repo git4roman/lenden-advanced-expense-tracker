@@ -4,7 +4,6 @@ import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { useImagePicker } from "@/src/shared/hooks/use-image-picker";
 import { GroupMember } from "../types/group-member";
-import { useCreateGroupMutation } from "@/src/shared/store/apiSlices/group-slice.api";
 import { useGroupHandler } from "../hooks/use-group-handler";
 
 type Props = {
