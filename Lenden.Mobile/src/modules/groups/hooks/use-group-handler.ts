@@ -5,20 +5,23 @@ import {
   useCreateGroupMutation,
   useDeleteGroupMutation,
 } from "@/src/shared/store/apiSlices/group-slice.api";
+import { GroupMember } from "../types/group-member";
 
 export const useGroupHandler = () => {
   const [groupName, setGroupName] = useState("My Group");
-  const [imageUrl, setImageUrl] = useState("");
+  const [groupImageUri, setGroupImageUri] = useState("");
   const [createGroup, { isLoading: isCreateGroupLoading }] =
     useCreateGroupMutation();
   const [deleteGroup, { isLoading: isDeleteGroupLoading }] =
     useDeleteGroupMutation();
+  const [selectedMembers, setSelectedMembers] = useState<number[]>([]);
+  const [suggestedMembers, setSuggestedMembers] = useState<GroupMember[]>([]);
 
   const handleCreateGroup = async () => {
     try {
       const response = await createGroup({
         groupName,
-        imageUrl,
+        groupImageUri,
       }).unwrap();
       Toast.show({ type: "success", text1: "Group Creation Successful" });
       router.replace("/(tabs)/(groups)");
@@ -35,7 +38,7 @@ export const useGroupHandler = () => {
     try {
       const response = await deleteGroup({
         groupName,
-        imageUrl,
+        groupImageUri,
       }).unwrap();
       Toast.show({ type: "success", text1: "Group Deletion Successful" });
       router.replace("/(tabs)/(groups)");
@@ -51,8 +54,12 @@ export const useGroupHandler = () => {
   return {
     groupName,
     setGroupName,
-    imageUrl,
-    setImageUrl,
+    groupImageUri,
+    setGroupImageUri,
+    selectedMembers,
+    setSelectedMembers,
+    suggestedMembers,
+    setSuggestedMembers,
     handleCreateGroup,
     handleDeleteGroup,
     isCreateGroupLoading,
