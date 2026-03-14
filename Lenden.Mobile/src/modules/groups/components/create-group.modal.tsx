@@ -177,6 +177,56 @@ export const CreateGroupModal = ({ visible, onClose, members }: Props) => {
             })}
           </View>
 
+          <TextInput
+            value={friendEmail}
+            onChangeText={(text) => {
+              setFriendEmail(text);
+
+              const suggestions = members.filter(
+                (m) =>
+                  `${m.firstName.toLowerCase()} ${m.lastName.toLowerCase()}`.includes(
+                    text.toLowerCase(),
+                  ) || m.email?.toLowerCase().includes(text.toLowerCase()),
+              );
+              setSuggestedMembers(suggestions);
+            }}
+            placeholder="Add friend by email"
+            placeholderTextColor={Colors.neutral[600]}
+            style={{
+              borderWidth: 1,
+              borderColor: Colors.neutral[700],
+              backgroundColor: Colors.neutral[900],
+              borderRadius: 10,
+              padding: 10,
+              color: Colors.neutral[100],
+            }}
+          />
+          <View style={{ maxHeight: 120 }}>
+            {suggestedMembers.map((member) => {
+              const active = selectedMembers.includes(member.userId);
+              return (
+                <Pressable
+                  key={member.userId}
+                  onPress={() => {
+                    toggleMember(member.userId);
+                    setFriendEmail("");
+                    setSuggestedMembers([]);
+                  }}
+                  style={{
+                    padding: 8,
+                    borderRadius: 8,
+                    backgroundColor: active
+                      ? Colors.accent[100]
+                      : Colors.neutral[700],
+                    marginVertical: 2,
+                  }}
+                >
+                  <CText size="xs">{`${member.firstName} ${member.lastName} (${member.email})`}</CText>
+                </Pressable>
+              );
+            })}
+          </View>
+
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
             {members.map((member) => {
               const active = selectedMembers.includes(member.userId);
