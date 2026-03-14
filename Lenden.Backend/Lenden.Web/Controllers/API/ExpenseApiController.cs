@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Lenden.Web.Controllers.API;
 
-[Route("api/v1/[controller]")]
+[Route("api/v1/expense")]
 [ApiController]
 [Authorize]
 public class ExpenseApiController : ControllerBase

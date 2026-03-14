@@ -2,5 +2,5 @@
 
 public record CreateGroupRequest(string Name, string? ImageUrl);
 public record UpdateGroupRequest(string Name, string? ImageUrl);
-public record AddMemberRequest(Guid UserId, Guid InvitedByUserId);
+public record AddMemberRequestDto(Guid UserId);
 public record LeaveGroupRequest(Guid UserId);

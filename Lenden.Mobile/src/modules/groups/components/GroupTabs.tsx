@@ -2,7 +2,7 @@ import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import React from "react";
 import { View, Pressable } from "react-native";
-import { groupButtonsLabel } from "../../../../app/(tabs)/(groups)/[groupId]";
+import { groupButtonsLabel } from "../constants/group-buttons-label.constant";
 
 export function GroupTabs({
   selectedTab,

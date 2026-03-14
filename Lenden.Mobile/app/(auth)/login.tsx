@@ -5,7 +5,7 @@ import { router } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
-import { useLoginHandler } from "@/src/modules/auth/hooks/use-login- handler-hook";
+import { useLoginHandler } from "@/src/modules/auth/hooks/use-login- handler";
 
 export default function LoginScreen() {
   const { email, setEmail, password, setPassword, handleLogin, isLoading } =

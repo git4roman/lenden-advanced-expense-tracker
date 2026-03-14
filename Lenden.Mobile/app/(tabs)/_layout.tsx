@@ -11,9 +11,12 @@ import {
   Profile,
   Profile2User,
 } from "iconsax-react-nativejs";
+import { store } from "@/src/shared/store/store";
 
 export default function _layout() {
   const TAB_ICON_SIZE = 18;
+  // const token = store.getState().auth.token;
+  // console.log(token)
 
   return (
     <SafeAreaProvider>

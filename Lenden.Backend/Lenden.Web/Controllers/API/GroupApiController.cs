@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Lenden.Web.Controllers.API;
 
-[Route("api/v1/[controller]")]
+[Route("api/v1/group")]
 [ApiController]
 [Authorize]
 public class GroupApiController : ControllerBase
@@ -45,11 +45,11 @@ public class GroupApiController : ControllerBase
     }
 
     [HttpPost("{groupId:Guid}/members")]
-    public async Task<IActionResult> AddMember(Guid groupId, AddMemberRequest request,CancellationToken ct = default)
+    public async Task<IActionResult> AddMember(Guid groupId, AddMemberRequestDto requestDto,CancellationToken ct = default)
     {
-        await _authService.ValidateUserAsync(User, ct);
+        var currentUser = await _authService.ValidateUserAsync(User, ct);
         // await _groupManager.EnsureGroupAdminAsync(groupId, User, ct);
-        await _groupService.AddMemberAsync(groupId, request);
+        await _groupService.AddMemberAsync(groupId, requestDto, currentUser.Id);
         return NoContent();
     }
 

@@ -1,4 +1,11 @@
-import { View, Pressable, Image, Modal, ScrollView, RefreshControl } from "react-native";
+import {
+  View,
+  Pressable,
+  Image,
+  Modal,
+  ScrollView,
+  RefreshControl,
+} from "react-native";
 import React, { useCallback, useState } from "react";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -11,13 +18,7 @@ import ExpenseTab from "@/src/modules/groups/components/expense-tab";
 import BalanceTab from "@/src/modules/groups/components/balance-tab";
 import TotalTab from "@/src/modules/groups/components/total-tab";
 import GroupInfoTab from "@/src/modules/groups/components/group-info-tab";
-
-export const groupButtonsLabel = [
-  { key: "Expenses", label: "Expenses" },
-  { key: "label2", label: "Balances" },
-  { key: "label3", label: "Total" },
-  { key: "label4", label: "Group Info" },
-];
+import { groupButtonsLabel } from "@/src/modules/groups/constants/group-buttons-label.constant";
 
 const TAB_CONTENT: Record<string, React.FC> = {
   Expenses: ExpenseTab,

@@ -31,7 +31,7 @@ public class GroupEntity
     // private readonly List<ExpenseEntity> _expenses;
     // public IReadOnlyCollection<ExpenseEntity> Expenses => _expenses.AsReadOnly();
 
-    public void AddMembers(UserEntity user, UserEntity invitedBy = null, bool isCreator = false)
+    public void AddMember(UserEntity user, long invitedByUserId, bool isCreator = false)
     {
         if (_members.Any(ug => ug.UserId == user.Id && ug.Status == GroupMembershipStatus.Active))
             return; 
@@ -42,7 +42,7 @@ public class GroupEntity
             userId: user.Id,
             groupId: Id,
             role: role,
-            invitedByUserId: invitedBy?.Id
+            invitedByUserId
         ));
     }
 

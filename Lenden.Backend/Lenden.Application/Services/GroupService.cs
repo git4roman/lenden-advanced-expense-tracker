@@ -23,7 +23,7 @@ public class GroupService : IGroupService
 
         var group = new GroupEntity(request.Name, request.ImageUrl, creator.Id);
 
-        group.AddMembers(creator); 
+        group.AddMember(creator,creator.Id); 
         await _unitOfWork.GroupRepository.AddAsync(group, ct);
         await _unitOfWork.SaveChangesAsync(ct);
         return;
@@ -40,14 +40,14 @@ public class GroupService : IGroupService
         await _unitOfWork.SaveChangesAsync(ct);
     }
 
-    public async Task AddMemberAsync(Guid groupId, AddMemberRequest request, CancellationToken ct = default)
+    public async Task AddMemberAsync(Guid groupId, AddMemberRequestDto requestDto,long invitedByUserId, CancellationToken ct = default)
     {
       var group= await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId, ct);
-        var user = await _unitOfWork.UserRepository.GetUserByPublicIdAsync(request.UserId, ct);
+        var user = await _unitOfWork.UserRepository.GetUserByPublicIdAsync(requestDto.UserId, ct);
         if (user is null)
             throw new Exception("User not found");
 
-        group.AddMembers(user, user);
+        group.AddMember(user, invitedByUserId);
         await _unitOfWork.SaveChangesAsync(ct);
     }
 

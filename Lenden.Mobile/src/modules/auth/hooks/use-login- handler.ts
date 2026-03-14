@@ -1,20 +1,21 @@
-// features/auth/hooks/useLoginHandler.ts
 import { useState } from "react";
 import { router } from "expo-router";
 import Toast from "react-native-toast-message";
-import { useLoginMutation } from "@/src/modules/auth/services/api/auth-api";
-import { useDispatch } from "react-redux";
-import { setCredentials } from "@/src/shared/store/slices/auth-slice";
+import { useLoginMutation } from "@/src/shared/store/apiSlices/auth-slice.api";
 
 export const useLoginHandler = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("admin@admin.com");
+  const [password, setPassword] = useState("String123");
   const [login, { isLoading }] = useLoginMutation();
-  const dispatch = useDispatch();
 
   const handleLogin = async () => {
     try {
-      const response = await login({ email, password }).unwrap();     
+      const response = await login({
+        email,
+        password,
+        ipAddress: "192.168.1.1",
+        deviceInfo: "android",
+      }).unwrap();
       Toast.show({ type: "success", text1: "Login Successful" });
       router.replace("/(tabs)/(home)");
     } catch (error: any) {

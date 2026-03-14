@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Lenden.Web.Controllers.API
 {
-    [Route("api/v1/[controller]")]
+    [Route("api/v1/auth")]
     [ApiController]
     public class AuthenticationApiController : ControllerBase
     {

@@ -1,5 +1,5 @@
-import { setCredentials } from "@/src/shared/store/slices/auth-slice";
-import { api } from "@/src/shared/services/api/client";
+import { setAuthCredentials } from "@/src/shared/store/slices/auth-slice";
+import { api } from "@/src/shared/store/apiSlices/apiClient";
 
 const authApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -12,14 +12,14 @@ const authApi = api.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-
           dispatch(
-            setCredentials({
-              token: data.token,
+            setAuthCredentials({
+              accessToken: data.accessToken,
+              refreshToken: data.refreshToken,
               user: data.user,
             }),
           );
-        } catch {}
+        } catch (error) {}
       },
     }),
 
@@ -29,6 +29,18 @@ const authApi = api.injectEndpoints({
         method: "POST",
         body: payload,
       }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(
+            setAuthCredentials({
+              accessToken: data.accessToken,
+              refreshToken: data.refreshToken,
+              user: data.user,
+            }),
+          );
+        } catch (error) {}
+      },
     }),
   }),
 });

@@ -9,7 +9,7 @@ public interface IGroupService
 
     Task UpdateGroupAsync(Guid groupId, UpdateGroupRequest request, CancellationToken ct = default);
 
-    Task AddMemberAsync(Guid groupId, AddMemberRequest request, CancellationToken ct = default);
+    Task AddMemberAsync(Guid groupId, AddMemberRequestDto requestDto, long invitedByUserId, CancellationToken ct = default);
 
     // Task LeaveGroupAsync(Guid groupId, Guid userId, CancellationToken ct = default);
 

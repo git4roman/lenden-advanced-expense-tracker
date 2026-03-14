@@ -1,6 +1,4 @@
-import Config from "react-native-config";
-
 export const API_CONFIG = {
-  BASE_URL: Config.API_BASE_URL,
+  BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL,
   TIMEOUT: 15000,
 };
