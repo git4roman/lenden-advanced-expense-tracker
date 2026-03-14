@@ -24,7 +24,7 @@ import { persistor, store, RootState } from "@/src/shared/store/store";
 import { PersistGate } from "redux-persist/integration/react";
 
 function RootNavigator() {
-  const token = useSelector((state: RootState) => state.auth.token);
+  const token = useSelector((state: RootState) => state.auth.accessToken);
   const isLoggedIn = Boolean(token);
 
   return (

@@ -5,7 +5,7 @@ const groupApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getGroups: builder.query({
       query: () => ({
-        url: "/GroupApi",
+        url: "/Group",
         method: "GET",
       }),
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
@@ -21,7 +21,7 @@ const groupApi = api.injectEndpoints({
     }),
     createGroup: builder.mutation({
       query: (payload) => ({
-        url: "/GroupApi",
+        url: "/Group",
         method: "POST",
         body: payload,
       }),
@@ -39,7 +39,7 @@ const groupApi = api.injectEndpoints({
 
     deleteGroup: builder.mutation({
       query: (payload) => ({
-        url: "/GroupApi",
+        url: "/Group",
         method: "DELETE",
         body: payload,
       }),
