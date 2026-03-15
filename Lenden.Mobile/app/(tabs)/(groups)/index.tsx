@@ -4,31 +4,27 @@ import {
   Pressable,
   ScrollView,
   RefreshControl,
-  ImageBackground,
 } from "react-native";
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
+import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { ArrowRight2 } from "iconsax-react-nativejs";
 import { router } from "expo-router";
-import { groupsData } from "./groups.mock";
 import { CreateGroupModal } from "@/src/modules/groups/components/create-group.modal";
-import { availableMembers } from "./members.mock";
-
-
+import { getColorFromString } from "@/src/shared/utils/get-random-color.utils";
+import { getInitials } from "@/src/shared/utils/get-initials.utils";
+import { useGetGroupsQuery } from "@/src/shared/store/apiSlices/group-slice.api";
+import { Group } from "@/src/modules/groups/types/group-member";
 
 const GroupScreen = () => {
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
+  const { data: groups, refetch, isFetching } = useGetGroupsQuery(undefined);
 
   const onRefresh = useCallback(() => {
-    setRefreshing(true);
-
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 900);
-  }, []);
+    refetch();
+  }, [refetch]);
 
   return (
     <SafeAreaView
@@ -45,23 +41,20 @@ const GroupScreen = () => {
           Groups
         </CText>
       </View>
+
       <ScrollView
-        style={{
-          paddingHorizontal: 8,
-          borderRadius: 8 + 8,
-          flex: 1,
-        }}
+        style={{ paddingHorizontal: 8, borderRadius: 16, flex: 1 }}
         contentContainerStyle={{ gap: 4, paddingBottom: 90 }}
         refreshControl={
           <RefreshControl
-            refreshing={refreshing}
+            refreshing={isFetching}
             onRefresh={onRefresh}
             tintColor={Colors.neutral[200]}
             colors={[Colors.accent[400]]}
           />
         }
       >
-        {groupsData.map((group, index) => (
+        {(groups ?? []).map((group: Group, index: number) => (
           <React.Fragment key={group.id}>
             <Pressable
               style={{
@@ -74,13 +67,14 @@ const GroupScreen = () => {
                 paddingVertical: 12,
                 paddingRight: 12,
               }}
-              onPress={() => {
+              onPress={() =>
                 router.push({
                   pathname: "/[groupId]",
                   params: { groupId: group.id },
-                });
-              }}
+                })
+              }
             >
+              {/* Group image / initials */}
               <View
                 style={{
                   width: 100,
@@ -91,12 +85,29 @@ const GroupScreen = () => {
                   overflow: "hidden",
                 }}
               >
-                <Image
-                  source={{ uri: group.image }}
-                  resizeMode="cover"
-                  style={{ width: "100%", height: "100%" }}
-                />
+                {group.imageUrl ? (
+                  <Image
+                    source={{ uri: group.imageUrl }}
+                    resizeMode="cover"
+                    style={{ width: "100%", height: "100%" }}
+                  />
+                ) : (
+                  <View
+                    style={{
+                      flex: 1,
+                      backgroundColor: getColorFromString(group.name),
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <CText weight="bold" size="lg" color="neutral" shade={50}>
+                      {getInitials(group.name)}
+                    </CText>
+                  </View>
+                )}
               </View>
+
+              {/* Group info */}
               <View
                 style={{
                   flexDirection: "row",
@@ -112,74 +123,68 @@ const GroupScreen = () => {
                     color="neutral"
                     shade={300}
                   >
-                    {group.label}
+                    {group.name}
                   </CText>
-                  <View style={{ flexDirection: "row", gap: 0 }}>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                    >
-                      {group.members.slice(0, 3).map((member, index) => (
-                        <View
-                          key={index}
-                          style={{
-                            borderColor: Colors.accent[800],
-                            width: 20,
-                            height: 20,
-                            borderWidth: 2,
-                            borderRadius: 25,
-                            overflow: "hidden",
-                            marginLeft: index === 0 ? 0 : -6,
-                          }}
-                        >
-                          <Image
-                            source={{ uri: member }}
-                            style={{ width: "100%", height: "100%" }}
-                          />
-                        </View>
-                      ))}
 
-                      {group.members.length > 3 && (
-                        <ImageBackground
-                          source={{ uri: group.members[2] }}
-                          blurRadius={15}
-                          style={{
-                            width: 20,
-                            height: 20,
-                            borderRadius: 25,
-                            backgroundColor: Colors.neutral[700],
-                            justifyContent: "center",
-                            alignItems: "center",
-                            marginLeft: -6,
-                            borderWidth: 2,
-                            borderColor: Colors.accent[800],
-                            overflow: "hidden",
-                            opacity: 0.6,
-                          }}
+                  {/* Member avatars (initials since no avatar URL) */}
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    {group.members.slice(0, 3).map((member, i) => (
+                      <View
+                        key={member.id}
+                        style={{
+                          width: 20,
+                          height: 20,
+                          borderRadius: 25,
+                          borderWidth: 2,
+                          borderColor: Colors.accent[800],
+                          overflow: "hidden",
+                          marginLeft: i === 0 ? 0 : -6,
+                          backgroundColor: getColorFromString(member.givenName),
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <CText size="xs" color="neutral" shade={50}>
+                          {getInitials(
+                            `${member.givenName} ${member.familyName}`,
+                          )}
+                        </CText>
+                      </View>
+                    ))}
+
+                    {group.members.length > 3 && (
+                      <View
+                        style={{
+                          width: 20,
+                          height: 20,
+                          borderRadius: 25,
+                          backgroundColor: Colors.neutral[700],
+                          justifyContent: "center",
+                          alignItems: "center",
+                          marginLeft: -6,
+                          borderWidth: 2,
+                          borderColor: Colors.accent[800],
+                          overflow: "hidden",
+                        }}
+                      >
+                        <CText
+                          size="xs"
+                          weight="semibold"
+                          color="neutral"
+                          shade={50}
                         >
-                          <CText
-                            size="xs"
-                            weight="semibold"
-                            color="neutral"
-                            shade={50}
-                          >
-                            +{group.members.length - 3}
-                          </CText>
-                        </ImageBackground>
-                      )}
-                    </View>
+                          +{group.members.length - 3}
+                        </CText>
+                      </View>
+                    )}
                   </View>
                 </View>
-                <View style={{}}>
-                  <Pressable onPress={() => console.log("first")} style={{}}>
-                    <ArrowRight2 size="24" color={Colors.neutral[300]} />
-                  </Pressable>
-                </View>
+
+                <ArrowRight2 size="24" color={Colors.neutral[300]} />
               </View>
             </Pressable>
-            {groupsData.length - 1 !== index && (
+
+            {(groups ?? []).length - 1 !== index && (
               <View
                 style={{
                   width: "100%",
@@ -192,10 +197,9 @@ const GroupScreen = () => {
           </React.Fragment>
         ))}
       </ScrollView>
+
       <Pressable
-        onPress={() => {
-          setIsCreateGroupOpen(true);
-        }}
+        onPress={() => setIsCreateGroupOpen(true)}
         style={{
           backgroundColor: Colors.accent[500],
           position: "absolute",
@@ -214,7 +218,7 @@ const GroupScreen = () => {
       <CreateGroupModal
         visible={isCreateGroupOpen}
         onClose={() => setIsCreateGroupOpen(false)}
-        members={availableMembers}
+        members={[]}
       />
     </SafeAreaView>
   );

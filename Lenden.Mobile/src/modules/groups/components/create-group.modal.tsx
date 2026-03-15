@@ -1,15 +1,22 @@
 import { View, Pressable, Modal, Image, TextInput } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { useImagePicker } from "@/src/shared/hooks/use-image-picker";
 import { GroupMember } from "../types/group-member";
 import { useGroupHandler } from "../hooks/use-group-handler";
+import { useGetFriendsQuery } from "@/src/shared/store/apiSlices/friends-slice.api";
 
 type Props = {
   visible: boolean;
   onClose: () => void;
   members: GroupMember[];
+};
+type Friend = {
+  id: string;
+  givenName: string;
+  familyName: string;
+  email: string;
 };
 
 export const CreateGroupModal = ({ visible, onClose, members }: Props) => {
@@ -28,7 +35,21 @@ export const CreateGroupModal = ({ visible, onClose, members }: Props) => {
 
   const [friendEmail, setFriendEmail] = useState("");
 
-  const toggleMember = (userId: number) => {
+  const { data: friends, error } = useGetFriendsQuery(undefined);
+  const [search, setSearch] = useState("");
+  const suggestions = search.trim()
+    ? friends.filter((friend: Friend) => {
+        const fullName =
+          `${friend.givenName} ${friend.familyName}`.toLowerCase();
+        const email = friend.email.toLowerCase();
+        const query = search.toLowerCase();
+        return fullName.includes(query) || email.includes(query);
+      })
+    : [];
+
+  console.log("The data", friends);
+  console.log("The Error", error);
+  const toggleMember = (userId: string) => {
     setSelectedMembers((prev) =>
       prev.includes(userId)
         ? prev.filter((m) => m !== userId)
@@ -127,38 +148,14 @@ export const CreateGroupModal = ({ visible, onClose, members }: Props) => {
             </Pressable>
           </View>
 
-          <TextInput
-            value={friendEmail}
-            onChangeText={(text) => {
-              setFriendEmail(text);
-
-              const suggestions = members.filter(
-                (m) =>
-                  `${m.firstName.toLowerCase()} ${m.lastName.toLowerCase()}`.includes(
-                    text.toLowerCase(),
-                  ) || m.email?.toLowerCase().includes(text.toLowerCase()),
-              );
-              setSuggestedMembers(suggestions);
-            }}
-            placeholder="Add friend by email"
-            placeholderTextColor={Colors.neutral[600]}
-            style={{
-              borderWidth: 1,
-              borderColor: Colors.neutral[700],
-              backgroundColor: Colors.neutral[900],
-              borderRadius: 10,
-              padding: 10,
-              color: Colors.neutral[100],
-            }}
-          />
           <View style={{ maxHeight: 120 }}>
             {suggestedMembers.map((member) => {
-              const active = selectedMembers.includes(member.userId);
+              const active = selectedMembers.includes(member.id);
               return (
                 <Pressable
-                  key={member.userId}
+                  key={member.id}
                   onPress={() => {
-                    toggleMember(member.userId);
+                    toggleMember(member.id);
                     setFriendEmail("");
                     setSuggestedMembers([]);
                   }}
@@ -171,81 +168,99 @@ export const CreateGroupModal = ({ visible, onClose, members }: Props) => {
                     marginVertical: 2,
                   }}
                 >
-                  <CText size="xs">{`${member.firstName} ${member.lastName} (${member.email})`}</CText>
+                  <CText size="xs">{`${member.givenName} ${member.familyName} (${member.email})`}</CText>
                 </Pressable>
               );
             })}
           </View>
 
           <TextInput
-            value={friendEmail}
-            onChangeText={(text) => {
-              setFriendEmail(text);
-
-              const suggestions = members.filter(
-                (m) =>
-                  `${m.firstName.toLowerCase()} ${m.lastName.toLowerCase()}`.includes(
-                    text.toLowerCase(),
-                  ) || m.email?.toLowerCase().includes(text.toLowerCase()),
-              );
-              setSuggestedMembers(suggestions);
-            }}
-            placeholder="Add friend by email"
-            placeholderTextColor={Colors.neutral[600]}
+            value={search}
+            onChangeText={setSearch}
+            placeholder="Search by name or email..."
+            placeholderTextColor={Colors.neutral[500]}
             style={{
+              backgroundColor: Colors.neutral[800],
+              borderRadius: 10,
+              paddingHorizontal: 14,
+              paddingVertical: 10,
+              color: Colors.neutral[100],
               borderWidth: 1,
               borderColor: Colors.neutral[700],
-              backgroundColor: Colors.neutral[900],
-              borderRadius: 10,
-              padding: 10,
-              color: Colors.neutral[100],
             }}
           />
-          <View style={{ maxHeight: 120 }}>
-            {suggestedMembers.map((member) => {
-              const active = selectedMembers.includes(member.userId);
-              return (
+          {suggestions.length > 0 && (
+            <View
+              style={{
+                backgroundColor: Colors.neutral[800],
+                borderRadius: 10,
+                borderWidth: 1,
+                borderColor: Colors.neutral[700],
+                marginTop: 4,
+              }}
+            >
+              {suggestions.map((friend: Friend) => (
                 <Pressable
-                  key={member.userId}
+                  key={friend.id}
                   onPress={() => {
-                    toggleMember(member.userId);
-                    setFriendEmail("");
-                    setSuggestedMembers([]);
+                    if (!selectedMembers.includes(friend.id)) {
+                      setSelectedMembers((prev) => [...prev, friend.id]);
+                    }
+                    setSearch(""); // clear search after selecting
                   }}
                   style={{
-                    padding: 8,
-                    borderRadius: 8,
-                    backgroundColor: active
-                      ? Colors.accent[100]
-                      : Colors.neutral[700],
-                    marginVertical: 2,
+                    paddingHorizontal: 14,
+                    paddingVertical: 10,
+                    borderBottomWidth: 1,
+                    borderBottomColor: Colors.neutral[700],
                   }}
                 >
-                  <CText size="xs">{`${member.firstName} ${member.lastName} (${member.email})`}</CText>
+                  <CText size="sm" color="neutral" shade={200}>
+                    {friend.givenName} {friend.familyName}
+                  </CText>
+                  <CText size="xs" color="neutral" shade={500}>
+                    {friend.email}
+                  </CText>
                 </Pressable>
-              );
-            })}
-          </View>
+              ))}
+            </View>
+          )}
 
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-            {members.map((member) => {
-              const active = selectedMembers.includes(member.userId);
+          <View
+            style={{
+              flexDirection: "row",
+              flexWrap: "wrap",
+              gap: 8,
+              marginTop: 8,
+            }}
+          >
+            {selectedMembers.map((id) => {
+              const friend = friends.find((f: Friend) => f.id === id);
+              if (!friend) return null;
 
               return (
                 <Pressable
-                  key={member.userId}
-                  onPress={() => toggleMember(member.userId)}
+                  key={id}
+                  onPress={() =>
+                    setSelectedMembers((prev) => prev.filter((m) => m !== id))
+                  }
                   style={{
                     paddingHorizontal: 10,
                     paddingVertical: 8,
                     borderRadius: 999,
                     borderWidth: 1,
-                    borderColor: active
-                      ? Colors.accent[500]
-                      : Colors.neutral[700],
+                    borderColor: Colors.accent[500],
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 6,
                   }}
                 >
-                  <CText size="xs">{`${member.firstName} ${member.lastName}`}</CText>
+                  <CText size="xs">
+                    {friend.givenName} {friend.familyName}
+                  </CText>
+                  <CText size="xs" color="neutral" shade={400}>
+                    ✕
+                  </CText>
                 </Pressable>
               );
             })}

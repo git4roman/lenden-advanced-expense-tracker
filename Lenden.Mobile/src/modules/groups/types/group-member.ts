@@ -1,7 +1,23 @@
+// export type GroupMember = {
+//   userId: string;
+//   email: string;
+//   firstName: string;
+//   lastName: string;
+//   userImageUri: string;
+// };
+
+export type Group = {
+  id: string;
+  name: string;
+  imageUrl: string;
+  updatedAt?: string;
+  members: GroupMember[];
+  createdBy?: number;
+};
+
 export type GroupMember = {
-  userId: number;
+  id: string;
   email: string;
-  firstName: string;
-  lastName: string;
-  userImageUri: string;
+  givenName: string;
+  familyName: string;
 };

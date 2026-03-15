@@ -14,7 +14,7 @@ export const useGroupHandler = (onClose: () => void) => {
     useCreateGroupMutation();
   const [deleteGroup, { isLoading: isDeleteGroupLoading }] =
     useDeleteGroupMutation();
-  const [selectedMembers, setSelectedMembers] = useState<number[]>([]);
+  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
   const [suggestedMembers, setSuggestedMembers] = useState<GroupMember[]>([]);
 
   const handleCreateGroup = async () => {
@@ -26,10 +26,11 @@ export const useGroupHandler = (onClose: () => void) => {
       });
 
       const response = await createGroup({
-        groupName,
-        groupImageUri,
-        members: selectedMembers,
+        name: groupName,
+        imageUrl: groupImageUri,
+        userIds: selectedMembers,
       }).unwrap();
+
       Toast.show({ type: "success", text1: "Group Creation Successful" });
       setGroupName("");
       setGroupImageUri("");

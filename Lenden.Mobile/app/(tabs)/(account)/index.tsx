@@ -24,6 +24,8 @@ import { logout } from "@/src/shared/store/slices/auth-slice";
 import { clearAuth } from "@/src/shared/services/storage/auth-storage";
 import { RootState } from "@/src/shared/store/store";
 import { formatDate } from "@/src/shared/utils/format-date.utils";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+import { getInitials } from "@/src/shared/utils/get-initials.utils";
 
 type AcccountItems = {
   title: string;
@@ -174,10 +176,7 @@ export default function Account() {
               }}
             >
               <CText size="sm" color="accent" shade={300} weight="bold">
-                {infoRows.fullName
-                  .split(" ")
-                  .map((word) => word[0])
-                  .join("")}
+                {getInitials(infoRows.fullName)}
               </CText>
             </View>
             <CText size="sm" color={Colors.neutral[100]} weight="bold">

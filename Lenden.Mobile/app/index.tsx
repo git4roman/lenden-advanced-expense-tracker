@@ -1,6 +1,5 @@
-import React from "react";
-import { Redirect } from "expo-router";
 import { store } from "@/src/shared/store/store";
+import { Redirect } from "expo-router";
 
 const index = () => {
   const token = store.getState().auth.accessToken;
@@ -8,6 +7,7 @@ const index = () => {
 
   return <Redirect href={token ? "/(tabs)/(home)" : "/(auth)/login"} />;
   // return <Redirect href={"/(tabs)/(home)"} />;
+  // return null;
 };
 
 export default index;
