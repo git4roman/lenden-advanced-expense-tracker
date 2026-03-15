@@ -11,5 +11,6 @@ public interface IUserRepository
     Task<UserEntity> GetUserByIdAsync(long userId, CancellationToken ct = default);
     
     Task<List<UserIdandPublicIdDto>> GetUsersIdsInBulkWithPublicIdAsync(List<Guid> publicIds, CancellationToken ct = default);
+    Task<List<UserEntity>> GetUsersInBulkWithPublicIdAsync(List<Guid> publicIds, CancellationToken ct = default);
    
 }

@@ -15,15 +15,28 @@ public class GroupService : IGroupService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task CreateGroupAsync(Guid CreatorId,CreateGroupRequest request, CancellationToken ct = default)
+    public async Task CreateGroupAsync(Guid creatorId,CreateGroupRequest request, CancellationToken ct = default)
     {
-        var creator = await _unitOfWork.UserRepository.GetUserByPublicIdAsync(CreatorId, ct);
+        var creator = await _unitOfWork.UserRepository.GetUserByPublicIdAsync(creatorId, ct);
         if (creator is null)
             throw new Exception("Creator not found");
 
         var group = new GroupEntity(request.Name, request.ImageUrl, creator.Id);
 
-        group.AddMember(creator,creator.Id); 
+        group.AddMember(creator,creator.Id, true);
+        try
+        {
+            var publicIds = request.UserIds
+                .Distinct()
+                .ToList();
+
+            var users = await _unitOfWork.UserRepository.GetUsersInBulkWithPublicIdAsync(publicIds, ct);
+            group.AddMembersBulk(users,creator.Id);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
         await _unitOfWork.GroupRepository.AddAsync(group, ct);
         await _unitOfWork.SaveChangesAsync(ct);
         return;

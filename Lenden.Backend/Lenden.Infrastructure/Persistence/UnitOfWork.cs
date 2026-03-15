@@ -1,6 +1,7 @@
 ﻿using Lenden.Application.Interfaces;
 using Lenden.Application.Interfaces.Repositories;
 using Lenden.Infrastructure.Persistence.DbContexts;
+using Lenden.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore.Storage;
 using IUserRepository = Lenden.Application.Interfaces.IUserRepository;
 
@@ -10,7 +11,7 @@ public class UnitOfWork : IUnitOfWork
 {
     private readonly AppDbContext _context;
 
-    public UnitOfWork(AppDbContext context, IUserRepository userRepository, IAuthRepository authRepository, IGroupRepository groupRepository, IUserBalanceRepository userBalanceRepository, IUserGroupRepository userGroupRepository, IExpenseRepository expenseRepository)
+    public UnitOfWork(AppDbContext context, IUserRepository userRepository, IAuthRepository authRepository, IGroupRepository groupRepository, IUserBalanceRepository userBalanceRepository, IUserGroupRepository userGroupRepository, IExpenseRepository expenseRepository, IFriendshipRepository friendshipRepository)
     {
         _context = context;
         UserRepository = userRepository;
@@ -19,6 +20,7 @@ public class UnitOfWork : IUnitOfWork
         UserBalanceRepository = userBalanceRepository;
         UserGroupRepository = userGroupRepository;
         ExpenseRepository = expenseRepository;
+        FriendshipRepository=friendshipRepository;
     }
 
     public IUserRepository UserRepository { get; private set; }
@@ -27,7 +29,8 @@ public class UnitOfWork : IUnitOfWork
     public IUserBalanceRepository UserBalanceRepository { get; private set; }
     public IUserGroupRepository UserGroupRepository { get; private set; }
     public IExpenseRepository ExpenseRepository { get; private set; }
-
+    
+    public IFriendshipRepository FriendshipRepository { get; private set; }
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         return await _context.SaveChangesAsync(cancellationToken);

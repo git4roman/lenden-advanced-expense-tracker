@@ -24,7 +24,21 @@ public class GroupApiController : ControllerBase
     {
         var currentUser = await _authService.ValidateUserAsync(User, ct);
         var groups = await _groupService.GetGroupsByUserIdAsync(currentUser.PublicId,ct);
-        return Ok(groups);
+        var result = groups.Select(g => new GroupDto
+        {
+            Id = g.PublicId,
+            Name = g.Name,
+            ImageUrl = g.ImageUrl,
+            Members = g.Members.Select(m => new MemberDto
+            {
+                Id = m.User.PublicId,
+                Email = m.User.Email.Value,
+                GivenName = m.User.GivenName,
+                FamilyName = m.User.FamilyName
+            }).ToList()
+        });
+
+        return Ok(result);
     }
 
     [HttpPost]
@@ -69,5 +83,21 @@ public class GroupApiController : ControllerBase
         // await _groupManager.EnsureGroupAdminAsync(groupId, User, ct);
         await _groupService.DeleteGroupAsync(groupId);
         return NoContent();
+    }
+    
+    public class GroupDto
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string ImageUrl { get; set; }
+        public List<MemberDto> Members { get; set; }
+    }
+
+    public class MemberDto
+    {
+        public Guid Id { get; set; }
+        public string Email { get; set; }
+        public string GivenName { get; set; }
+        public string FamilyName { get; set; }
     }
 }

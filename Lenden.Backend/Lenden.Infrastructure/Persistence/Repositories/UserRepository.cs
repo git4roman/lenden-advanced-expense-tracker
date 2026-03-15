@@ -44,5 +44,11 @@ public class UserRepository: IUserRepository
             .Select(u => new UserIdandPublicIdDto(u.Id, u.PublicId))
             .ToListAsync();
     }
-    
+
+    public async Task<List<UserEntity>> GetUsersInBulkWithPublicIdAsync(List<Guid> publicIds, CancellationToken ct = default)
+    {
+        return await _dbContext.Users
+            .Where(u => publicIds.Contains(u.PublicId))
+            .ToListAsync();
+    }
 }

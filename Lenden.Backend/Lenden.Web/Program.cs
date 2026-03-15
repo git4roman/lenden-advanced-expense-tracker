@@ -13,8 +13,8 @@ builder.Services.AddAuthorization();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddCorsPolicies();
-builder.Services.AddSwaggerDocumentation(); 
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerDocumentation(); 
 
 var app = builder.Build();
 
@@ -26,11 +26,11 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-if (app.Environment.IsDevelopment())
-{
+// if (app.Environment.IsDevelopment())
+// {
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+// }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

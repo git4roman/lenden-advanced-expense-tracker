@@ -27,7 +27,11 @@ public class GroupRepository : IGroupRepository
 
     public async Task<IEnumerable<GroupEntity?>> GetByUserPublicIdAsync(Guid publicId, CancellationToken ct = default)
     {
-        return await _context.Groups.Where(g=>g.Members.Any(m=>m.User.PublicId == publicId)).ToListAsync(ct);
+        return await _context.Groups
+            .Include(g => g.Members)
+            .ThenInclude(m => m.User)
+            .Where(g => g.Members.Any(m => m.User.PublicId == publicId))
+            .ToListAsync(ct);
     }
 
     public async Task<GroupEntity?> GetByPublicIdAsync(Guid publicId, CancellationToken ct = default)

@@ -45,6 +45,27 @@ public class GroupEntity
             invitedByUserId
         ));
     }
+    
+    public void AddMembersBulk(IEnumerable<UserEntity> users, long invitedByUserId)
+    {
+        var existingUserIds = _members
+            .Where(m => m.Status == GroupMembershipStatus.Active)
+            .Select(m => m.UserId)
+            .ToHashSet();
+
+        foreach (var user in users)
+        {
+            if (existingUserIds.Contains(user.Id))
+                continue;
+            
+            _members.Add(new UserGroupEntity(
+                userId: user.Id,
+                groupId: Id,
+                role: UserGroupRole.Member,
+                invitedByUserId
+            ));
+        }
+    }
 
     public void RemoveMember(long userId)
     {

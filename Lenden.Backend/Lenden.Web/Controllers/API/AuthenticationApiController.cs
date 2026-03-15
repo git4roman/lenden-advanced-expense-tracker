@@ -28,6 +28,10 @@ namespace Lenden.Web.Controllers.API
             {
                 return Unauthorized(new { message = "Invalid email or password." });
             }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         
         [HttpPost("register")]

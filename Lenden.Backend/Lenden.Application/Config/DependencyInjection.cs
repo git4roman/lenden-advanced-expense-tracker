@@ -15,6 +15,7 @@ public static class DependencyInjection
         services.AddScoped<IGroupService, GroupService>();
         services.AddScoped<TokenService>(); 
         services.AddScoped<IGroupValidators, GroupValidator>();
+        services.AddScoped<IFriendshipService, FriendshipService>();
         return services;
     }
 }

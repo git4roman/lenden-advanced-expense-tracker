@@ -17,6 +17,7 @@ public class AppDbContext: DbContext
     public DbSet<UserBalanceEntity> UserBalances { get; set; }
     public DbSet<ExpenseEntity> Expenses { get; set; }
     public DbSet<AuthSessionEntity> AuthSessions { get; set; }
+    public DbSet<FriendshipEntity> Friends { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -25,5 +26,6 @@ public class AppDbContext: DbContext
         modelBuilder.ApplyConfiguration(new UserGroupEntityConfiguration());
         modelBuilder.ApplyConfiguration(new GroupEntityConfiguration());
         modelBuilder.ApplyConfiguration(new ExpenseEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new FriendshipEntityConfiguration());
     }
 }
