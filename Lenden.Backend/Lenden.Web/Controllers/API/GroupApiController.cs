@@ -41,6 +41,30 @@ public class GroupApiController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("{groupId:guid}")]
+    public async Task<IActionResult> GetGroup(Guid groupId, CancellationToken ct = default)
+    {
+        var currentUser = await _authService.ValidateUserAsync(User, ct);
+        var group = await _groupService.GetGroupByPublicIdAsync(groupId, ct);
+        if (group is null)
+            return NotFound();
+        var result = new GroupDto
+        {
+            Id = group.PublicId,
+            Name = group.Name,
+            ImageUrl = group.ImageUrl,
+            Members = group.Members.Select(m => new MemberDto
+            {
+                Id = m.User.PublicId,
+                Email = m.User.Email.Value,
+                GivenName = m.User.GivenName,
+                FamilyName = m.User.FamilyName
+            }).ToList()
+        };
+
+        return Ok(result);
+    }
+
     [HttpPost]
     public async Task<IActionResult> CreateGroup(CreateGroupRequest request, CancellationToken ct = default)
     {

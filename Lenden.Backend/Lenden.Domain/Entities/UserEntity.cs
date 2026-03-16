@@ -47,6 +47,8 @@ public class UserEntity
     private readonly List<AuthProviderEntity> _authProviders ;
     public IReadOnlyCollection<AuthProviderEntity> AuthProviders => _authProviders.AsReadOnly();
     
+    
+    
     public void AddGoogleProvider(string googleUid)
     {
         if (_authProviders.Any(a => a.Provider == "Google" && a.ProviderUserId == googleUid))

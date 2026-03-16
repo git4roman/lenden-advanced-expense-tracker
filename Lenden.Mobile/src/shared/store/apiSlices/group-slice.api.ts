@@ -11,11 +11,30 @@ const groupApi = api.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
+          console.log("Group APi ", data);
           dispatch(
             setUserGroups({
               groups: data.groups,
             }),
           );
+        } catch (error) {
+          console.log("Group APi ", error);
+        }
+      },
+    }),
+    getGroup: builder.query({
+      query: (payload) => ({
+        url: `/Group/${payload}`,
+        method: "GET",
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          // dispatch(
+          //   setUserGroups({
+          //     groups: data.groups,
+          //   }),
+          // );
         } catch (error) {}
       },
     }),
@@ -61,4 +80,5 @@ export const {
   useCreateGroupMutation,
   useGetGroupsQuery,
   useDeleteGroupMutation,
+  useGetGroupQuery,
 } = groupApi;

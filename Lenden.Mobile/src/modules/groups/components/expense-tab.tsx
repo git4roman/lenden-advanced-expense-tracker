@@ -4,6 +4,8 @@ import { CText } from "@/src/shared/ui/components/CText";
 import { ActivityItem } from "./activity-item";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { router, useLocalSearchParams } from "expo-router";
+import { useGetExpensesQuery } from "@/src/shared/store/apiSlices/expense-slice.api";
+import { formatDateTime } from "@/src/shared/utils/format-date-expense.utils";
 
 const activityMockData = [
   {
@@ -54,7 +56,6 @@ const activityMockData = [
     categoryKey: "household_utilities",
     description: "LPG cylinder refill for cooking",
     amount: "2500",
-    
   },
   {
     date: "20 Jan",
@@ -86,9 +87,20 @@ const activityMockData = [
   },
 ];
 
-const ExpenseTab = () => {
-  const { groupId } = useLocalSearchParams<{ groupId?: string }>();
-
+const ExpenseTab = ({ groupId }: { groupId: string }) => {
+  const { data: expenses } = useGetExpensesQuery(groupId as string);
+  console.log("The Expenses Data is:", expenses);
+  const activityData =
+    expenses?.map((expense: any) => {
+      const { date, time } = formatDateTime(expense.createdAt);
+      return {
+        date,
+        time,
+        categoryKey: expense.categoryKey ?? "other",
+        description: expense.description ?? "No description",
+        amount: expense.totalAmount?.toString() ?? "0",
+      };
+    }) ?? [];
   return (
     <ScrollView
       style={{ borderColor: "transparent" }}
@@ -109,12 +121,10 @@ const ExpenseTab = () => {
             color="neutral"
             shade={400}
             size="ssm"
-            
             style={{ paddingHorizontal: 10 }}
             weight="medium"
-            
           >
-            Fri, FEB 6           
+            Fri, FEB 6
           </CText>
           <View
             style={{
@@ -130,7 +140,7 @@ const ExpenseTab = () => {
             gap: 10,
           }}
         >
-          {activityMockData.map((item, index) => (
+          {activityData.map((item: any, index: number) => (
             <Pressable
               key={index}
               onPress={() => {

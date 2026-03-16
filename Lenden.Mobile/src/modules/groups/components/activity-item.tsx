@@ -83,9 +83,11 @@ const sharedExpenseCategories = [
 ];
 
 export const ActivityItem = ({ item }: any) => {
+  console.log("The item is", item);
   const category = sharedExpenseCategories.find(
-    (cat) => cat.key === item.categoryKey,
+    (cat) => cat.label === item.categoryKey,
   );
+  console.log(category);
   return (
     <View
       style={{

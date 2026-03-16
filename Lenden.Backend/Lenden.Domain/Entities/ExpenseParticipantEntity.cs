@@ -4,7 +4,8 @@ public class ExpenseParticipantEntity
 {
     public Guid Id { get; private set; }
     public Guid ExpenseId { get; private set; }         
-    public long UserInternalId { get; private set; }     
+    public long UserId { get; private set; }    
+    public UserEntity User {get; private set;}
     public decimal Net { get; private set; }        
     public decimal Paid { get; private set; }        
     public decimal Split { get; private set; }     
@@ -20,7 +21,7 @@ public class ExpenseParticipantEntity
         )
     {
         ExpenseId = expenseId;
-        UserInternalId = userInternalId;
+        UserId = userInternalId;
         Paid = paid;
         Split = split;
         Net = net;

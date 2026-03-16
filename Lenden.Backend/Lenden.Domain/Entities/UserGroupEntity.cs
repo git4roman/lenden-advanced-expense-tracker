@@ -16,11 +16,11 @@ public class UserGroupEntity
     public long? InvitedByUserId { get; private set; }
     public UserEntity InvitedByUser { get; private set; }
 
-    public UserGroupEntity(long userId, long groupId, UserGroupRole role = null, long? invitedByUserId = null)
+    public UserGroupEntity(long userId, long groupId, UserGroupRole? role , long? invitedByUserId = null)
     {
         UserId = userId;
         GroupId = groupId;
-        Role = role ?? UserGroupRole.Member;
+        Role = UserGroupRole.Member;
         InvitedByUserId = invitedByUserId;
         JoinedAt = DateTimeOffset.UtcNow;
         Status = GroupMembershipStatus.Active;

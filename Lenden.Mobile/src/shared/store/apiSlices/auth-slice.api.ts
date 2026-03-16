@@ -19,7 +19,9 @@ const authApi = api.injectEndpoints({
               user: data.user,
             }),
           );
-        } catch (error) {}
+        } catch (error) {
+          console.log("Error From Auth Login", error);
+        }
       },
     }),
 

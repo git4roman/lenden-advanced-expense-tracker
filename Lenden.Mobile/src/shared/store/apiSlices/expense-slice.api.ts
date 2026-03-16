@@ -4,8 +4,8 @@ import { setExpenses } from "../slices/expense-slice";
 const expenseApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getExpenses: builder.query({
-      query: () => ({
-        url: "/ExpenseApi",
+      query: (payload) => ({
+        url: `/Expense/${payload}`,
         method: "GET",
       }),
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {

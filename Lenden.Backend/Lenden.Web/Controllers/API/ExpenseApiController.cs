@@ -49,7 +49,19 @@ public class ExpenseApiController : ControllerBase
         CancellationToken ct = default)
     {
         var result = await _expenseService.GetGroupExpensesAsync(groupId, ct);
-        return Ok(result);
+        var response = result.Select(r =>
+            new
+            {
+                Id = r.PublicId,
+                TotalAmount = r.TotalAmount,
+                Participants = r.Participants.Select(p => new
+                {
+                    p.User.PublicId, p.User.GivenName, p.User.FamilyName, p.User.Email.Value, p.Net, p.Paid, p.Split
+                }),
+                CreatedAt = r.CreatedAt,
+                CategoryKey = r.Category.Name,
+            });
+        return Ok(response);
     }
 
 

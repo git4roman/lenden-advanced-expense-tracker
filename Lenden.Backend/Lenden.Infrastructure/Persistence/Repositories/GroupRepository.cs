@@ -36,7 +36,7 @@ public class GroupRepository : IGroupRepository
 
     public async Task<GroupEntity?> GetByPublicIdAsync(Guid publicId, CancellationToken ct = default)
     {
-        return await _context.Groups.Include(g=>g.Members).Include(g=>g.UserBalances)
+        return await _context.Groups.Include(g=>g.Members).ThenInclude(u=>u.User).Include(g=>g.UserBalances)
             .FirstOrDefaultAsync(g => g.PublicId == publicId, ct);
     }
     public async Task<bool> ExistsAsync(long id, CancellationToken ct = default)

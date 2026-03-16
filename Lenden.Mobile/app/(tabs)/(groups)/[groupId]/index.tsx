@@ -19,16 +19,16 @@ import BalanceTab from "@/src/modules/groups/components/balance-tab";
 import TotalTab from "@/src/modules/groups/components/total-tab";
 import GroupInfoTab from "@/src/modules/groups/components/group-info-tab";
 import { groupButtonsLabel } from "@/src/modules/groups/constants/group-buttons-label.constant";
-
-const TAB_CONTENT: Record<string, React.FC> = {
-  Expenses: ExpenseTab,
-  label2: BalanceTab,
-  label3: TotalTab,
-  label4: GroupInfoTab,
-};
+import { useGetGroupQuery } from "@/src/shared/store/apiSlices/group-slice.api";
 
 const GroupScreen = () => {
   const { groupId } = useLocalSearchParams();
+  const TAB_CONTENT: Record<string, React.FC<{ groupId: string }>> = {
+    Expenses: ExpenseTab,
+    label2: BalanceTab,
+    label3: TotalTab,
+    label4: GroupInfoTab,
+  };
   const insets = useSafeAreaInsets();
   const [selectedTab, setSelectedTab] = useState<string>(
     groupButtonsLabel[0].key,
@@ -36,6 +36,9 @@ const GroupScreen = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const { data: group } = useGetGroupQuery(groupId as string);
+
+  console.log("The Single Group Data is:", group);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -66,7 +69,7 @@ const GroupScreen = () => {
     >
       <Stack.Screen
         options={{
-          title: groupData.label,
+          title: group?.name ?? "Group",
           headerRight: () => (
             <>
               <Pressable
@@ -96,7 +99,9 @@ const GroupScreen = () => {
         }}
       >
         <Image
-          source={{ uri: groupData.image }}
+          source={{
+            uri: group?.imageUrl,
+          }}
           style={{
             width: "100%",
             height: 150,
@@ -110,7 +115,10 @@ const GroupScreen = () => {
         style={{ gap: 12, paddingHorizontal: 8, flex: 1, position: "relative" }}
       >
         <GroupTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
-        <AciveTabScreen key={`${selectedTab}-${refreshKey}`} />
+        <AciveTabScreen
+          key={`${selectedTab}-${refreshKey}`}
+          groupId={groupId as string}
+        />
         {/* {selectedTab === "Expenses" && (
           
         )} */}

@@ -21,7 +21,6 @@ import { Group } from "@/src/modules/groups/types/group-member";
 const GroupScreen = () => {
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
   const { data: groups, refetch, isFetching } = useGetGroupsQuery(undefined);
-
   const onRefresh = useCallback(() => {
     refetch();
   }, [refetch]);
