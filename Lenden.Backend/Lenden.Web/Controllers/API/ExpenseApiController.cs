@@ -25,17 +25,24 @@ public class ExpenseApiController : ControllerBase
         _authService = authService;
     }
 
-    [HttpPost("{groupId:Guid}")]
+    [HttpPost]
     public async Task<IActionResult> CreateExpense(
-        Guid groupId,
         CreateExpenseRequest request,
         CancellationToken ct = default)
     {
-        var currentUser = await _authService.ValidateUserAsync(User, ct);
-        await _expenseService.CreateExpenseAsync(currentUser.Id,request, ct);
-        return Ok();
+        try
+        {
+            var currentUser = await _authService.ValidateUserAsync(User, ct);
+            await _expenseService.CreateExpenseAsync(currentUser.Id, request, ct);
+            return Ok();
+        }
+        catch (System.Exception e)
+        {
+
+            throw new Exception(e.Message);
+        }
     }
-    
+
     [HttpGet("{groupId:Guid}")]
     public async Task<IActionResult> GetGroupExpenses(
         Guid groupId,
@@ -44,6 +51,6 @@ public class ExpenseApiController : ControllerBase
         var result = await _expenseService.GetGroupExpensesAsync(groupId, ct);
         return Ok(result);
     }
-    
-   
+
+
 }

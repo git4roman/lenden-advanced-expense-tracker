@@ -43,6 +43,7 @@ public class ExpenseEntity
         Description = description;
         ImageUrl = imageUrl;
         CreatedAt = DateTimeOffset.UtcNow;
+        CreatorId = creatorId;
     }
 
     public static ExpenseEntity Create(

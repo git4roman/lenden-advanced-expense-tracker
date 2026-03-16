@@ -1,5 +1,6 @@
 ﻿using Lenden.Application.Interfaces.Services;
 using Lenden.Application.Interfaces.Validators;
+using Lenden.Application.Managers;
 using Lenden.Application.Services;
 using Lenden.Application.Validatiors;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +17,7 @@ public static class DependencyInjection
         services.AddScoped<TokenService>(); 
         services.AddScoped<IGroupValidators, GroupValidator>();
         services.AddScoped<IFriendshipService, FriendshipService>();
+        services.AddScoped<AuthManager>();
         return services;
     }
 }

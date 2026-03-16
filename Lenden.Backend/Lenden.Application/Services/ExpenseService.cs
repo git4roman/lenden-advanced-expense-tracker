@@ -19,51 +19,51 @@ public class ExpenseService : IExpenseService
         _groupValidator = groupValidator;
     }
 
-    public async Task CreateExpenseAsync(long creatorId,CreateExpenseRequest request, CancellationToken ct = default)
-{
-    var group = await _groupService.GetGroupByPublicIdAsync(request.GroupPublicId, ct);
-    if (group is null) throw new Exception("Group not found");
-
-    using var transaction = await _unitOfWork.BeginTransactionAsync(ct);
-    
-    try
+    public async Task CreateExpenseAsync(long creatorId, CreateExpenseRequest request, CancellationToken ct = default)
     {
-        var publicIds = request.Users
-            .Select(x => x.UserId)
-            .Distinct()
-            .ToList();
+        var group = await _groupService.GetGroupByPublicIdAsync(request.GroupPublicId, ct);
+        if (group is null) throw new Exception("Group not found");
 
-        var users = await _unitOfWork.UserRepository.GetUsersIdsInBulkWithPublicIdAsync(publicIds, ct);
-        var userMap = users.ToDictionary(x => x.PublicId, x => x.UserId);
+        using var transaction = await _unitOfWork.BeginTransactionAsync(ct);
 
-        var expenseEntity = ExpenseEntity.Create(
-            creatorId,
-            group.Id,
-            request.TotalAmount,
-            request.Category,
-            request.Description,
-            request.ImageUrl
-        );
-
-        foreach (var x in request.Users)
+        try
         {
-            expenseEntity.AddExpenseParticipant(
-                userId: userMap[x.UserId],
-                paid: x.paidAmount,
-                split: x.splitAmount
-            );
-        }
+            var publicIds = request.Users
+                .Select(x => x.UserId)
+                .Distinct()
+                .ToList();
 
-        await _unitOfWork.ExpenseRepository.AddAsync(expenseEntity, ct);
-        await _unitOfWork.SaveChangesAsync(ct);
-        await transaction.CommitAsync();
+            var users = await _unitOfWork.UserRepository.GetUsersIdsInBulkWithPublicIdAsync(publicIds, ct);
+            var userMap = users.ToDictionary(x => x.PublicId, x => x.UserId);
+
+            var expenseEntity = ExpenseEntity.Create(
+                creatorId,
+                group.Id,
+                request.TotalAmount,
+                request.Category,
+                request.Description,
+                request.ImageUrl
+            );
+
+            foreach (var x in request.Users)
+            {
+                expenseEntity.AddExpenseParticipant(
+                    userId: userMap[x.UserId],
+                    paid: x.paidAmount,
+                    split: x.splitAmount
+                );
+            }
+
+            await _unitOfWork.ExpenseRepository.AddAsync(expenseEntity, ct);
+            await _unitOfWork.SaveChangesAsync(ct);
+            await transaction.CommitAsync();
+        }
+        catch (Exception e)
+        {
+            await transaction.RollbackAsync(ct);
+            throw new Exception(e.InnerException?.Message ?? e.Message);
+        }
     }
-    catch (Exception e)
-    {
-        await transaction.RollbackAsync(ct);
-        throw;
-    }
-}
 
     public async Task<IEnumerable<ExpenseEntity?>> GetGroupExpensesAsync(Guid groupId, CancellationToken ct = default)
     {
