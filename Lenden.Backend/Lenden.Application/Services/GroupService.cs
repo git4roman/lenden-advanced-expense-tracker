@@ -72,11 +72,17 @@ public class GroupService : IGroupService
         await _unitOfWork.SaveChangesAsync(ct);
     }
 
-    public async Task DeleteGroupAsync(Guid groupId, CancellationToken ct = default)
+    public async Task DeleteGroupAsync(Guid groupId,long userId, CancellationToken ct = default)
     {
         var group= await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId, ct);
-        _unitOfWork.GroupRepository.Remove(group);
-        await _unitOfWork.SaveChangesAsync(ct);
+        if(group.CreatedBy == userId)
+        {
+            // _unitOfWork.GroupRepository.Remove(group);
+            group.DisableGroup();
+            await _unitOfWork.SaveChangesAsync(ct);
+        }
+        else throw new Exception("You are not the creator of this group");
+        
     }
 
     // public async Task<UserEntity?> GetGroupMemberByPublicId(Guid groupId, Guid userId, CancellationToken ct = default)
@@ -91,7 +97,7 @@ public class GroupService : IGroupService
     {
         var group = await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId, ct);
         if (group is null)
-            throw new KeyNotFoundException("Group not found.");
+            throw new Exception("Group not found.");
         return group;
     }
 

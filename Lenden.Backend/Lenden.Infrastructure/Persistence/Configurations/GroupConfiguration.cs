@@ -34,6 +34,10 @@ public class GroupEntityConfiguration : IEntityTypeConfiguration<GroupEntity>
 
         builder.Property(g => g.UpdatedAt)
             .IsRequired();
+        
+        builder.Property(g => g.Status)
+            .HasConversion(new SmartEnumConverter<GroupStatus>())
+            .IsRequired();
 
         // Navigation
         builder.HasMany(g => g.Members)

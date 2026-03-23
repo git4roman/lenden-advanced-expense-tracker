@@ -44,25 +44,36 @@ public class GroupApiController : ControllerBase
     [HttpGet("{groupId:guid}")]
     public async Task<IActionResult> GetGroup(Guid groupId, CancellationToken ct = default)
     {
-        var currentUser = await _authService.ValidateUserAsync(User, ct);
-        var group = await _groupService.GetGroupByPublicIdAsync(groupId, ct);
-        if (group is null)
-            return NotFound();
-        var result = new GroupDto
+        try
         {
-            Id = group.Slug,
-            Name = group.Name,
-            ImageUrl = group.ImageUrl,
-            Members = group.Members.Select(m => new MemberDto
+            var currentUser = await _authService.ValidateUserAsync(User, ct);
+            var group = await _groupService.GetGroupByPublicIdAsync(groupId, ct);
+            if (group is null)
+                return NotFound();
+            var result = new GroupDto
             {
-                Id = m.User.Slug,
-                Email = m.User.Email.Value,
-                GivenName = m.User.GivenName,
-                FamilyName = m.User.FamilyName
-            }).ToList()
-        };
+                Id = group.Slug,
+                Name = group.Name,
+                ImageUrl = group.ImageUrl,
+                Members = group.Members.Select(m => new MemberDto
+                {
+                    Id = m.User.Slug,
+                    Email = m.User.Email.Value,
+                    GivenName = m.User.GivenName,
+                    FamilyName = m.User.FamilyName
+                }).ToList()
+            };
 
-        return Ok(result);
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+           return BadRequest(new 
+           {
+               status = 400,
+               message = e.Message
+           });
+        }
     }
 
     [HttpPost]
@@ -102,9 +113,9 @@ public class GroupApiController : ControllerBase
     [HttpDelete("{groupId:Guid}")]
     public async Task<IActionResult> DeleteGroup([FromRoute]Guid groupId,CancellationToken ct = default)
     {
-        await _authService.ValidateUserAsync(User, ct);
+       var currenUser= await _authService.ValidateUserAsync(User, ct);
         // await _groupManager.EnsureGroupAdminAsync(groupId, User, ct);
-        await _groupService.DeleteGroupAsync(groupId);
+        await _groupService.DeleteGroupAsync(groupId, currenUser.Id);
         return NoContent();
     }
     

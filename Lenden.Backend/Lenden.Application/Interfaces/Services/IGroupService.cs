@@ -13,7 +13,7 @@ public interface IGroupService
 
     Task LeaveGroupAsync(Guid groupId, long userId, CancellationToken ct = default);
 
-    Task DeleteGroupAsync(Guid groupId, CancellationToken ct = default);
+    Task DeleteGroupAsync(Guid groupId,long userId, CancellationToken ct = default);
     
     // Task<UserEntity?> GetGroupMemberByPublicId(Guid groupId, Guid userId, CancellationToken ct = default);
     

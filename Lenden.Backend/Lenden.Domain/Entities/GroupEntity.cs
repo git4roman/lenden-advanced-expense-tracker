@@ -21,6 +21,7 @@ public class GroupEntity
     public long CreatedBy { get; private set; } 
     public DateTimeOffset CreatedAt { get; private set; }
     public DateTimeOffset UpdatedAt { get; private set; }
+    public GroupStatus Status { get; private set; }
 
     private readonly List<UserGroupEntity> _members;
     public IReadOnlyCollection<UserGroupEntity> Members => _members.AsReadOnly();
@@ -76,6 +77,11 @@ public class GroupEntity
         {
             userGroup.RemoveMember();
         }
+    }
+
+    public void DisableGroup()
+    {
+        Status = GroupStatus.Disabled;
     }
 
     public void UpdateInfo(string? name, string? imageUrl)
