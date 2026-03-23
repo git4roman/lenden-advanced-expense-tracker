@@ -15,7 +15,7 @@ public class GroupEntity
         _members = new List<UserGroupEntity>();
     }
     public long Id { get; private set; } 
-    public Guid PublicId { get; private set; } = Guid.NewGuid(); 
+    public Guid Slug { get; private set; } = Guid.NewGuid(); 
     public string Name { get; private set; }
     public string ImageUrl { get; private set; }
     public long CreatedBy { get; private set; } 
@@ -90,7 +90,7 @@ public class GroupEntity
     }
 
     public bool IsActiveMember(Guid userId)
-    { return _members.Any(ug => ug.User.PublicId == userId && ug.Status == GroupMembershipStatus.Active);
+    { return _members.Any(ug => ug.User.Slug == userId && ug.Status == GroupMembershipStatus.Active);
     }
 
     public UserBalanceEntity CreateUserBalance(long groupId, long creditorId, long debtorId)
@@ -98,12 +98,4 @@ public class GroupEntity
         return  UserBalanceEntity.Create(groupId, creditorId, debtorId);
     }
 
-    // public void RemoveExpense(ExpenseEntity expense)
-    // {
-    //     
-    //     _expenses.Remove(expense);
-    //     
-    // }
-    
-   
 }

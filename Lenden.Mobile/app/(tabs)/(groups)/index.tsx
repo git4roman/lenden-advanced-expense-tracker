@@ -20,7 +20,13 @@ import { Group } from "@/src/modules/groups/types/group-member";
 
 const GroupScreen = () => {
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
-  const { data: groups, refetch, isFetching } = useGetGroupsQuery(undefined);
+  const {
+    data: groups,
+    refetch,
+    isFetching,
+    error,
+  } = useGetGroupsQuery(undefined);
+  console.log("The Group Data", groups);
   const onRefresh = useCallback(() => {
     refetch();
   }, [refetch]);
@@ -53,148 +59,167 @@ const GroupScreen = () => {
           />
         }
       >
-        {(groups ?? []).map((group: Group, index: number) => (
-          <React.Fragment key={group.id}>
-            <Pressable
-              style={{
-                flexDirection: "row",
-                gap: 16,
-                backgroundColor: Colors.neutral[900],
-                borderRadius: 16,
-                justifyContent: "flex-start",
-                alignItems: "center",
-                paddingVertical: 12,
-                paddingRight: 12,
-              }}
-              onPress={() =>
-                router.push({
-                  pathname: "/[groupId]",
-                  params: { groupId: group.id },
-                })
-              }
-            >
-              {/* Group image / initials */}
-              <View
-                style={{
-                  width: 100,
-                  height: 70,
-                  borderWidth: 1,
-                  borderColor: Colors.neutral[600],
-                  borderRadius: 8,
-                  overflow: "hidden",
-                }}
-              >
-                {group.imageUrl ? (
-                  <Image
-                    source={{ uri: group.imageUrl }}
-                    resizeMode="cover"
-                    style={{ width: "100%", height: "100%" }}
-                  />
-                ) : (
-                  <View
-                    style={{
-                      flex: 1,
-                      backgroundColor: getColorFromString(group.name),
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <CText weight="bold" size="lg" color="neutral" shade={50}>
-                      {getInitials(group.name)}
-                    </CText>
-                  </View>
-                )}
-              </View>
-
-              {/* Group info */}
-              <View
+        {!groups || groups?.length === 0 ? (
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              flex: 1,
+              marginVertical: 250,
+            }}
+          >
+            <CText color="primary" shade={200} size="xlg">
+              No Groups Available
+            </CText>
+          </View>
+        ) : (
+          groups.map((group: Group, index: number) => (
+            <React.Fragment key={group.id}>
+              <Pressable
                 style={{
                   flexDirection: "row",
-                  justifyContent: "space-between",
+                  gap: 16,
+                  backgroundColor: Colors.neutral[900],
+                  borderRadius: 16,
+                  justifyContent: "flex-start",
                   alignItems: "center",
-                  flex: 1,
+                  paddingVertical: 12,
+                  paddingRight: 12,
                 }}
+                onPress={() =>
+                  router.push({
+                    pathname: "/[groupId]",
+                    params: { groupId: group.id },
+                  })
+                }
               >
-                <View style={{ gap: 10 }}>
-                  <CText
-                    weight="semibold"
-                    size="md"
-                    color="neutral"
-                    shade={300}
-                  >
-                    {group.name}
-                  </CText>
-
-                  {/* Member avatars (initials since no avatar URL) */}
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    {group.members.slice(0, 3).map((member, i) => (
-                      <View
-                        key={member.id}
-                        style={{
-                          width: 20,
-                          height: 20,
-                          borderRadius: 25,
-                          borderWidth: 2,
-                          borderColor: Colors.accent[800],
-                          overflow: "hidden",
-                          marginLeft: i === 0 ? 0 : -6,
-                          backgroundColor: getColorFromString(member.givenName),
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <CText size="xs" color="neutral" shade={50}>
-                          {getInitials(
-                            `${member.givenName} ${member.familyName}`,
-                          )}
-                        </CText>
-                      </View>
-                    ))}
-
-                    {group.members.length > 3 && (
-                      <View
-                        style={{
-                          width: 20,
-                          height: 20,
-                          borderRadius: 25,
-                          backgroundColor: Colors.neutral[700],
-                          justifyContent: "center",
-                          alignItems: "center",
-                          marginLeft: -6,
-                          borderWidth: 2,
-                          borderColor: Colors.accent[800],
-                          overflow: "hidden",
-                        }}
-                      >
-                        <CText
-                          size="xs"
-                          weight="semibold"
-                          color="neutral"
-                          shade={50}
-                        >
-                          +{group.members.length - 3}
-                        </CText>
-                      </View>
-                    )}
-                  </View>
+                {/* Group image / initials */}
+                <View
+                  style={{
+                    width: 100,
+                    height: 70,
+                    borderWidth: 1,
+                    borderColor: Colors.neutral[600],
+                    borderRadius: 8,
+                    overflow: "hidden",
+                  }}
+                >
+                  {group.imageUrl ? (
+                    <Image
+                      source={{ uri: group.imageUrl }}
+                      resizeMode="cover"
+                      style={{ width: "100%", height: "100%" }}
+                    />
+                  ) : (
+                    <View
+                      style={{
+                        flex: 1,
+                        backgroundColor: getColorFromString(group.name),
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <CText weight="bold" size="lg" color="neutral" shade={50}>
+                        {getInitials(group.name)}
+                      </CText>
+                    </View>
+                  )}
                 </View>
 
-                <ArrowRight2 size="24" color={Colors.neutral[300]} />
-              </View>
-            </Pressable>
+                {/* Group info */}
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    flex: 1,
+                  }}
+                >
+                  <View style={{ gap: 10 }}>
+                    <CText
+                      weight="semibold"
+                      size="md"
+                      color="neutral"
+                      shade={300}
+                    >
+                      {group.name}
+                    </CText>
 
-            {(groups ?? []).length - 1 !== index && (
-              <View
-                style={{
-                  width: "100%",
-                  height: 1,
-                  backgroundColor: Colors.neutral[700],
-                  alignSelf: "center",
-                }}
-              />
-            )}
-          </React.Fragment>
-        ))}
+                    {/* Member avatars (initials since no avatar URL) */}
+                    <View
+                      style={{ flexDirection: "row", alignItems: "center" }}
+                    >
+                      {group.members.slice(0, 3).map((member, i) => (
+                        <View
+                          key={member.id}
+                          style={{
+                            width: 20,
+                            height: 20,
+                            borderRadius: 25,
+                            borderWidth: 2,
+                            borderColor: Colors.accent[800],
+                            overflow: "hidden",
+                            marginLeft: i === 0 ? 0 : -6,
+                            backgroundColor: getColorFromString(
+                              member.givenName,
+                            ),
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <CText size="xs" color="neutral" shade={50}>
+                            {getInitials(
+                              `${member.givenName} ${member.familyName}`,
+                            )}
+                          </CText>
+                        </View>
+                      ))}
+
+                      {group.members.length > 3 && (
+                        <View
+                          style={{
+                            width: 20,
+                            height: 20,
+                            borderRadius: 25,
+                            backgroundColor: Colors.neutral[700],
+                            justifyContent: "center",
+                            alignItems: "center",
+                            marginLeft: -6,
+                            borderWidth: 2,
+                            borderColor: Colors.accent[800],
+                            overflow: "hidden",
+                          }}
+                        >
+                          <CText
+                            size="xs"
+                            weight="semibold"
+                            color="neutral"
+                            shade={50}
+                          >
+                            +{group.members.length - 3}
+                          </CText>
+                        </View>
+                      )}
+                    </View>
+                  </View>
+
+                  <ArrowRight2 size="24" color={Colors.neutral[300]} />
+                </View>
+              </Pressable>
+
+              {(groups ?? []).length - 1 !== index && (
+                <View
+                  style={{
+                    width: "100%",
+                    height: 1,
+                    backgroundColor: Colors.neutral[700],
+                    alignSelf: "center",
+                  }}
+                />
+              )}
+            </React.Fragment>
+          ))
+        )}
       </ScrollView>
 
       <Pressable

@@ -25,6 +25,6 @@ public class ExpenseRepository: IExpenseRepository
 
     public async Task<IEnumerable<ExpenseEntity>> GetByGroupAsync(Guid groupId, CancellationToken ct = default)
     {
-        return await _dbContext.Expenses.Include(e=>e.Participants).ThenInclude(p=>p.User).Where(e=>e.Group.PublicId == groupId).ToListAsync(ct);
+        return await _dbContext.Expenses.Include(e=>e.Participants).ThenInclude(p=>p.User).Where(e=>e.Group.Slug == groupId).ToListAsync(ct);
     }
 }

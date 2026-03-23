@@ -13,12 +13,12 @@ public class UserConfiguration : IEntityTypeConfiguration<UserEntity>
 
         builder.HasKey(u => u.Id);
 
-        // PublicId - unique
-        builder.Property(u => u.PublicId)
+        // Slug - unique
+        builder.Property(u => u.Slug)
             .IsRequired()
             .HasMaxLength(50);
 
-        builder.HasIndex(u => u.PublicId)
+        builder.HasIndex(u => u.Slug)
             .IsUnique();
 
         // Email (Value Object)
@@ -37,9 +37,7 @@ public class UserConfiguration : IEntityTypeConfiguration<UserEntity>
         builder.Property(u => u.EmailVerified)
             .IsRequired();
 
-        // EmailConfirmed
-        builder.Property(u => u.EmailConfirmed)
-            .IsRequired();
+        
 
         // Status - SmartEnum converter
         builder.Property(u => u.Status)
@@ -52,8 +50,8 @@ public class UserConfiguration : IEntityTypeConfiguration<UserEntity>
             .IsRequired();
 
         // UserInfoId foreign key
-        builder.Property(u => u.UserInfoId)
-            .IsRequired(false);
+        // builder.Property(u => u.UserInfoId)
+        //     .IsRequired(false);
 
         // CreatedAt & UpdatedAt
         builder.Property(u => u.CreatedAt)
@@ -73,5 +71,10 @@ public class UserConfiguration : IEntityTypeConfiguration<UserEntity>
             .WithOne()
             .HasForeignKey(a => a.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.HasOne(u => u.UserInfo)
+            .WithOne(ui => ui.User)
+            .HasForeignKey<UserInfoEntity>(ui => ui.UserId)  // FK lives on UserInfo side
+            .IsRequired(false);
     }
 }

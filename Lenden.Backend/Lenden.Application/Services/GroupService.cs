@@ -56,22 +56,21 @@ public class GroupService : IGroupService
     public async Task AddMemberAsync(Guid groupId, AddMemberRequestDto requestDto,long invitedByUserId, CancellationToken ct = default)
     {
       var group= await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId, ct);
-        var user = await _unitOfWork.UserRepository.GetUserByPublicIdAsync(requestDto.UserId, ct);
-        if (user is null)
-            throw new Exception("User not found");
+        var users = await _unitOfWork.UserRepository.GetUsersInBulkWithPublicIdAsync(requestDto.UserIds, ct);
+        if (users is null)
+            throw new Exception("Users not found");
 
-        group.AddMember(user, invitedByUserId);
+        group.AddMembersBulk(users, invitedByUserId);
         await _unitOfWork.SaveChangesAsync(ct);
     }
 
-    // public async Task LeaveGroupAsync(Guid groupId, Guid userId, CancellationToken ct = default)
-    // {
-    //     var group= await _groupManager.GetGroupByPublicIdAsync(groupId, ct);
-    //     var user = await _unitOfWork.UserRepository.GetUserByPublicIdAsync(userId, ct);
-    //     group.RemoveMember(user.Id);
-    //
-    //     await _unitOfWork.SaveChangesAsync(ct);
-    // }
+    public async Task LeaveGroupAsync(Guid groupId, long userId, CancellationToken ct = default)
+    {
+        var group= await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId, ct);
+        var user = await _unitOfWork.UserRepository.GetUserByIdAsync(userId, ct);
+        group.RemoveMember(user.Id);
+        await _unitOfWork.SaveChangesAsync(ct);
+    }
 
     public async Task DeleteGroupAsync(Guid groupId, CancellationToken ct = default)
     {

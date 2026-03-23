@@ -18,7 +18,7 @@ const groupApi = api.injectEndpoints({
             }),
           );
         } catch (error) {
-          console.log("Group APi ", error);
+          console.log("Group APi Error", error);
         }
       },
     }),

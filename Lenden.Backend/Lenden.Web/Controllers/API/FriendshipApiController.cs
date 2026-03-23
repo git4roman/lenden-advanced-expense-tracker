@@ -28,7 +28,7 @@ namespace Lenden.Web.Controllers.API
                 var friends = await _friendshipService.GetFriendsAsync(currentUser.Id);
                 var result = friends.Select(f => new FriendDto
                 {
-                    Id = f.PublicId,
+                    Id = f.Slug,
                     GivenName = f.GivenName,
                     FamilyName = f.FamilyName,
                     Email = f.Email.Value

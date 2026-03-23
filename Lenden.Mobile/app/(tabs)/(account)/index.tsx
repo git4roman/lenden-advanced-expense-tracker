@@ -119,6 +119,7 @@ export default function Account() {
   const [isRateModalVisible, setIsRateModalVisible] = useState(false);
 
   const userInfo = useSelector((state: RootState) => state.userInfo);
+  console.log("The user info is ", userInfo.userInfo);
 
   const infoRows = {
     fullName: `${userInfo.firstName} ${userInfo.lastName}` || "-",
@@ -135,180 +136,212 @@ export default function Account() {
       style={{ backgroundColor: Colors.neutral[950], flex: 1 }}
       edges={["top"]}
     >
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ flex: 1 }}
-        scrollEnabled={false}
-        showsVerticalScrollIndicator={false}
-      >
+      {userInfo.userInfo === null ? (
         <View
           style={{
-            paddingVertical: 16,
-            paddingHorizontal: 20,
-            backgroundColor: Colors.neutral[950],
             flex: 1,
+            marginVertical: 250,
+            alignItems: "center",
+            justifyContent: "center",
+            flexDirection: "row",
           }}
+        >
+          <CText shade={200} size="xxlg">
+            Please{" "}
+          </CText>
+          <Pressable
+            style={{
+              backgroundColor: Colors.primary[500],
+              paddingHorizontal: 14,
+              paddingVertical: 8,
+              borderRadius: 12,
+            }}
+            onPress={() => router.push("/(auth)/login")}
+          >
+            <CText shade={800} size="xmd" weight="semibold">
+              {" "}
+              Login
+            </CText>
+          </Pressable>
+        </View>
+      ) : (
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{ flex: 1 }}
+          scrollEnabled={false}
+          showsVerticalScrollIndicator={false}
         >
           <View
             style={{
-              flexDirection: "column",
-              gap: 12,
               paddingVertical: 16,
               paddingHorizontal: 20,
-              borderRadius: 12,
-              backgroundColor: Colors.neutral[800],
-              borderWidth: 1,
-              borderColor: Colors.neutral[700],
-              alignItems: "center",
-              justifyContent: "center",
+              backgroundColor: Colors.neutral[950],
+              flex: 1,
             }}
           >
             <View
               style={{
-                width: 64,
-                height: 64,
-                padding: 1,
-                borderRadius: 32,
-                backgroundColor: Colors.accent[900],
-                flexDirection: "row",
+                flexDirection: "column",
+                gap: 12,
+                paddingVertical: 16,
+                paddingHorizontal: 20,
+                borderRadius: 12,
+                backgroundColor: Colors.neutral[800],
+                borderWidth: 1,
+                borderColor: Colors.neutral[700],
                 alignItems: "center",
                 justifyContent: "center",
               }}
             >
-              <CText size="sm" color="accent" shade={300} weight="bold">
-                {getInitials(infoRows.fullName)}
+              <View
+                style={{
+                  width: 64,
+                  height: 64,
+                  padding: 1,
+                  borderRadius: 32,
+                  backgroundColor: Colors.accent[900],
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <CText size="sm" color="accent" shade={300} weight="bold">
+                  {getInitials(infoRows.fullName)}
+                </CText>
+              </View>
+              <CText size="sm" color={Colors.neutral[100]} weight="bold">
+                {infoRows.fullName}
               </CText>
+              <Pressable onPress={() => router.push("/notificationyes")}>
+                <CText size="sm" color={Colors.neutral[400]}>
+                  Member Since {infoRows.memberSince}
+                </CText>
+              </Pressable>
             </View>
-            <CText size="sm" color={Colors.neutral[100]} weight="bold">
-              {infoRows.fullName}
-            </CText>
-            <Pressable onPress={() => router.push("/notificationyes")}>
-              <CText size="sm" color={Colors.neutral[400]}>
-                Member Since {infoRows.memberSince}
-              </CText>
-            </Pressable>
-          </View>
 
-          <View
-            style={{
-              marginTop: 24,
-              flexDirection: "column",
-              gap: 24,
-            }}
-          >
             <View
               style={{
+                marginTop: 24,
                 flexDirection: "column",
-                gap: 8,
+                gap: 24,
               }}
             >
-              <CText size="ssm" color={Colors.neutral[300]} weight="bold">
-                Account
-              </CText>
               <View
                 style={{
                   flexDirection: "column",
-                  gap: 4,
-                  paddingVertical: 16,
-                  paddingHorizontal: 20,
-                  borderRadius: 12,
-                  backgroundColor: Colors.neutral[800],
-                  borderWidth: 1,
-                  borderColor: Colors.neutral[700],
+                  gap: 8,
                 }}
               >
-                {accountItems.map((item) => (
+                <CText size="ssm" color={Colors.neutral[300]} weight="bold">
+                  Account
+                </CText>
+                <View
+                  style={{
+                    flexDirection: "column",
+                    gap: 4,
+                    paddingVertical: 16,
+                    paddingHorizontal: 20,
+                    borderRadius: 12,
+                    backgroundColor: Colors.neutral[800],
+                    borderWidth: 1,
+                    borderColor: Colors.neutral[700],
+                  }}
+                >
+                  {accountItems.map((item) => (
+                    <DividedPattern
+                      key={item.title}
+                      leftIcon={item.icon}
+                      title={item.title}
+                      rightIcon={ChervonRight}
+                      onPress={() => router.push(item.path)}
+                    />
+                  ))}
+                </View>
+              </View>
+
+              <View
+                style={{
+                  flexDirection: "column",
+                  gap: 8,
+                }}
+              >
+                <CText size="ssm" color={Colors.neutral[300]} weight="bold">
+                  Preferences
+                </CText>
+                <View
+                  style={{
+                    flexDirection: "column",
+                    gap: 4,
+                    paddingVertical: 16,
+                    paddingHorizontal: 20,
+                    borderRadius: 12,
+                    backgroundColor: Colors.neutral[800],
+                    borderWidth: 1,
+                    borderColor: Colors.neutral[700],
+                  }}
+                >
                   <DividedPattern
-                    key={item.title}
-                    leftIcon={item.icon}
-                    title={item.title}
+                    leftIcon={BellICon}
+                    title="Notification"
                     rightIcon={ChervonRight}
-                    onPress={() => router.push(item.path)}
+                    onPress={() =>
+                      router.push("/(tabs)/(account)/notification")
+                    }
                   />
-                ))}
+                  <DividedPattern
+                    leftIcon={SettingIcon}
+                    title="Settings"
+                    rightIcon={ChervonRight}
+                    onPress={() => router.push("/(tabs)/(account)/settings")}
+                  />
+                </View>
               </View>
-            </View>
 
-            <View
-              style={{
-                flexDirection: "column",
-                gap: 8,
-              }}
-            >
-              <CText size="ssm" color={Colors.neutral[300]} weight="bold">
-                Preferences
-              </CText>
               <View
                 style={{
                   flexDirection: "column",
-                  gap: 4,
-                  paddingVertical: 16,
-                  paddingHorizontal: 20,
-                  borderRadius: 12,
-                  backgroundColor: Colors.neutral[800],
-                  borderWidth: 1,
-                  borderColor: Colors.neutral[700],
+                  gap: 8,
                 }}
               >
-                <DividedPattern
-                  leftIcon={BellICon}
-                  title="Notification"
-                  rightIcon={ChervonRight}
-                  onPress={() => router.push("/(tabs)/(account)/notification")}
-                />
-                <DividedPattern
-                  leftIcon={SettingIcon}
-                  title="Settings"
-                  rightIcon={ChervonRight}
-                  onPress={() => router.push("/(tabs)/(account)/settings")}
-                />
-              </View>
-            </View>
-
-            <View
-              style={{
-                flexDirection: "column",
-                gap: 8,
-              }}
-            >
-              <CText size="sm" color={Colors.neutral[300]} weight="bold">
-                Support
-              </CText>
-              <View
-                style={{
-                  flexDirection: "column",
-                  gap: 4,
-                  paddingVertical: 16,
-                  paddingHorizontal: 20,
-                  borderRadius: 12,
-                  backgroundColor: Colors.neutral[800],
-                  borderWidth: 1,
-                  borderColor: Colors.neutral[700],
-                }}
-              >
-                <DividedPattern
-                  leftIcon={StarIcon}
-                  title="Rate the App"
-                  rightIcon={ChervonRight}
-                  onPress={() => setIsRateModalVisible(true)}
-                />
-                <DividedPattern
-                  leftIcon={InfoIcon}
-                  title="About App"
-                  rightIcon={ChervonRight}
-                  onPress={() => router.push("/(tabs)/(account)/about")}
-                />
-                <DividedPattern
-                  leftIcon={InfoIcon}
-                  title="Logout"
-                  rightIcon={ChervonRight}
-                  onPress={() => setIsLogoutModalVisible(true)}
-                />
+                <CText size="sm" color={Colors.neutral[300]} weight="bold">
+                  Support
+                </CText>
+                <View
+                  style={{
+                    flexDirection: "column",
+                    gap: 4,
+                    paddingVertical: 16,
+                    paddingHorizontal: 20,
+                    borderRadius: 12,
+                    backgroundColor: Colors.neutral[800],
+                    borderWidth: 1,
+                    borderColor: Colors.neutral[700],
+                  }}
+                >
+                  <DividedPattern
+                    leftIcon={StarIcon}
+                    title="Rate the App"
+                    rightIcon={ChervonRight}
+                    onPress={() => setIsRateModalVisible(true)}
+                  />
+                  <DividedPattern
+                    leftIcon={InfoIcon}
+                    title="About App"
+                    rightIcon={ChervonRight}
+                    onPress={() => router.push("/(tabs)/(account)/about")}
+                  />
+                  <DividedPattern
+                    leftIcon={InfoIcon}
+                    title="Logout"
+                    rightIcon={ChervonRight}
+                    onPress={() => setIsLogoutModalVisible(true)}
+                  />
+                </View>
               </View>
             </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      )}
 
       <Modal
         transparent

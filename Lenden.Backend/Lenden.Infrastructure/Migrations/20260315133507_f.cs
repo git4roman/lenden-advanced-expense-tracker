@@ -12,7 +12,7 @@ namespace Lenden.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<Guid>(
-                name: "PublicId",
+                name: "Slug",
                 table: "users",
                 type: "char(50)",
                 maxLength: 50,
@@ -24,7 +24,7 @@ namespace Lenden.Infrastructure.Migrations
                 .OldAnnotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.AlterColumn<Guid>(
-                name: "PublicId",
+                name: "Slug",
                 table: "Groups",
                 type: "char(50)",
                 maxLength: 50,
@@ -85,7 +85,7 @@ namespace Lenden.Infrastructure.Migrations
                 name: "UserFriends");
 
             migrationBuilder.AlterColumn<string>(
-                name: "PublicId",
+                name: "Slug",
                 table: "users",
                 type: "char(50)",
                 maxLength: 50,
@@ -97,7 +97,7 @@ namespace Lenden.Infrastructure.Migrations
                 .OldAnnotation("Relational:Collation", "ascii_general_ci");
 
             migrationBuilder.AlterColumn<string>(
-                name: "PublicId",
+                name: "Slug",
                 table: "Groups",
                 type: "char(50)",
                 maxLength: 50,

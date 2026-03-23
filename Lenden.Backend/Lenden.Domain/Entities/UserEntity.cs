@@ -10,12 +10,12 @@ public class UserEntity
         _sessions = new List<AuthSessionEntity>();
         _authProviders = new List<AuthProviderEntity>();
     }
-    public UserEntity(Email email, string givenName, string familyName, string passwordHash=null)
+    public UserEntity(Email email,string username, string givenName, string familyName, string passwordHash=null)
     {
         Email = email;
         PasswordHash = passwordHash;
         Status = UserStatus.Disabled;
-        EmailConfirmed = false;
+        EmailVerified = false;
         _sessions = new List<AuthSessionEntity>();
         _authProviders = new List<AuthProviderEntity>();
         CreatedAt = DateTimeOffset.UtcNow;
@@ -23,23 +23,23 @@ public class UserEntity
         GivenName = givenName;
         FamilyName = familyName;
         Role = UserRole.Customer;
+        Username = username;
 
     }
     
     public long Id { get; private set; } 
-    public Guid PublicId { get; private set; } = Guid.NewGuid();
+    public Guid Slug { get; private set; } = Guid.NewGuid();
     public Email Email { get; private set; }
     public string? PasswordHash { get; private set; }
+    public string Username { get; private set; }
     public string GivenName { get; private set; }
     public string FamilyName { get; private set; }
     public UserRole Role { get; private set; }
-
+    public UserInfoEntity? UserInfo { get; private set; }
     public bool EmailVerified { get; private set; }
     public UserStatus Status { get; private set; }
-    public Guid? UserInfoId { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; }
     public DateTimeOffset UpdatedAt { get; private set; }
-    public bool EmailConfirmed { get; private set; }
 
     private readonly List<AuthSessionEntity> _sessions ;
     public IReadOnlyCollection<AuthSessionEntity> Sessions => _sessions.AsReadOnly();
@@ -57,10 +57,10 @@ public class UserEntity
         UpdatedAt = DateTimeOffset.UtcNow;
     }
     
-    public void LinkUserInfo(Guid userInfoId)
-    {
-        UserInfoId = userInfoId;
-    }
+    // public void LinkUserInfo(Guid userInfoId)
+    // {
+    //     UserInfoId = userInfoId;
+    // }
     public void UserStatusChange(UserStatus status)
     {
         Status = status;
@@ -74,7 +74,7 @@ public class UserEntity
 
     public void ConfirmEmail()
     {
-        EmailConfirmed = true;
+        EmailVerified = true;
         UpdatedAt = DateTimeOffset.UtcNow;
     }
 
@@ -86,6 +86,12 @@ public class UserEntity
             ipAddress,
             expiresAt);
         _sessions.Add(session);
+    }
+    
+    public void UpdateName(string firstName, string lastName)
+    {
+        FamilyName = lastName;
+        GivenName = firstName;
     }
     
     

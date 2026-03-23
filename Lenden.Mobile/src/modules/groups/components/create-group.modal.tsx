@@ -56,6 +56,7 @@ export const CreateGroupModal = ({ visible, onClose, members }: Props) => {
         : [...prev, userId],
     );
   };
+  const noFriends = !friends || friends.length === 0;
 
   return (
     <Modal transparent animationType="fade" visible={visible}>
@@ -86,7 +87,7 @@ export const CreateGroupModal = ({ visible, onClose, members }: Props) => {
             gap: 12,
           }}
         >
-          <CText weight="bold" size="xmd">
+          <CText weight="bold" size="xmd" color="neutral" shade={200}>
             Create Group
           </CText>
 
@@ -127,7 +128,9 @@ export const CreateGroupModal = ({ visible, onClose, members }: Props) => {
                 alignItems: "center",
               }}
             >
-              <CText size="xs">Camera</CText>
+              <CText size="xs" shade={300}>
+                Camera
+              </CText>
             </Pressable>
 
             <Pressable
@@ -144,7 +147,9 @@ export const CreateGroupModal = ({ visible, onClose, members }: Props) => {
                 alignItems: "center",
               }}
             >
-              <CText size="xs">Gallery</CText>
+              <CText size="xs" shade={300}>
+                Gallery
+              </CText>
             </Pressable>
           </View>
 
@@ -177,7 +182,8 @@ export const CreateGroupModal = ({ visible, onClose, members }: Props) => {
           <TextInput
             value={search}
             onChangeText={setSearch}
-            placeholder="Search by name or email..."
+            editable={!noFriends}
+            placeholder={noFriends? "No friends available":"Search by name or email..."}
             placeholderTextColor={Colors.neutral[500]}
             style={{
               backgroundColor: Colors.neutral[800],
@@ -187,6 +193,7 @@ export const CreateGroupModal = ({ visible, onClose, members }: Props) => {
               color: Colors.neutral[100],
               borderWidth: 1,
               borderColor: Colors.neutral[700],
+              opacity: noFriends ? 0.5 : 1,
             }}
           />
           {suggestions.length > 0 && (
@@ -278,7 +285,7 @@ export const CreateGroupModal = ({ visible, onClose, members }: Props) => {
                 alignItems: "center",
               }}
             >
-              <CText>Cancel</CText>
+              <CText shade={300}>Cancel</CText>
             </Pressable>
 
             <Pressable

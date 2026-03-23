@@ -4,8 +4,13 @@ import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { userProfilesData } from "@/app/(tabs)/(groups)/groups.mock";
 import { Feather } from "@expo/vector-icons";
+import { useGetExpensesQuery } from "@/src/shared/store/apiSlices/expense-slice.api";
+import { useGetGroupQuery } from "@/src/shared/store/apiSlices/group-slice.api";
+import { GroupMember } from "../types/group-member";
 
-const GroupInfoTab = () => {
+const GroupInfoTab = ({ groupId }: { groupId: string }) => {
+  const { data: group } = useGetGroupQuery(groupId as string);
+  console.log("The Group Data is:", JSON.stringify(group, null, 2));
   const [text, setText] = useState("");
   return (
     <ScrollView
@@ -26,7 +31,7 @@ const GroupInfoTab = () => {
             weight="medium"
             size="ssm"
           >
-            Trip to Japan
+            {group.name}
           </CText>
         </View>
         <View style={{ gap: 4 }}>
@@ -50,7 +55,7 @@ const GroupInfoTab = () => {
             weight="medium"
             size="ssm"
           >
-            USD
+            NRs
           </CText>
         </View>
         <View style={{ gap: 4 }}>
@@ -99,7 +104,7 @@ const GroupInfoTab = () => {
           </Pressable>
         </View>
         <View style={{ gap: 8 }}>
-          {userProfilesData.map((item, index) => (
+          {group.members.map((item: GroupMember, index: number) => (
             <View
               key={item.id}
               style={{
@@ -120,7 +125,7 @@ const GroupInfoTab = () => {
                 }}
               >
                 <Image
-                  source={{ uri: item.image }}
+                  source={{ uri: item.imgUrl ?? "" }}
                   resizeMode="cover"
                   style={{ width: "100%", height: "100%" }}
                 />
@@ -140,7 +145,7 @@ const GroupInfoTab = () => {
                     weight="semibold"
                     size="ssm"
                   >
-                    {item.name}
+                    {item.givenName} {item.familyName}
                     {item.id === 1 ? " (You)" : ""}
                   </CText>
                   <CText color="neutral" shade={400}>

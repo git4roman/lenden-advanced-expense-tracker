@@ -82,7 +82,7 @@ namespace Lenden.Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("varchar(200)");
 
-                    b.Property<Guid>("PublicId")
+                    b.Property<Guid>("Slug")
                         .HasColumnType("char(36)");
 
                     b.Property<decimal>("TotalAmount")
@@ -94,7 +94,7 @@ namespace Lenden.Infrastructure.Migrations
 
                     b.HasIndex("GroupId");
 
-                    b.HasIndex("PublicId")
+                    b.HasIndex("Slug")
                         .IsUnique();
 
                     b.ToTable("expenses", (string)null);
@@ -178,7 +178,7 @@ namespace Lenden.Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("varchar(200)");
 
-                    b.Property<Guid>("PublicId")
+                    b.Property<Guid>("Slug")
                         .HasMaxLength(50)
                         .HasColumnType("char(50)");
 
@@ -257,7 +257,7 @@ namespace Lenden.Infrastructure.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
 
-                    b.Property<Guid>("PublicId")
+                    b.Property<Guid>("Slug")
                         .HasMaxLength(50)
                         .HasColumnType("char(50)");
 
@@ -275,7 +275,7 @@ namespace Lenden.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PublicId")
+                    b.HasIndex("Slug")
                         .IsUnique();
 
                     b.ToTable("users", (string)null);

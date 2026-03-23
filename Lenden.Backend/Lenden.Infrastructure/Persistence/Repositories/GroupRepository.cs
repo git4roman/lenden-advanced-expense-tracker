@@ -28,16 +28,17 @@ public class GroupRepository : IGroupRepository
     public async Task<IEnumerable<GroupEntity?>> GetByUserPublicIdAsync(Guid publicId, CancellationToken ct = default)
     {
         return await _context.Groups
-            .Include(g => g.Members)
+            .Include(g => g.Members.Where(m => m.Status == GroupMembershipStatus.Active))
             .ThenInclude(m => m.User)
-            .Where(g => g.Members.Any(m => m.User.PublicId == publicId))
+            .Where(g => g.Members.Any(m => m.User.Slug == publicId))
             .ToListAsync(ct);
     }
 
     public async Task<GroupEntity?> GetByPublicIdAsync(Guid publicId, CancellationToken ct = default)
     {
-        return await _context.Groups.Include(g=>g.Members).ThenInclude(u=>u.User).Include(g=>g.UserBalances)
-            .FirstOrDefaultAsync(g => g.PublicId == publicId, ct);
+        var groups= await _context.Groups.Include(g=>g.Members.Where(m => m.Status == GroupMembershipStatus.Active)).ThenInclude(u=>u.User).Include(g=>g.UserBalances)
+            .FirstOrDefaultAsync(g => g.Slug == publicId, ct);
+        return groups;
     }
     public async Task<bool> ExistsAsync(long id, CancellationToken ct = default)
     {
@@ -49,7 +50,7 @@ public class GroupRepository : IGroupRepository
     }
     public async Task<GroupEntity?> GetGroupByUserPublicIdAsync(Guid groupId, Guid userId, CancellationToken ct = default)
     {
-        var group = await _context.Groups.FirstOrDefaultAsync(u => u.PublicId == groupId, ct);
+        var group = await _context.Groups.FirstOrDefaultAsync(u => u.Slug == groupId, ct);
         return group;
     }
 }

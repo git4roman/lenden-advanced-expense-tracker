@@ -15,7 +15,7 @@ public class GroupEntityConfiguration : IEntityTypeConfiguration<GroupEntity>
         builder.HasKey(g => g.Id);
 
         // Properties
-        builder.Property(g => g.PublicId)
+        builder.Property(g => g.Slug)
             .IsRequired()
             .HasMaxLength(50);
 

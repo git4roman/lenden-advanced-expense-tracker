@@ -9,6 +9,7 @@ public interface IUserRepository
     Task<UserEntity> GetUserByEmailAsync(string email, CancellationToken ct = default);
     Task<UserEntity> GetUserByPublicIdAsync(Guid userId, CancellationToken ct = default);
     Task<UserEntity> GetUserByIdAsync(long userId, CancellationToken ct = default);
+    Task<UserEntity> GetUserWithInfoByIdAsync(long userId, CancellationToken ct = default);
     
     Task<List<UserIdandPublicIdDto>> GetUsersIdsInBulkWithPublicIdAsync(List<Guid> publicIds, CancellationToken ct = default);
     Task<List<UserEntity>> GetUsersInBulkWithPublicIdAsync(List<Guid> publicIds, CancellationToken ct = default);

@@ -4,8 +4,9 @@ import { MaterialIcons, FontAwesome, FontAwesome6 } from "@expo/vector-icons";
 import React from "react";
 import { Pressable, View } from "react-native";
 
-const sharedExpenseCategories = [
+export const sharedExpenseCategories = [
   {
+    id: 1,
     key: "accommodation",
     label: "Accommodation",
     tags: ["Rent", "Deposit", "Maintenance", "Room Repairs"],
@@ -14,6 +15,7 @@ const sharedExpenseCategories = [
     ),
   },
   {
+    id: 2,
     key: "household_utilities",
     label: "Household & Utilities",
     tags: [
@@ -34,6 +36,7 @@ const sharedExpenseCategories = [
     ),
   },
   {
+    id: 3,
     key: "food_groceries",
     label: "Food & Groceries",
     tags: [
@@ -53,6 +56,7 @@ const sharedExpenseCategories = [
     ),
   },
   {
+    id: 4,
     key: "transportation_travel",
     label: "Transportation & Travel",
     tags: ["Petrol", "Taxi/Pathao", "Bus Fare", "Trips"],
@@ -61,6 +65,7 @@ const sharedExpenseCategories = [
     ),
   },
   {
+    id: 5,
     key: "lifestyle_personal",
     label: "Lifestyle & Personal",
     tags: [
@@ -83,11 +88,9 @@ const sharedExpenseCategories = [
 ];
 
 export const ActivityItem = ({ item }: any) => {
-  console.log("The item is", item);
   const category = sharedExpenseCategories.find(
     (cat) => cat.label === item.categoryKey,
   );
-  console.log(category);
   return (
     <View
       style={{

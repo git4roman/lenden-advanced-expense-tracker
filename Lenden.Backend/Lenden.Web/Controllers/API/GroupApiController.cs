@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Lenden.Web.Controllers.API;
 
-[Route("api/v1/group")]
+[Route("api/v1/groups")]
 [ApiController]
 [Authorize]
 public class GroupApiController : ControllerBase
@@ -23,15 +23,15 @@ public class GroupApiController : ControllerBase
     public async Task<IActionResult> GetGroups(CancellationToken ct = default)
     {
         var currentUser = await _authService.ValidateUserAsync(User, ct);
-        var groups = await _groupService.GetGroupsByUserIdAsync(currentUser.PublicId,ct);
+        var groups = await _groupService.GetGroupsByUserIdAsync(currentUser.Slug,ct);
         var result = groups.Select(g => new GroupDto
         {
-            Id = g.PublicId,
+            Id = g.Slug,
             Name = g.Name,
             ImageUrl = g.ImageUrl,
             Members = g.Members.Select(m => new MemberDto
             {
-                Id = m.User.PublicId,
+                Id = m.User.Slug,
                 Email = m.User.Email.Value,
                 GivenName = m.User.GivenName,
                 FamilyName = m.User.FamilyName
@@ -50,12 +50,12 @@ public class GroupApiController : ControllerBase
             return NotFound();
         var result = new GroupDto
         {
-            Id = group.PublicId,
+            Id = group.Slug,
             Name = group.Name,
             ImageUrl = group.ImageUrl,
             Members = group.Members.Select(m => new MemberDto
             {
-                Id = m.User.PublicId,
+                Id = m.User.Slug,
                 Email = m.User.Email.Value,
                 GivenName = m.User.GivenName,
                 FamilyName = m.User.FamilyName
@@ -70,7 +70,7 @@ public class GroupApiController : ControllerBase
     {
         var currentUser = await _authService.ValidateUserAsync(User, ct);
         
-        await _groupService.CreateGroupAsync(currentUser.PublicId,request);
+        await _groupService.CreateGroupAsync(currentUser.Slug,request);
         return Ok();
     }
 
@@ -91,17 +91,16 @@ public class GroupApiController : ControllerBase
         return NoContent();
     }
 
-    // [HttpPost("{groupId:Guid}/leave")]
-    // public async Task<IActionResult> LeaveGroup(Guid groupId, Guid userId,CancellationToken ct = default)
-    // {
-    //     await _authService.ValidateUserAsync(User, ct);
-    //     // await _groupManager.EnsureCurrentUserIsGroupMemberAsync(groupId, User, ct);
-    //     await _groupService.LeaveGroupAsync(groupId, userId);
-    //     return NoContent();
-    // }
+    [HttpPost("{groupId:Guid}/leave")]
+    public async Task<IActionResult> LeaveGroup([FromRoute]Guid groupId,CancellationToken ct = default)
+    {
+        var currentUser = await _authService.ValidateUserAsync(User, ct);
+        await _groupService.LeaveGroupAsync(groupId, currentUser.Id);
+        return NoContent();
+    }
 
     [HttpDelete("{groupId:Guid}")]
-    public async Task<IActionResult> DeleteGroup(Guid groupId,CancellationToken ct = default)
+    public async Task<IActionResult> DeleteGroup([FromRoute]Guid groupId,CancellationToken ct = default)
     {
         await _authService.ValidateUserAsync(User, ct);
         // await _groupManager.EnsureGroupAdminAsync(groupId, User, ct);

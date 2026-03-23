@@ -27,7 +27,7 @@ public class UserRepository: IUserRepository
     }
     public async Task<UserEntity?> GetUserByPublicIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var entity = await _dbContext.Users.FirstOrDefaultAsync<UserEntity>(u=> u.PublicId == id);
+        var entity = await _dbContext.Users.FirstOrDefaultAsync<UserEntity>(u=> u.Slug == id);
         return entity;
     }
 
@@ -40,15 +40,21 @@ public class UserRepository: IUserRepository
     public async Task<List<UserIdandPublicIdDto>> GetUsersIdsInBulkWithPublicIdAsync(List<Guid> publicIds, CancellationToken ct = default)
     {
          return await _dbContext.Users
-            .Where(u => publicIds.Contains(u.PublicId))
-            .Select(u => new UserIdandPublicIdDto(u.Id, u.PublicId))
+            .Where(u => publicIds.Contains(u.Slug))
+            .Select(u => new UserIdandPublicIdDto(u.Id, u.Slug))
             .ToListAsync();
     }
 
     public async Task<List<UserEntity>> GetUsersInBulkWithPublicIdAsync(List<Guid> publicIds, CancellationToken ct = default)
     {
         return await _dbContext.Users
-            .Where(u => publicIds.Contains(u.PublicId))
+            .Where(u => publicIds.Contains(u.Slug))
             .ToListAsync();
+    }
+
+    public async Task<UserEntity?> GetUserWithInfoByIdAsync(long userId, CancellationToken cancellationToken = default)
+    {
+        var user = await _dbContext.Users.Include(u=>u.UserInfo).FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+        return user;
     }
 }

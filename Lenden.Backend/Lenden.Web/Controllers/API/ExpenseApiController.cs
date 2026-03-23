@@ -56,7 +56,7 @@ public class ExpenseApiController : ControllerBase
                 TotalAmount = r.TotalAmount,
                 Participants = r.Participants.Select(p => new
                 {
-                    p.User.PublicId, p.User.GivenName, p.User.FamilyName, p.User.Email.Value, p.Net, p.Paid, p.Split
+                    PublicId = p.User.Slug, p.User.GivenName, p.User.FamilyName, p.User.Email.Value, p.Net, p.Paid, p.Split
                 }),
                 CreatedAt = r.CreatedAt,
                 CategoryKey = r.Category.Name,

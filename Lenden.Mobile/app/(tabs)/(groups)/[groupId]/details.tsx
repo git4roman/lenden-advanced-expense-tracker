@@ -69,7 +69,7 @@ const GroupExpenseDetails = () => {
         <DetailRow label="Time" value={time ?? "-"} />
       </View>
 
-      <Pressable
+      {/* <Pressable
         onPress={() => {
           router.push(
             canRequest
@@ -113,7 +113,7 @@ const GroupExpenseDetails = () => {
         <CText weight="bold" size="sm" color="neutral" shade={900}>
           {canRequest ? "Request" : "Pay"}
         </CText>
-      </Pressable>
+      </Pressable> */}
     </SafeAreaView>
   );
 };

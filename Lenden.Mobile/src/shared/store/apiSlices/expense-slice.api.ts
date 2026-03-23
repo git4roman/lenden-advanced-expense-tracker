@@ -37,7 +37,7 @@ const expenseApi = api.injectEndpoints({
     }),
     createExpense: builder.mutation({
       query: (payload) => ({
-        url: "/ExpenseApi",
+        url: "/Expense",
         method: "POST",
         body: payload,
       }),

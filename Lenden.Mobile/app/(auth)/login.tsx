@@ -6,10 +6,19 @@ import { FontAwesome } from "@expo/vector-icons";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { useLoginHandler } from "@/src/modules/auth/hooks/use-login- handler";
+import { onGoogleButtonPress } from "@/src/shared/services/auth/google-auth.service";
+import { useGoogleHandler } from "@/src/modules/auth/hooks/use-google-handler";
 
 export default function LoginScreen() {
   const { email, setEmail, password, setPassword, handleLogin, isLoading } =
     useLoginHandler();
+  const { handleGoogle } = useGoogleHandler();
+
+  const handleGoogleLogin = async () => {
+    const data = await onGoogleButtonPress();
+    console.log("Google Sign-In Response:", data);
+    handleGoogle(data.user);
+  };
 
   return (
     <SafeAreaView
@@ -126,9 +135,7 @@ export default function LoginScreen() {
           </View>
 
           <Pressable
-            onPress={() => {
-              router.replace("/(tabs)/(home)");
-            }}
+            onPress={handleGoogleLogin}
             style={{
               borderWidth: 1,
               borderColor: Colors.neutral[700],

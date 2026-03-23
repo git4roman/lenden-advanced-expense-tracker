@@ -283,7 +283,7 @@ namespace Lenden.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_expenses_PublicId",
                 table: "expenses",
-                column: "PublicId",
+                column: "Slug",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -314,7 +314,7 @@ namespace Lenden.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_users_PublicId",
                 table: "users",
-                column: "PublicId",
+                column: "Slug",
                 unique: true);
         }
 

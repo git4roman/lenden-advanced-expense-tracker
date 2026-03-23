@@ -38,7 +38,7 @@ const GroupScreen = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   const { data: group } = useGetGroupQuery(groupId as string);
 
-  console.log("The Single Group Data is:", group);
+  // console.log("The Single Group Data is:", JSON.stringify(group, null, 2));
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);

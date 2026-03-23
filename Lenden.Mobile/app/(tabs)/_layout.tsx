@@ -37,6 +37,7 @@ export default function _layout() {
         <Tabs.Screen
           name="(home)"
           options={{
+            href: null,
             headerShown: false,
             title: "Home",
             tabBarIcon: ({ color }) => (
@@ -97,6 +98,7 @@ export default function _layout() {
         <Tabs.Screen
           name="(friends)"
           options={{
+            href: null,
             headerShown: false,
             title: "Friends",
             tabBarIcon: ({ color }) => (

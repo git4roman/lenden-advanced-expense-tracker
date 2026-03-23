@@ -18,6 +18,7 @@ public static class DependencyInjection
         services.AddScoped<IGroupValidators, GroupValidator>();
         services.AddScoped<IFriendshipService, FriendshipService>();
         services.AddScoped<AuthManager>();
+        services.AddScoped<IUserService, UserService>();
         return services;
     }
 }

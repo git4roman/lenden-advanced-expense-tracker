@@ -1,29 +1,33 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Pressable, ScrollView, TextInput, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-
-const groups = ["Roommates", "Office Team", "Trip to Pokhara"];
-const categories = [
-  "Food",
-  "Transport",
-  "Groceries",
-  "Utilities",
-  "Shopping",
-  "Other",
-];
-const members = ["Roman", "Aayush", "Sita", "Nabin"];
+import { useGetGroupsQuery } from "@/src/shared/store/apiSlices/group-slice.api";
+import { sharedExpenseCategories } from "@/src/modules/groups/components/activity-item";
+import { useCreateExpenseMutation } from "@/src/shared/store/apiSlices/expense-slice.api";
 
 const Expense = () => {
   const [amount, setAmount] = useState("");
-  const [selectedGroup, setSelectedGroup] = useState(groups[0]);
-  const [selectedCategory, setSelectedCategory] = useState(categories[0]);
-  const [paidBy, setPaidBy] = useState(members[0]);
-  const [splitBetween, setSplitBetween] = useState<string[]>(members);
+  const { data: groups, isLoading } = useGetGroupsQuery(undefined);
+  const [selectedGroup, setSelectedGroup] = useState<any>(null);
+  const [selectedCategory, setSelectedCategory] = useState(
+    sharedExpenseCategories[0],
+  );
+  const [paidBy, setPaidBy] = useState<string>("");
+  const [splitBetween, setSplitBetween] = useState<string[]>([]);
   const [notes, setNotes] = useState("");
+  const [createExpense] = useCreateExpenseMutation();
+
+  useEffect(() => {
+    if (groups?.length) {
+      setSelectedGroup(groups[0]);
+      setPaidBy(groups[0].members[0].id);
+      setSplitBetween(groups[0].members.map((m: any) => m.id));
+    }
+  }, [groups]);
 
   const perPersonAmount = useMemo(() => {
     const total = Number(amount || "0");
@@ -31,14 +35,34 @@ const Expense = () => {
     return (total / splitBetween.length).toFixed(2);
   }, [amount, splitBetween.length]);
 
-  const toggleSplitMember = (member: string) => {
+  const toggleSplitMember = (memberId: string) => {
     setSplitBetween((prev) => {
-      if (prev.includes(member)) {
+      if (prev.includes(memberId)) {
         if (prev.length === 1) return prev;
-        return prev.filter((item) => item !== member);
+        return prev.filter((item) => item !== memberId);
       }
-      return [...prev, member];
+      return [...prev, memberId];
     });
+  };
+
+  const users = useMemo(() => {
+    if (!selectedGroup?.members) return [];
+    return selectedGroup.members.map((member: any) => ({
+      userId: member.id,
+      paidAmount: paidBy === member.id ? Number(amount || 0) : 0,
+      splitAmount: splitBetween.includes(member.id)
+        ? Number(perPersonAmount)
+        : 0,
+    }));
+  }, [selectedGroup, paidBy, splitBetween, amount, perPersonAmount]);
+
+  const formData = {
+    totalAmount: Number(amount || 0),
+    groupPublicId: selectedGroup?.id,
+    category: selectedCategory.id,
+    description: notes,
+    imageUrl: "",
+    users: users,
   };
 
   const chipStyle = (active: boolean) => ({
@@ -50,20 +74,25 @@ const Expense = () => {
     backgroundColor: active ? Colors.accent[900] : Colors.neutral[900],
   });
 
-  const handleSubmit = () => {
-    console.log("Create Expense", {
-      amount,
-      selectedGroup,
-      selectedCategory,
-      paidBy,
-      splitBetween,
-      notes,
-    });
+  const handleSubmit = async () => {
+    try {
+      const response = await createExpense(formData).unwrap();
+      console.log("The Response from create Expense is", response);
+      router.replace("/(tabs)/(groups)");
+    } catch (e) {
+      console.log("The error is :", e);
+    }
   };
 
   const handleCancel = () => {
-    router.back();
+    router.replace("/(tabs)/(groups)");
   };
+
+  if (isLoading || !selectedGroup) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: Colors.neutral[900] }} />
+    );
+  }
 
   return (
     <SafeAreaView
@@ -147,18 +176,22 @@ const Expense = () => {
             Group Selection
           </CText>
           <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
-            {groups.map((group) => (
+            {groups.map((group: any) => (
               <Pressable
-                key={group}
+                key={group.id}
                 style={chipStyle(selectedGroup === group)}
-                onPress={() => setSelectedGroup(group)}
+                onPress={() => {
+                  setSelectedGroup(group);
+                  setPaidBy(group.members[0].id);
+                  setSplitBetween(group.members.map((m: any) => m.id));
+                }}
               >
                 <CText
                   size="sm"
                   color={selectedGroup === group ? "accent" : "neutral"}
                   shade={300}
                 >
-                  {group}
+                  {group.name}
                 </CText>
               </Pressable>
             ))}
@@ -170,9 +203,9 @@ const Expense = () => {
             Category
           </CText>
           <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
-            {categories.map((category) => (
+            {sharedExpenseCategories.map((category) => (
               <Pressable
-                key={category}
+                key={category.key}
                 style={chipStyle(selectedCategory === category)}
                 onPress={() => setSelectedCategory(category)}
               >
@@ -181,7 +214,7 @@ const Expense = () => {
                   color={selectedCategory === category ? "accent" : "neutral"}
                   shade={300}
                 >
-                  {category}
+                  {category.label}
                 </CText>
               </Pressable>
             ))}
@@ -193,18 +226,18 @@ const Expense = () => {
             Paid By
           </CText>
           <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
-            {members.map((member) => (
+            {selectedGroup.members.map((member: any) => (
               <Pressable
-                key={member}
-                style={chipStyle(paidBy === member)}
-                onPress={() => setPaidBy(member)}
+                key={member.id}
+                style={chipStyle(paidBy === member.id)}
+                onPress={() => setPaidBy(member.id)}
               >
                 <CText
                   size="sm"
-                  color={paidBy === member ? "accent" : "neutral"}
+                  color={paidBy === member.id ? "accent" : "neutral"}
                   shade={300}
                 >
-                  {member}
+                  {member.givenName}
                 </CText>
               </Pressable>
             ))}
@@ -216,20 +249,20 @@ const Expense = () => {
             Split Between
           </CText>
           <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
-            {members.map((member) => {
-              const isSelected = splitBetween.includes(member);
+            {selectedGroup.members.map((member: any) => {
+              const isSelected = splitBetween.includes(member.id);
               return (
                 <Pressable
-                  key={member}
+                  key={member.id}
                   style={chipStyle(isSelected)}
-                  onPress={() => toggleSplitMember(member)}
+                  onPress={() => toggleSplitMember(member.id)}
                 >
                   <CText
                     size="sm"
                     color={isSelected ? "accent" : "neutral"}
                     shade={300}
                   >
-                    {member}
+                    {member.givenName}
                   </CText>
                 </Pressable>
               );

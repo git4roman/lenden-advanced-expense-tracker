@@ -14,7 +14,7 @@ public class UserGroupRepository: IUserGroupRepository
     }
     public async Task EnsureUserInGroupAndActiveAsync( Guid groupId,Guid userId, CancellationToken ct = default)
     {
-        var userGroup = await _dbContext.UserGroups.FirstOrDefaultAsync(ug => ug.Group.PublicId == groupId && ug.User.PublicId == userId && ug.User.Status == GroupMembershipStatus.Active);
+        var userGroup = await _dbContext.UserGroups.FirstOrDefaultAsync(ug => ug.Group.Slug == groupId && ug.User.Slug == userId && ug.User.Status == GroupMembershipStatus.Active);
         if(userGroup == null) throw new Exception("User not in group");
     }
 }

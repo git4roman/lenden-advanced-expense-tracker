@@ -89,15 +89,33 @@ const activityMockData = [
 
 const ExpenseTab = ({ groupId }: { groupId: string }) => {
   const { data: expenses } = useGetExpensesQuery(groupId as string);
-  console.log("The Expenses Data is:", expenses);
+  console.log("The Expenses Data is:", JSON.stringify(expenses, null, 2));
   const activityData =
     expenses?.map((expense: any) => {
       const { date, time } = formatDateTime(expense.createdAt);
+
+      const payers = expense.participants.filter((p: any) => p.paid > 0);
+
+      const payerNames = payers.map((p: any) => p.givenName);
+
+      let description = "";
+
+      if (payerNames.length === 1) {
+        description = `${payerNames[0]} paid for ${expense.categoryKey}`;
+      } else if (payerNames.length === 2) {
+        description = `${payerNames[0]} and ${payerNames[1]} paid for ${expense.categoryKey}`;
+      } else if (payerNames.length > 2) {
+        const last = payerNames.pop();
+        description = `${payerNames.join(", ")}, and ${last} paid for ${expense.categoryKey}`;
+      } else {
+        description = `Expense added for ${expense.categoryKey}`;
+      }
+
       return {
         date,
         time,
         categoryKey: expense.categoryKey ?? "other",
-        description: expense.description ?? "No description",
+        description,
         amount: expense.totalAmount?.toString() ?? "0",
       };
     }) ?? [];

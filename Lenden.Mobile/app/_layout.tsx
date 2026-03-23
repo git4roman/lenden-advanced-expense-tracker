@@ -26,6 +26,7 @@ import { PersistGate } from "redux-persist/integration/react";
 function RootNavigator() {
   const token = useSelector((state: RootState) => state.auth.accessToken);
   const isLoggedIn = Boolean(token);
+  // const isLoggedIn = true;
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
