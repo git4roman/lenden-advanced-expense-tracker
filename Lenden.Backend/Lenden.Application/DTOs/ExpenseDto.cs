@@ -11,6 +11,8 @@ public record CreateExpenseRequest(
     List<ExpenseParticipantDto> Users
 );
 
+public record DeleteExpenseRequest(Guid GroupPublicId,Guid ExpensePublicId);
+
 public record UpdateExpenseRequest(
     Guid ExpensePublicId,
     Guid GroupPublicId,

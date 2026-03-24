@@ -41,6 +41,23 @@ public class ExpenseApiController : ControllerBase
 
             throw new Exception(e.Message);
         }
+    } 
+    [HttpDelete]
+    public async Task<IActionResult> DeleteExpense(
+        DeleteExpenseRequest request,
+        CancellationToken ct = default)
+    {
+        try
+        {
+            var currentUser = await _authService.ValidateUserAsync(User, ct);
+            await _expenseService.DeleteExpenseAsync(currentUser.Id, request, ct);
+            return Ok();
+        }
+        catch (System.Exception e)
+        {
+
+            throw new Exception(e.Message);
+        }
     }
 
     [HttpGet("{groupId:Guid}")]

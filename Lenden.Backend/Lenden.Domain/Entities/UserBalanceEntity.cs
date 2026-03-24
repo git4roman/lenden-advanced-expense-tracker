@@ -4,54 +4,32 @@ public class UserBalanceEntity
 {
     public Guid Id { get; private set; }                // PK
     public long GroupPublicId { get; private set; }     // Group reference
-    public long CreditorId { get; private set; }       // Internal DB Id of user who should receive
-    public UserEntity Creditor { get; private set; } = null!;
-    public long DebtorId { get; private set; }         // Internal DB Id of user who should pay
-    public UserEntity Debtor { get; private set; } = null!;
+    public long UserId { get; private set; }
     
     public decimal Balance { get; private set; }       // Positive → Creditor receives, Negative → Creditor pays
     public DateTimeOffset UpdatedAt { get; private set; }
 
     private UserBalanceEntity() { } // EF
 
-    private UserBalanceEntity(long groupId, long userId1, long userId2)
+    private UserBalanceEntity(long groupId, long userId, decimal balance)
     {
         Id = Guid.NewGuid();
         GroupPublicId = groupId;
-
-        // Deterministic ordering by internal DB ID
-        if (userId1 < userId2)
-        {
-            CreditorId = userId1;
-            DebtorId = userId2;
-        }
-        else
-        {
-            CreditorId = userId2;
-            DebtorId = userId1;
-        }
-
-        Balance = 0;
+        UserId = userId;
+        Balance = balance;
         UpdatedAt = DateTimeOffset.UtcNow;
     }
 
     // Factory method
-    public static UserBalanceEntity Create(long groupId, long userId1, long userId2)
+    public static UserBalanceEntity Create(long groupId, long userId, decimal balance)
     {
-        return new UserBalanceEntity(groupId, userId1, userId2);
+        return new UserBalanceEntity(groupId, userId, balance);
     }
-    public void UpdateBalance(decimal amount, long creditorId, long debtorId)
+    public void UpdateBalance(decimal amount)
     {
-        if(creditorId == CreditorId) Balance += amount;
-        else Balance -= amount;
+       Balance = Balance + amount;
         UpdatedAt = DateTimeOffset.UtcNow;
     }
 
-    // Get balance from perspective of a user
-    public decimal GetBalanceForUser(long userId)
-    {
-        if (userId == CreditorId) return Balance;
-        if (userId == DebtorId) return -Balance;
-        throw new ArgumentException("User not part of this balance pair.");
-    }
+    
 }

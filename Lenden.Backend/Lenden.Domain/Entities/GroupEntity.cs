@@ -99,9 +99,11 @@ public class GroupEntity
     { return _members.Any(ug => ug.User.Slug == userId && ug.Status == GroupMembershipStatus.Active);
     }
 
-    public UserBalanceEntity CreateUserBalance(long groupId, long creditorId, long debtorId)
+    public void CreateUserBalance(long userId, decimal paidAmount, decimal splitAmount)
     {
-        return  UserBalanceEntity.Create(groupId, creditorId, debtorId);
+        var balance = paidAmount - splitAmount;
+        UserBalanceEntity.Create(this.Id,userId, balance);
     }
+   
 
 }

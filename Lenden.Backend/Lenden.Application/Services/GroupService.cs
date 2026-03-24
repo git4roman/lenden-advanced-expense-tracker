@@ -68,8 +68,22 @@ public class GroupService : IGroupService
     {
         var group= await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId, ct);
         var user = await _unitOfWork.UserRepository.GetUserByIdAsync(userId, ct);
+        if(user is null) throw new Exception("User not found");
         group.RemoveMember(user.Id);
         await _unitOfWork.SaveChangesAsync(ct);
+    }
+
+    public async Task RemoveMemberAsync(Guid groupId, Guid memberId, long userId, CancellationToken ct = default)
+    {
+        var group= await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId, ct);
+        var member = await _unitOfWork.UserRepository.GetUserByPublicIdAsync(memberId, ct);
+        if(member is null) throw new Exception("Member not found");
+        if(group.CreatedBy == userId)
+        {
+            group.RemoveMember(member.Id);
+            await _unitOfWork.SaveChangesAsync(ct);
+        }
+        else throw new Exception("You are not the creator of this group");
     }
 
     public async Task DeleteGroupAsync(Guid groupId,long userId, CancellationToken ct = default)

@@ -12,6 +12,8 @@ public interface IGroupService
     Task AddMemberAsync(Guid groupId, AddMemberRequestDto requestDto, long invitedByUserId, CancellationToken ct = default);
 
     Task LeaveGroupAsync(Guid groupId, long userId, CancellationToken ct = default);
+    
+    Task RemoveMemberAsync(Guid groupId, Guid memberId, long userId, CancellationToken ct = default);
 
     Task DeleteGroupAsync(Guid groupId,long userId, CancellationToken ct = default);
     

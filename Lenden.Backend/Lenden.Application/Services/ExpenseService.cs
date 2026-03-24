@@ -24,6 +24,8 @@ public class ExpenseService : IExpenseService
         var group = await _groupService.GetGroupByPublicIdAsync(request.GroupPublicId, ct);
         if (group is null) throw new Exception("Group not found");
 
+        var userBalances = group.UserBalances;
+
         using var transaction = await _unitOfWork.BeginTransactionAsync(ct);
 
         try
@@ -47,11 +49,21 @@ public class ExpenseService : IExpenseService
 
             foreach (var x in request.Users)
             {
+                var userId = userMap[x.UserId];
+                var paidAmount = x.paidAmount;
+                var splitAmount = x.splitAmount;
                 expenseEntity.AddExpenseParticipant(
                     userId: userMap[x.UserId],
-                    paid: x.paidAmount,
-                    split: x.splitAmount
+                    paid: paidAmount,
+                    split: splitAmount
                 );
+                var userBalance = userBalances.FirstOrDefault(b => b.UserId == userId);
+                if (userBalance is null)
+                {
+                    group.CreateUserBalance(userId,paidAmount,splitAmount);
+                    return;
+                }
+                userBalance.UpdateBalance(paidAmount-splitAmount);
             }
 
             await _unitOfWork.ExpenseRepository.AddAsync(expenseEntity, ct);
@@ -68,5 +80,14 @@ public class ExpenseService : IExpenseService
     public async Task<IEnumerable<ExpenseEntity?>> GetGroupExpensesAsync(Guid groupId, CancellationToken ct = default)
     {
         return await _unitOfWork.ExpenseRepository.GetByGroupAsync(groupId);
+    }
+
+    public async Task DeleteExpenseAsync(long userId, DeleteExpenseRequest request, CancellationToken ct = default)
+    {
+        var group = await _groupService.GetGroupByPublicIdAsync(request.GroupPublicId, ct);
+        if (group is null) throw new Exception("Group not found");
+        var expense = await _unitOfWork.ExpenseRepository.GetByPublicIdAsync(request.ExpensePublicId, ct);
+        if(expense is null) throw new Exception("Expense not found");
+        
     }
 }
