@@ -39,7 +39,7 @@ public class GroupService : IGroupService
         }
         await _unitOfWork.GroupRepository.AddAsync(group, ct);
         await _unitOfWork.SaveChangesAsync(ct);
-        return;
+        // return;
     }
 
     public async Task UpdateGroupAsync(Guid groupId, UpdateGroupRequest request, CancellationToken ct = default)

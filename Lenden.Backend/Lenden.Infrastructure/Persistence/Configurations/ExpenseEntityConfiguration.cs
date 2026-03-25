@@ -1,81 +1,71 @@
 ﻿using Lenden.Domain.Entities;
-using Lenden.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-namespace Lenden.Infrastructure.Persistence.Configurations
+namespace Lenden.Infrastructure.Persistence.Configurations;
+public class ExpenseEntityConfiguration : IEntityTypeConfiguration<ExpenseEntity>
 {
-    public class ExpenseEntityConfiguration : IEntityTypeConfiguration<ExpenseEntity>
+    public void Configure(EntityTypeBuilder<ExpenseEntity> builder)
     {
-        public void Configure(EntityTypeBuilder<ExpenseEntity> builder)
-        {
-            // Table name
-            builder.ToTable("expenses");
+        builder.ToTable("expenses");
 
-            // Primary key
-            builder.HasKey(e => e.Id);
+        builder.HasKey(x => x.Id);
 
-            // Properties
-            builder.Property(e => e.PublicId)
-                   .IsRequired();
-            
-            builder.Property(e => e.CreatorId)
-                   .IsRequired();
-            
-            builder.Property(e => e.GroupId)
-                   .IsRequired();
+        builder.Property(x => x.Id)
+            .HasColumnName("id");
 
-            builder.Property(e => e.TotalAmount)
-                   .IsRequired()
-                   .HasColumnType("decimal(18,2)");
+        builder.Property(x => x.PublicId)
+            .HasColumnName("public_id")
+            .IsRequired();
 
-            builder.Property(e => e.Description)
-                   .HasMaxLength(500);
+        builder.Property(x => x.GroupId)
+            .HasColumnName("group_id")
+            .IsRequired();
 
-            builder.Property(e => e.ImageUrl)
-                   .HasMaxLength(200);
+        builder.Property(x => x.CreatorId)
+            .HasColumnName("creator_id")
+            .IsRequired();
 
-            builder.Property(e => e.Category)
-                   .IsRequired()
-                   .HasConversion(new SmartEnumConverter<ExpenseCategory>());
+        builder.Property(x => x.TotalAmount)
+            .HasColumnName("total_amount")
+            .HasColumnType("decimal(18,2)")
+            .IsRequired();
 
-            builder.Property(e => e.CreatedAt)
-                   .IsRequired();
+        builder.Property(x => x.Category)
+            .HasColumnName("category")
+            .HasConversion(new SmartEnumConverter<ExpenseCategory>())
+            .IsRequired();
 
-            builder.HasOne(e => e.Creator)
-                          .WithMany()
-                   .HasForeignKey(e => e.CreatorId)
-                          .IsRequired();
+        builder.Property(x => x.Description)
+            .HasColumnName("description");
 
-            // // Payers (value objects)
-            // builder.OwnsMany(e => e.Payers, pb =>
-            // {
-            //     pb.WithOwner().HasForeignKey("ExpenseId"); // FK to Expense
-            //     pb.Property<Guid>("Id");                    // PK for the owned entity
-            //     pb.HasKey("Id");
-            //     pb.Property(p => p.UserPublicId).IsRequired();
-            //     pb.Property(p => p.Amount)
-            //       .IsRequired()
-            //       .HasColumnType("decimal(18,2)");
-            //     pb.ToTable("ExpensePayers");
-            // });
-            //
-            // // Splitters (value objects)
-            // builder.OwnsMany(e => e.Splitters, sb =>
-            // {
-            //     sb.WithOwner().HasForeignKey("ExpenseId"); // FK to Expense
-            //     sb.Property<Guid>("Id");                    // PK for the owned entity
-            //     sb.HasKey("Id");
-            //     sb.Property(s => s.UserPublicId).IsRequired();
-            //     sb.Property(s => s.Amount)
-            //       .IsRequired()
-            //       .HasColumnType("decimal(18,2)");
-            //     sb.ToTable("ExpenseSplitters");
-            // });
+        builder.Property(x => x.ImageUrl)
+            .HasColumnName("image_url");
 
-            // Indexes (optional, for fast lookups)
-            builder.HasIndex(e => e.GroupId);
-            builder.HasIndex(e => e.PublicId).IsUnique();
-        }
+        builder.Property(x => x.CreatedAt)
+            .HasColumnName("created_at")
+            .IsRequired();
+
+        builder.HasOne(x => x.Group)
+            .WithMany()
+            .HasForeignKey(x => x.GroupId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(x => x.Creator)
+            .WithMany()
+            .HasForeignKey(x => x.CreatorId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(x => x.Participants)
+            .WithOne()
+            .HasForeignKey("expense_id")
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Navigation(x => x.Participants)
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+        builder.HasIndex(x => x.PublicId)
+            .IsUnique();
+
+        builder.HasIndex(x => x.GroupId);
     }
 }

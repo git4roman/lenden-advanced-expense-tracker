@@ -2,6 +2,10 @@
 
 public class UserGroupEntity
 {
+    private UserGroupEntity()
+    {
+        
+    }
     public long UserId { get; private set; }
     public UserEntity User { get; private set; }
 
@@ -20,7 +24,7 @@ public class UserGroupEntity
     {
         UserId = userId;
         GroupId = groupId;
-        Role = UserGroupRole.Member;
+        Role = role ?? UserGroupRole.Member;
         InvitedByUserId = invitedByUserId;
         JoinedAt = DateTimeOffset.UtcNow;
         Status = GroupMembershipStatus.Active;

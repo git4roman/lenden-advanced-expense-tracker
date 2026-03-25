@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lenden.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260304053027_creator")]
-    partial class creator
+    [Migration("20260325155205_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,9 +52,12 @@ namespace Lenden.Infrastructure.Migrations
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("user_id")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("user_id");
 
                     b.ToTable("AuthSessions");
                 });
@@ -63,33 +66,40 @@ namespace Lenden.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("char(36)")
+                        .HasColumnName("id");
 
                     b.Property<int>("Category")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("category");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
 
                     b.Property<long>("CreatorId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("creator_id");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("description");
 
                     b.Property<long>("GroupId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("group_id");
 
                     b.Property<string>("ImageUrl")
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("image_url");
 
                     b.Property<Guid>("PublicId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("char(36)")
+                        .HasColumnName("public_id");
 
                     b.Property<decimal>("TotalAmount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("total_amount");
 
                     b.HasKey("Id");
 
@@ -109,9 +119,6 @@ namespace Lenden.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("ExpenseEntityId")
-                        .HasColumnType("char(36)");
-
                     b.Property<Guid>("ExpenseId")
                         .HasColumnType("char(36)");
 
@@ -124,48 +131,94 @@ namespace Lenden.Infrastructure.Migrations
                     b.Property<decimal>("Split")
                         .HasColumnType("decimal(65,30)");
 
-                    b.Property<long>("UserInternalId")
+                    b.Property<long>("UserId")
                         .HasColumnType("bigint");
+
+                    b.Property<Guid?>("expense_id")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ExpenseEntityId");
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("expense_id");
 
                     b.ToTable("ExpenseParticipantEntity");
+                });
+
+            modelBuilder.Entity("Lenden.Domain.Entities.FriendshipEntity", b =>
+                {
+                    b.Property<long>("RequesterId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("requester_id");
+
+                    b.Property<long>("RecipientId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("recipient_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int")
+                        .HasColumnName("status");
+
+                    b.HasKey("RequesterId", "RecipientId");
+
+                    b.HasIndex("RecipientId");
+
+                    b.HasIndex("RequesterId", "RecipientId")
+                        .IsUnique();
+
+                    b.ToTable("friendships", (string)null);
                 });
 
             modelBuilder.Entity("Lenden.Domain.Entities.GroupEntity", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
 
                     b.Property<long>("CreatedBy")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("created_by");
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("image_url");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("name");
 
-                    b.Property<Guid>("PublicId")
-                        .HasMaxLength(50)
-                        .HasColumnType("char(50)");
+                    b.Property<Guid>("Slug")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("slug");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int")
+                        .HasColumnName("status");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Groups", (string)null);
+                    b.HasIndex("Name");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.ToTable("groups", (string)null);
                 });
 
             modelBuilder.Entity("Lenden.Domain.Entities.UserBalanceEntity", b =>
@@ -177,28 +230,21 @@ namespace Lenden.Infrastructure.Migrations
                     b.Property<decimal>("Balance")
                         .HasColumnType("decimal(65,30)");
 
-                    b.Property<long>("CreditorId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("DebtorId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("GroupEntityId")
-                        .HasColumnType("bigint");
-
                     b.Property<long>("GroupPublicId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("group_id")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("CreditorId");
-
-                    b.HasIndex("DebtorId");
-
-                    b.HasIndex("GroupEntityId");
+                    b.HasIndex("group_id");
 
                     b.ToTable("UserBalances");
                 });
@@ -207,53 +253,66 @@ namespace Lenden.Infrastructure.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(320)
-                        .HasColumnType("varchar(320)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("email");
 
                     b.Property<bool>("EmailVerified")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("email_verified");
 
                     b.Property<string>("FamilyName")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("family_name");
 
                     b.Property<string>("GivenName")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("given_name");
 
                     b.Property<string>("PasswordHash")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
-
-                    b.Property<Guid>("PublicId")
-                        .HasMaxLength(50)
-                        .HasColumnType("char(50)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("password_hash");
 
                     b.Property<int>("Role")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("role");
+
+                    b.Property<Guid>("Slug")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("slug");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("status");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
 
-                    b.Property<Guid?>("UserInfoId")
-                        .HasColumnType("char(36)");
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("username");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PublicId")
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.HasIndex("Username")
                         .IsUnique();
 
                     b.ToTable("users", (string)null);
@@ -265,27 +324,33 @@ namespace Lenden.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
+                    b.Property<string>("Address")
+                        .HasColumnType("longtext");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
+                    b.Property<string>("ImageUrl")
                         .HasColumnType("longtext");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("longtext");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("user_id")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("user_id")
+                        .IsUnique();
 
                     b.ToTable("UserInfos");
                 });
@@ -310,9 +375,12 @@ namespace Lenden.Infrastructure.Migrations
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("user_id")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("user_id");
 
                     b.ToTable("AuthProviderEntity");
                 });
@@ -320,42 +388,57 @@ namespace Lenden.Infrastructure.Migrations
             modelBuilder.Entity("UserGroupEntity", b =>
                 {
                     b.Property<long>("UserId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("user_id");
 
                     b.Property<long>("GroupId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("group_id");
 
                     b.Property<long?>("InvitedByUserId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("invited_by_user_id");
 
                     b.Property<DateTimeOffset>("JoinedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("joined_at");
 
                     b.Property<DateTimeOffset?>("LeftAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("left_at");
 
                     b.Property<int>("Role")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("role");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("status");
+
+                    b.Property<long?>("group_id")
+                        .HasColumnType("bigint");
 
                     b.HasKey("UserId", "GroupId");
 
-                    b.HasIndex("GroupId");
-
                     b.HasIndex("InvitedByUserId");
 
-                    b.ToTable("UserGroups", (string)null);
+                    b.HasIndex("group_id");
+
+                    b.HasIndex("GroupId", "Status");
+
+                    b.ToTable("user_groups", null, t =>
+                        {
+                            t.Property("group_id")
+                                .HasColumnName("group_id1");
+                        });
                 });
 
             modelBuilder.Entity("Lenden.Domain.Entities.AuthSessionEntity", b =>
                 {
                     b.HasOne("Lenden.Domain.Entities.UserEntity", null)
                         .WithMany("Sessions")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("user_id")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Lenden.Domain.Entities.ExpenseEntity", b =>
@@ -363,7 +446,7 @@ namespace Lenden.Infrastructure.Migrations
                     b.HasOne("Lenden.Domain.Entities.UserEntity", "Creator")
                         .WithMany()
                         .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Lenden.Domain.Entities.GroupEntity", "Group")
@@ -379,47 +462,76 @@ namespace Lenden.Infrastructure.Migrations
 
             modelBuilder.Entity("Lenden.Domain.Entities.ExpenseParticipantEntity", b =>
                 {
+                    b.HasOne("Lenden.Domain.Entities.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Lenden.Domain.Entities.ExpenseEntity", null)
                         .WithMany("Participants")
-                        .HasForeignKey("ExpenseEntityId");
+                        .HasForeignKey("expense_id")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Lenden.Domain.Entities.FriendshipEntity", b =>
+                {
+                    b.HasOne("Lenden.Domain.Entities.UserEntity", "Recipient")
+                        .WithMany()
+                        .HasForeignKey("RecipientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Lenden.Domain.Entities.UserEntity", "Requester")
+                        .WithMany()
+                        .HasForeignKey("RequesterId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Recipient");
+
+                    b.Navigation("Requester");
                 });
 
             modelBuilder.Entity("Lenden.Domain.Entities.UserBalanceEntity", b =>
                 {
-                    b.HasOne("Lenden.Domain.Entities.UserEntity", "Creditor")
-                        .WithMany()
-                        .HasForeignKey("CreditorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Lenden.Domain.Entities.UserEntity", "Debtor")
-                        .WithMany()
-                        .HasForeignKey("DebtorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Lenden.Domain.Entities.GroupEntity", null)
                         .WithMany("UserBalances")
-                        .HasForeignKey("GroupEntityId");
+                        .HasForeignKey("group_id")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
 
-                    b.Navigation("Creditor");
+            modelBuilder.Entity("Lenden.Domain.Entities.UserInfoEntity", b =>
+                {
+                    b.HasOne("Lenden.Domain.Entities.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Debtor");
+                    b.HasOne("Lenden.Domain.Entities.UserEntity", null)
+                        .WithOne("UserInfo")
+                        .HasForeignKey("Lenden.Domain.Entities.UserInfoEntity", "user_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Lenden.Domain.ValueObjects.AuthProviderEntity", b =>
                 {
                     b.HasOne("Lenden.Domain.Entities.UserEntity", null)
                         .WithMany("AuthProviders")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("user_id")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("UserGroupEntity", b =>
                 {
                     b.HasOne("Lenden.Domain.Entities.GroupEntity", "Group")
-                        .WithMany("Members")
+                        .WithMany()
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -432,8 +544,13 @@ namespace Lenden.Infrastructure.Migrations
                     b.HasOne("Lenden.Domain.Entities.UserEntity", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Lenden.Domain.Entities.GroupEntity", null)
+                        .WithMany("Members")
+                        .HasForeignKey("group_id")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Group");
 
@@ -459,6 +576,8 @@ namespace Lenden.Infrastructure.Migrations
                     b.Navigation("AuthProviders");
 
                     b.Navigation("Sessions");
+
+                    b.Navigation("UserInfo");
                 });
 #pragma warning restore 612, 618
         }

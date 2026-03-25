@@ -25,10 +25,13 @@ public class GroupRepository : IGroupRepository
 
     public async Task<IEnumerable<GroupEntity?>> GetByUserPublicIdAsync(Guid publicId, CancellationToken ct = default)
     {
-        var groups = await _context.Groups.Where(g=>g.Status==GroupStatus.Active)
+        var groups = await _context.Groups
+            .Where(g => g.Status == GroupStatus.Active)
+            .Where(g => g.Members.Any(m =>
+                m.User.Slug == publicId &&
+                m.Status == GroupMembershipStatus.Active))
             .Include(g => g.Members.Where(m => m.Status == GroupMembershipStatus.Active))
             .ThenInclude(m => m.User)
-            .Where(g => g.Members.Any(m => m.User.Slug == publicId))
             .ToListAsync(ct);
         return groups;
     }

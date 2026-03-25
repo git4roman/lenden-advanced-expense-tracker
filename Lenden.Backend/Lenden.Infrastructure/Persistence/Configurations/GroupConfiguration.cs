@@ -1,48 +1,66 @@
 ﻿using Lenden.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace Lenden.Infrastructure.Persistence.Configurations;
 
 public class GroupEntityConfiguration : IEntityTypeConfiguration<GroupEntity>
 {
     public void Configure(EntityTypeBuilder<GroupEntity> builder)
     {
-        // Table
-        builder.ToTable("Groups");
+        builder.ToTable("groups");
 
-        // PK
-        builder.HasKey(g => g.Id);
+        builder.HasKey(x => x.Id);
 
-        // Properties
-        builder.Property(g => g.Slug)
-            .IsRequired()
-            .HasMaxLength(50);
+        builder.Property(x => x.Id)
+            .HasColumnName("id");
 
-        builder.Property(g => g.Name)
-            .IsRequired()
-            .HasMaxLength(200);
-
-        builder.Property(g => g.ImageUrl)
-            .HasMaxLength(500);
-
-        builder.Property(g => g.CreatedBy)
+        builder.Property(x => x.Slug)
+            .HasColumnName("slug")
             .IsRequired();
 
-        builder.Property(g => g.CreatedAt)
+        builder.Property(x => x.Name)
+            .HasColumnName("name")
             .IsRequired();
 
-        builder.Property(g => g.UpdatedAt)
+        builder.Property(x => x.ImageUrl)
+            .HasColumnName("image_url");
+
+        builder.Property(x => x.CreatedBy)
+            .HasColumnName("created_by")
             .IsRequired();
-        
-        builder.Property(g => g.Status)
+
+        builder.Property(x => x.CreatedAt)
+            .HasColumnName("created_at")
+            .IsRequired();
+
+        builder.Property(x => x.UpdatedAt)
+            .HasColumnName("updated_at")
+            .IsRequired();
+
+        builder.Property(x => x.Status)
+            .HasColumnName("status")
             .HasConversion(new SmartEnumConverter<GroupStatus>())
             .IsRequired();
 
-        // Navigation
-        builder.HasMany(g => g.Members)
-            .WithOne(ug => ug.Group)
-            .HasForeignKey(ug => ug.GroupId)
+        builder.HasMany(x => x.Members)
+            .WithOne()
+            .HasForeignKey("group_id")
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Navigation(x => x.Members)
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+        builder.HasMany(x => x.UserBalances)
+            .WithOne()
+            .HasForeignKey("group_id")
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Navigation(x => x.UserBalances)
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+        builder.HasIndex(x => x.Slug)
+            .IsUnique();
+
+        builder.HasIndex(x => x.Name);
     }
 }

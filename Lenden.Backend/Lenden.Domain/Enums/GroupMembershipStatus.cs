@@ -2,7 +2,7 @@
 
 namespace Lenden.Domain.Entities;
 
-public class GroupMembershipStatus: SmartEnum<GroupMembershipStatus>
+public class GroupMembershipStatus: SmartEnum<GroupMembershipStatus,int>
 {
     public static readonly GroupMembershipStatus Active  = new(nameof(Active), 1);
     public static readonly GroupMembershipStatus Disabled = new(nameof(Disabled), 2);

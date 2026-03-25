@@ -38,13 +38,13 @@ public class GroupEntity
             return; 
 
         var role = isCreator ? UserGroupRole.Admin : UserGroupRole.Member;
-
-        _members.Add(new UserGroupEntity(
+        var newMember = new UserGroupEntity(
             userId: user.Id,
             groupId: Id,
             role: role,
             invitedByUserId
-        ));
+        );
+        _members.Add(newMember);
     }
     
     public void AddMembersBulk(IEnumerable<UserEntity> users, long invitedByUserId)
