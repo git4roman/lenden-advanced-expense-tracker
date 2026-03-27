@@ -118,6 +118,14 @@ public class GroupApiController : ControllerBase
         await _groupService.DeleteGroupAsync(groupId, currenUser.Id);
         return NoContent();
     }
+
+    [HttpGet("all")]
+    public async Task<IActionResult> GetAllGroups(CancellationToken ct = default)
+    {
+       var currenUser= await _authService.ValidateUserAsync(User, ct);
+       var allGroups = await _groupService.GetAllActiveAsync();
+       return Ok(allGroups);
+    }
     
     public class GroupDto
     {

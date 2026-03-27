@@ -21,15 +21,20 @@ public class ExpenseService : IExpenseService
 
     public async Task CreateExpenseAsync(long creatorId, CreateExpenseRequest request, CancellationToken ct = default)
     {
-        var group = await _groupService.GetGroupByPublicIdAsync(request.GroupPublicId, ct);
-        if (group is null) throw new Exception("Group not found");
-
-        var userBalances = group.UserBalances;
-
         using var transaction = await _unitOfWork.BeginTransactionAsync(ct);
-
         try
         {
+            var group = await _unitOfWork.GroupRepository.GetByPublicIdAsync(request.GroupPublicId, ct);
+            if (group is null) throw new Exception("Group not found");
+            
+            decimal totalPaid = request.Users.Sum(u => u.paidAmount);
+            decimal totalSplit = request.Users.Sum(u => u.splitAmount);
+            if (totalPaid != request.TotalAmount || totalSplit != request.TotalAmount)
+            {
+                throw new Exception("Total paid or split amount does not match the total amount");
+            }
+
+            // var userBalances = group.UserBalances;
             var publicIds = request.Users
                 .Select(x => x.UserId)
                 .Distinct()
@@ -57,15 +62,11 @@ public class ExpenseService : IExpenseService
                     paid: paidAmount,
                     split: splitAmount
                 );
-                var userBalance = userBalances.FirstOrDefault(b => b.UserId == userId);
-                if (userBalance is null)
-                {
-                    group.CreateUserBalance(userId,paidAmount,splitAmount);
-                    return;
-                }
-                userBalance.UpdateBalance(paidAmount-splitAmount);
+                var member = group.Members.FirstOrDefault(m => m.UserId == userId);
+                if (member is null) continue;
+                member.UpdateNetBalance(paidAmount-splitAmount);
+                
             }
-
             await _unitOfWork.ExpenseRepository.AddAsync(expenseEntity, ct);
             await _unitOfWork.SaveChangesAsync(ct);
             await transaction.CommitAsync();

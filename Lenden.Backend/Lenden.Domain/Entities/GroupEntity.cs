@@ -13,6 +13,7 @@ public class GroupEntity
         CreatedAt = DateTimeOffset.UtcNow;
         UpdatedAt = DateTimeOffset.UtcNow;
         _members = new List<UserGroupEntity>();
+        Status = GroupStatus.Active;
     }
     public long Id { get; private set; } 
     public Guid Slug { get; private set; } = Guid.NewGuid(); 
@@ -23,16 +24,10 @@ public class GroupEntity
     public DateTimeOffset UpdatedAt { get; private set; }
     public GroupStatus Status { get; private set; }
 
-    private readonly List<UserGroupEntity> _members;
+    private readonly List<UserGroupEntity> _members; 
     public IReadOnlyCollection<UserGroupEntity> Members => _members.AsReadOnly();
 
-    private readonly List<UserBalanceEntity> _userBalances;
-    public IReadOnlyCollection<UserBalanceEntity> UserBalances => _userBalances.AsReadOnly();
-    
-    // private readonly List<ExpenseEntity> _expenses;
-    // public IReadOnlyCollection<ExpenseEntity> Expenses => _expenses.AsReadOnly();
-
-    public void AddMember(UserEntity user, long invitedByUserId, bool isCreator = false)
+    public void AddMember(GroupEntity group,UserEntity user, long invitedByUserId, bool isCreator = false)
     {
         if (_members.Any(ug => ug.UserId == user.Id && ug.Status == GroupMembershipStatus.Active))
             return; 
@@ -40,14 +35,14 @@ public class GroupEntity
         var role = isCreator ? UserGroupRole.Admin : UserGroupRole.Member;
         var newMember = new UserGroupEntity(
             userId: user.Id,
-            groupId: Id,
+            group: group,
             role: role,
             invitedByUserId
         );
         _members.Add(newMember);
     }
     
-    public void AddMembersBulk(IEnumerable<UserEntity> users, long invitedByUserId)
+    public void AddMembersBulk(GroupEntity group,IEnumerable<UserEntity> users, long invitedByUserId)
     {
         var existingUserIds = _members
             .Where(m => m.Status == GroupMembershipStatus.Active)
@@ -61,7 +56,7 @@ public class GroupEntity
             
             _members.Add(new UserGroupEntity(
                 userId: user.Id,
-                groupId: Id,
+                group: group,
                 role: UserGroupRole.Member,
                 invitedByUserId
             ));
@@ -102,7 +97,7 @@ public class GroupEntity
     public void CreateUserBalance(long userId, decimal paidAmount, decimal splitAmount)
     {
         var balance = paidAmount - splitAmount;
-        UserBalanceEntity.Create(this.Id,userId, balance);
+        
     }
    
 

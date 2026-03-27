@@ -8,7 +8,6 @@ public interface IUnitOfWork
     IUserRepository UserRepository { get; }
     IAuthRepository AuthRepository { get; }
     IGroupRepository GroupRepository { get; }
-    IUserBalanceRepository UserBalanceRepository { get; }
     IUserGroupRepository UserGroupRepository { get; }
     IExpenseRepository ExpenseRepository { get; }
     IFriendshipRepository FriendshipRepository { get; }

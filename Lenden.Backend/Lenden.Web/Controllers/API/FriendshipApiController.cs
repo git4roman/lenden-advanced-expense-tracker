@@ -19,7 +19,7 @@ namespace Lenden.Web.Controllers.API
             _authService = authService;
         }
         
-        [HttpGet()]
+        [HttpGet]
         public async Task<IActionResult> GetFriends(CancellationToken ct = default)
         {
             try
@@ -40,6 +40,64 @@ namespace Lenden.Web.Controllers.API
             {
                 throw new Exception(e.Message);
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddFriend(AddFriendRequestDto request)
+        {
+            try
+            {
+                var currentUser = await _authService.ValidateUserAsync(User);
+                await _friendshipService.AddFriendAsync(currentUser.Id, request.UserId);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+            
+        }
+
+        [HttpPost("accept")]
+        public async Task<IActionResult> AcceptFriendRequest(FriendRequestDto friend)
+        {
+            try
+            {
+                var currentUser = await _authService.ValidateUserAsync(User);
+                await _friendshipService.AcceptFriendRequestAsync(currentUser.Id, friend.Id);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+
+            }
+        }
+
+        public class FriendRequestDto
+        {
+            public Guid Id { get; set; }
+        }
+
+        [HttpPost("reject")]
+        public async Task<IActionResult> RejectFriendRequest(FriendRequestDto friend)
+        {
+            try
+            {
+                var currentUser = await _authService.ValidateUserAsync(User);
+                await _friendshipService.RemoveFriendAsync(currentUser.Id, friend.Id);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+
+            }
+        }
+
+        public class AddFriendRequestDto
+        {
+            public Guid UserId { get; set; }
         }
         
         private class FriendDto

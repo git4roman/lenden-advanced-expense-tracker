@@ -14,7 +14,6 @@ public class AppDbContext: DbContext
     public DbSet<UserInfoEntity> UserInfos { get; set; }
     public DbSet<GroupEntity> Groups { get; set; }
     public DbSet<UserGroupEntity> UserGroups { get; set; }
-    public DbSet<UserBalanceEntity> UserBalances { get; set; }
     public DbSet<ExpenseEntity> Expenses { get; set; }
     public DbSet<AuthSessionEntity> AuthSessions { get; set; }
     public DbSet<FriendshipEntity> Friends { get; set; }
@@ -23,9 +22,11 @@ public class AppDbContext: DbContext
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new UserGroupEntityConfiguration());
         modelBuilder.ApplyConfiguration(new GroupEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new UserGroupEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new UserInfoEntityConfiguration());
         modelBuilder.ApplyConfiguration(new ExpenseEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new ExpenseParticipantEntityConfiguration());
         modelBuilder.ApplyConfiguration(new FriendshipEntityConfiguration());
     }
 }

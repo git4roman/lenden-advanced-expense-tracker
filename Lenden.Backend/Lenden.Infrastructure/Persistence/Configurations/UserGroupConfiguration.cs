@@ -22,6 +22,11 @@ public class UserGroupEntityConfiguration : IEntityTypeConfiguration<UserGroupEn
             .HasConversion(new SmartEnumConverter<UserGroupRole>())
             .IsRequired();
 
+        builder.Property(x => x.NetBalance)
+            .HasColumnName("net_balance")
+            .HasColumnType("decimal(18,2)")
+            .IsRequired();
+
         builder.Property(x => x.Status)
             .HasColumnName("status")
             .HasConversion(new SmartEnumConverter<GroupMembershipStatus>())
@@ -43,7 +48,7 @@ public class UserGroupEntityConfiguration : IEntityTypeConfiguration<UserGroupEn
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(x => x.Group)
-            .WithMany()
+            .WithMany(g=>g.Members)
             .HasForeignKey(x => x.GroupId)
             .OnDelete(DeleteBehavior.Cascade);
 

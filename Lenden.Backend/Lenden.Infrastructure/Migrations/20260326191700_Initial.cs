@@ -67,29 +67,6 @@ namespace Lenden.Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "UserBalances",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    GroupPublicId = table.Column<long>(type: "bigint", nullable: false),
-                    UserId = table.Column<long>(type: "bigint", nullable: false),
-                    Balance = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    UpdatedAt = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: false),
-                    group_id = table.Column<long>(type: "bigint", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserBalances", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UserBalances_groups_group_id",
-                        column: x => x.group_id,
-                        principalTable: "groups",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "AuthProviderEntity",
                 columns: table => new
                 {
@@ -206,6 +183,41 @@ namespace Lenden.Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "user_balances",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    group_id = table.Column<long>(type: "bigint", nullable: false),
+                    GroupId1 = table.Column<long>(type: "bigint", nullable: false),
+                    user_id = table.Column<long>(type: "bigint", nullable: false),
+                    balance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_user_balances", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_user_balances_groups_GroupId1",
+                        column: x => x.GroupId1,
+                        principalTable: "groups",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_user_balances_groups_group_id",
+                        column: x => x.group_id,
+                        principalTable: "groups",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_user_balances_users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "user_groups",
                 columns: table => new
                 {
@@ -215,8 +227,7 @@ namespace Lenden.Infrastructure.Migrations
                     status = table.Column<int>(type: "int", nullable: false),
                     joined_at = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: false),
                     left_at = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: true),
-                    invited_by_user_id = table.Column<long>(type: "bigint", nullable: true),
-                    group_id1 = table.Column<long>(type: "bigint", nullable: true)
+                    invited_by_user_id = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -224,12 +235,6 @@ namespace Lenden.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_user_groups_groups_group_id",
                         column: x => x.group_id,
-                        principalTable: "groups",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_user_groups_groups_group_id1",
-                        column: x => x.group_id1,
                         principalTable: "groups",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -249,32 +254,25 @@ namespace Lenden.Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "UserInfos",
+                name: "user_infos",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    UserId = table.Column<long>(type: "bigint", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "longtext", nullable: true)
+                    id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    user_id = table.Column<long>(type: "bigint", nullable: false),
+                    phone_number = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Address = table.Column<string>(type: "longtext", nullable: true)
+                    address = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    ImageUrl = table.Column<string>(type: "longtext", nullable: true)
+                    image_url = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    DateOfBirth = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    user_id = table.Column<long>(type: "bigint", nullable: false)
+                    date_of_birth = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserInfos", x => x.Id);
+                    table.PrimaryKey("PK_user_infos", x => x.id);
                     table.ForeignKey(
-                        name: "FK_UserInfos_users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserInfos_users_user_id",
+                        name: "FK_user_infos_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
                         principalColumn: "id",
@@ -283,32 +281,30 @@ namespace Lenden.Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "ExpenseParticipantEntity",
+                name: "user_expenses",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    ExpenseId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    UserId = table.Column<long>(type: "bigint", nullable: false),
-                    Net = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    Paid = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    Split = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    expense_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci")
+                    expense_id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    user_id = table.Column<long>(type: "bigint", nullable: false),
+                    net = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    paid = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    split = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ExpenseParticipantEntity", x => x.Id);
+                    table.PrimaryKey("PK_user_expenses", x => new { x.expense_id, x.user_id });
                     table.ForeignKey(
-                        name: "FK_ExpenseParticipantEntity_expenses_expense_id",
+                        name: "FK_user_expenses_expenses_expense_id",
                         column: x => x.expense_id,
                         principalTable: "expenses",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ExpenseParticipantEntity_users_UserId",
-                        column: x => x.UserId,
+                        name: "FK_user_expenses_users_user_id",
+                        column: x => x.user_id,
                         principalTable: "users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -321,16 +317,6 @@ namespace Lenden.Infrastructure.Migrations
                 name: "IX_AuthSessions_user_id",
                 table: "AuthSessions",
                 column: "user_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ExpenseParticipantEntity_expense_id",
-                table: "ExpenseParticipantEntity",
-                column: "expense_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ExpenseParticipantEntity_UserId",
-                table: "ExpenseParticipantEntity",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_expenses_creator_id",
@@ -371,14 +357,36 @@ namespace Lenden.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_user_balances_group_id_user_id",
+                table: "user_balances",
+                columns: new[] { "group_id", "user_id" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_balances_GroupId1",
+                table: "user_balances",
+                column: "GroupId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_balances_user_id",
+                table: "user_balances",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_expenses_expense_id_user_id",
+                table: "user_expenses",
+                columns: new[] { "expense_id", "user_id" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_expenses_user_id",
+                table: "user_expenses",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_user_groups_group_id_status",
                 table: "user_groups",
                 columns: new[] { "group_id", "status" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_user_groups_group_id1",
-                table: "user_groups",
-                column: "group_id1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_user_groups_invited_by_user_id",
@@ -386,20 +394,10 @@ namespace Lenden.Infrastructure.Migrations
                 column: "invited_by_user_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserBalances_group_id",
-                table: "UserBalances",
-                column: "group_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserInfos_user_id",
-                table: "UserInfos",
+                name: "IX_user_infos_user_id",
+                table: "user_infos",
                 column: "user_id",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserInfos_UserId",
-                table: "UserInfos",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_users_email",
@@ -430,19 +428,19 @@ namespace Lenden.Infrastructure.Migrations
                 name: "AuthSessions");
 
             migrationBuilder.DropTable(
-                name: "ExpenseParticipantEntity");
+                name: "friendships");
 
             migrationBuilder.DropTable(
-                name: "friendships");
+                name: "user_balances");
+
+            migrationBuilder.DropTable(
+                name: "user_expenses");
 
             migrationBuilder.DropTable(
                 name: "user_groups");
 
             migrationBuilder.DropTable(
-                name: "UserBalances");
-
-            migrationBuilder.DropTable(
-                name: "UserInfos");
+                name: "user_infos");
 
             migrationBuilder.DropTable(
                 name: "expenses");

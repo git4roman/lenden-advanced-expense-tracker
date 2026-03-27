@@ -23,7 +23,7 @@ public class GroupService : IGroupService
 
         var group = new GroupEntity(request.Name, request.ImageUrl, creator.Id);
 
-        group.AddMember(creator,creator.Id, true);
+        group.AddMember(group,creator,creator.Id, true);
         try
         {
             var publicIds = request.UserIds
@@ -31,7 +31,7 @@ public class GroupService : IGroupService
                 .ToList();
 
             var users = await _unitOfWork.UserRepository.GetUsersInBulkWithPublicIdAsync(publicIds, ct);
-            group.AddMembersBulk(users,creator.Id);
+            group.AddMembersBulk(group,users,creator.Id);
         }
         catch (Exception e)
         {
@@ -56,17 +56,19 @@ public class GroupService : IGroupService
     public async Task AddMemberAsync(Guid groupId, AddMemberRequestDto requestDto,long invitedByUserId, CancellationToken ct = default)
     {
       var group= await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId, ct);
+      if(group is null) throw new Exception("Group not found");
         var users = await _unitOfWork.UserRepository.GetUsersInBulkWithPublicIdAsync(requestDto.UserIds, ct);
         if (users is null)
             throw new Exception("Users not found");
 
-        group.AddMembersBulk(users, invitedByUserId);
+        group.AddMembersBulk(group,users, invitedByUserId);
         await _unitOfWork.SaveChangesAsync(ct);
     }
 
     public async Task LeaveGroupAsync(Guid groupId, long userId, CancellationToken ct = default)
     {
         var group= await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId, ct);
+        if(group is null) throw new Exception("Group not found");
         var user = await _unitOfWork.UserRepository.GetUserByIdAsync(userId, ct);
         if(user is null) throw new Exception("User not found");
         group.RemoveMember(user.Id);
@@ -76,6 +78,7 @@ public class GroupService : IGroupService
     public async Task RemoveMemberAsync(Guid groupId, Guid memberId, long userId, CancellationToken ct = default)
     {
         var group= await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId, ct);
+        if(group is null) throw new Exception("Group not found");
         var member = await _unitOfWork.UserRepository.GetUserByPublicIdAsync(memberId, ct);
         if(member is null) throw new Exception("Member not found");
         if(group.CreatedBy == userId)
@@ -89,6 +92,7 @@ public class GroupService : IGroupService
     public async Task DeleteGroupAsync(Guid groupId,long userId, CancellationToken ct = default)
     {
         var group= await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId, ct);
+        if (group is null) throw new Exception("Group not found");
         if(group.CreatedBy == userId)
         {
             // _unitOfWork.GroupRepository.Remove(group);
@@ -97,6 +101,12 @@ public class GroupService : IGroupService
         }
         else throw new Exception("You are not the creator of this group");
         
+    }
+
+    public async Task<IEnumerable<GroupEntity>> GetAllActiveAsync(CancellationToken ct = default)
+    {
+        var allGroups = await _unitOfWork.GroupRepository.GetAllActiveAsync();
+        return allGroups;
     }
 
     // public async Task<UserEntity?> GetGroupMemberByPublicId(Guid groupId, Guid userId, CancellationToken ct = default)

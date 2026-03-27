@@ -2,8 +2,8 @@
 
 public class ExpenseParticipantEntity
 {
-    public Guid Id { get; private set; }
-    public Guid ExpenseId { get; private set; }         
+    public Guid ExpenseId { get; private set; }  
+    public ExpenseEntity Expense { get; private set; } 
     public long UserId { get; private set; }    
     public UserEntity User {get; private set;}
     public decimal Net { get; private set; }        

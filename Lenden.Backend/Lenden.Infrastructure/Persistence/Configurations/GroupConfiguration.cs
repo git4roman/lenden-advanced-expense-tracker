@@ -41,23 +41,9 @@ public class GroupEntityConfiguration : IEntityTypeConfiguration<GroupEntity>
             .HasColumnName("status")
             .HasConversion(new SmartEnumConverter<GroupStatus>())
             .IsRequired();
+       
 
-        builder.HasMany(x => x.Members)
-            .WithOne()
-            .HasForeignKey("group_id")
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.Navigation(x => x.Members)
-            .UsePropertyAccessMode(PropertyAccessMode.Field);
-
-        builder.HasMany(x => x.UserBalances)
-            .WithOne()
-            .HasForeignKey("group_id")
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.Navigation(x => x.UserBalances)
-            .UsePropertyAccessMode(PropertyAccessMode.Field);
-
+     
         builder.HasIndex(x => x.Slug)
             .IsUnique();
 

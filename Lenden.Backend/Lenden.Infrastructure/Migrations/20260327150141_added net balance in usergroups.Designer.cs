@@ -3,6 +3,7 @@ using System;
 using Lenden.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lenden.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260327150141_added net balance in usergroups")]
+    partial class addednetbalanceinusergroups
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -160,10 +163,6 @@ namespace Lenden.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasColumnName("status");
 
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("updated_at");
-
                     b.HasKey("RequesterId", "RecipientId");
 
                     b.HasIndex("RecipientId");
@@ -219,6 +218,39 @@ namespace Lenden.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("groups", (string)null);
+                });
+
+            modelBuilder.Entity("Lenden.Domain.Entities.UserBalanceEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasColumnName("id");
+
+                    b.Property<decimal>("Balance")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("balance");
+
+                    b.Property<long>("GroupId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("group_id");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("GroupId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("user_balances", (string)null);
                 });
 
             modelBuilder.Entity("Lenden.Domain.Entities.UserEntity", b =>
@@ -382,7 +414,7 @@ namespace Lenden.Infrastructure.Migrations
                         .HasColumnName("left_at");
 
                     b.Property<decimal>("NetBalance")
-                        .HasColumnType("decimal(18,2)")
+                        .HasColumnType("decimal(65,30)")
                         .HasColumnName("net_balance");
 
                     b.Property<int>("Role")
@@ -467,6 +499,25 @@ namespace Lenden.Infrastructure.Migrations
                     b.Navigation("Requester");
                 });
 
+            modelBuilder.Entity("Lenden.Domain.Entities.UserBalanceEntity", b =>
+                {
+                    b.HasOne("Lenden.Domain.Entities.GroupEntity", "Group")
+                        .WithMany("UserBalances")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Lenden.Domain.Entities.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Lenden.Domain.Entities.UserInfoEntity", b =>
                 {
                     b.HasOne("Lenden.Domain.Entities.UserEntity", "User")
@@ -520,6 +571,8 @@ namespace Lenden.Infrastructure.Migrations
             modelBuilder.Entity("Lenden.Domain.Entities.GroupEntity", b =>
                 {
                     b.Navigation("Members");
+
+                    b.Navigation("UserBalances");
                 });
 
             modelBuilder.Entity("Lenden.Domain.Entities.UserEntity", b =>

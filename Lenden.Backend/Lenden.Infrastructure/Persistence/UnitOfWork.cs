@@ -11,13 +11,12 @@ public class UnitOfWork : IUnitOfWork
 {
     private readonly AppDbContext _context;
 
-    public UnitOfWork(AppDbContext context, IUserRepository userRepository, IAuthRepository authRepository, IGroupRepository groupRepository, IUserBalanceRepository userBalanceRepository, IUserGroupRepository userGroupRepository, IExpenseRepository expenseRepository, IFriendshipRepository friendshipRepository)
+    public UnitOfWork(AppDbContext context, IUserRepository userRepository, IAuthRepository authRepository, IGroupRepository groupRepository, IUserGroupRepository userGroupRepository, IExpenseRepository expenseRepository, IFriendshipRepository friendshipRepository)
     {
         _context = context;
         UserRepository = userRepository;
         AuthRepository = authRepository;
         GroupRepository = groupRepository;
-        UserBalanceRepository = userBalanceRepository;
         UserGroupRepository = userGroupRepository;
         ExpenseRepository = expenseRepository;
         FriendshipRepository=friendshipRepository;
@@ -26,7 +25,6 @@ public class UnitOfWork : IUnitOfWork
     public IUserRepository UserRepository { get; private set; }
     public IAuthRepository AuthRepository { get; private set; }
     public IGroupRepository GroupRepository { get; private set; }
-    public IUserBalanceRepository UserBalanceRepository { get; private set; }
     public IUserGroupRepository UserGroupRepository { get; private set; }
     public IExpenseRepository ExpenseRepository { get; private set; }
     

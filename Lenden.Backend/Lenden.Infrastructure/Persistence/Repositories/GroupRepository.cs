@@ -35,16 +35,25 @@ public class GroupRepository : IGroupRepository
             .ToListAsync(ct);
         return groups;
     }
+    
+    public async Task<IEnumerable<GroupEntity>> GetAllActiveAsync(CancellationToken ct = default)
+    {
+        return await _context.Groups
+            .Where(g => g.Status == GroupStatus.Active)
+            .Include(g => g.Members)
+            .ThenInclude(m => m.User)
+            .ToListAsync(ct);
+    }
 
     public async Task<GroupEntity?> GetByPublicIdAsync(Guid publicId, CancellationToken ct = default)
     {
-        var group= await _context.Groups.Where(g=>g.Status==GroupStatus.Active).Include(g=>g.Members.Where(m => m.Status == GroupMembershipStatus.Active)).ThenInclude(u=>u.User).Include(g=>g.UserBalances)
+        var group= await _context.Groups.Where(g=>g.Status==GroupStatus.Active).Include(g=>g.Members.Where(m => m.Status == GroupMembershipStatus.Active)).ThenInclude(u=>u.User)
             .FirstOrDefaultAsync(g => g.Slug == publicId, ct);
         return group;
     }
     public async Task<bool> ExistsAsync(long id, CancellationToken ct = default)
     {
-        return await _context.Groups.Where(g=>g.Status==GroupStatus.Active).AnyAsync(g => g.Id == id, ct);
+        return await _context.Groups.Include(g=>g.Members).Where(g=>g.Status==GroupStatus.Active).AnyAsync(g => g.Id == id, ct);
     }
     public void Remove(GroupEntity group)
     {

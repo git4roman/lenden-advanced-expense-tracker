@@ -55,14 +55,6 @@ public class ExpenseEntityConfiguration : IEntityTypeConfiguration<ExpenseEntity
             .HasForeignKey(x => x.CreatorId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasMany(x => x.Participants)
-            .WithOne()
-            .HasForeignKey("expense_id")
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.Navigation(x => x.Participants)
-            .UsePropertyAccessMode(PropertyAccessMode.Field);
-
         builder.HasIndex(x => x.PublicId)
             .IsUnique();
 

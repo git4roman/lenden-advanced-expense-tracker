@@ -25,6 +25,10 @@ public class FriendshipEntityConfiguration : IEntityTypeConfiguration<Friendship
         builder.Property(x => x.CreatedAt)
             .HasColumnName("created_at")
             .IsRequired();
+        
+        builder.Property(x => x.UpdatedAt)
+            .HasColumnName("updated_at")
+            .IsRequired();
 
         builder.HasOne(x => x.Requester)
             .WithMany()

@@ -65,26 +65,21 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<UserEntity>
 
         builder.HasOne(x => x.UserInfo)
             .WithOne()
-            .HasForeignKey<UserInfoEntity>("user_id");
-
-        builder.Navigation(x => x.UserInfo)
-            .IsRequired(false);
+            .HasForeignKey<UserInfoEntity>(x => x.UserId);
 
         builder.HasMany(x => x.Sessions)
             .WithOne()
             .HasForeignKey("user_id")
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Navigation(x => x.Sessions)
-            .UsePropertyAccessMode(PropertyAccessMode.Field);
+        
 
         builder.HasMany(x => x.AuthProviders)
             .WithOne()
             .HasForeignKey("user_id")
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Navigation(x => x.AuthProviders)
-            .UsePropertyAccessMode(PropertyAccessMode.Field);
+        
 
         builder.HasIndex(x => x.Email)
             .IsUnique();

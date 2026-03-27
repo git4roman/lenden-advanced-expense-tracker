@@ -20,4 +20,23 @@ public class FriendShipRepository: IFriendshipRepository
             .Select(f => f.RequesterId == userId ? f.Recipient : f.Requester)
             .ToListAsync(ct);
     }
+
+    public async Task<FriendshipEntity?> GetFriendshipAsync(long userId, long friendId, CancellationToken ct = default)
+    {
+        return await _dbContext.Friends
+            .FirstOrDefaultAsync(f =>
+                    ((f.RecipientId == userId && f.RequesterId == friendId) ||
+                     (f.RequesterId == userId && f.RecipientId == friendId)),
+                ct);
+    }
+
+    public async Task AddFriendAsync(FriendshipEntity friendship)
+    {
+        await _dbContext.Friends.AddAsync(friendship);
+    }
+
+    public async Task RemoveFriendAsync(long userId, Guid friendId)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -17,6 +17,8 @@ public interface IGroupService
 
     Task DeleteGroupAsync(Guid groupId,long userId, CancellationToken ct = default);
     
+    Task<IEnumerable<GroupEntity>> GetAllActiveAsync(CancellationToken ct = default);
+    
     // Task<UserEntity?> GetGroupMemberByPublicId(Guid groupId, Guid userId, CancellationToken ct = default);
     
     Task<GroupEntity?> GetGroupByPublicIdAsync(Guid groupId, CancellationToken ct = default);

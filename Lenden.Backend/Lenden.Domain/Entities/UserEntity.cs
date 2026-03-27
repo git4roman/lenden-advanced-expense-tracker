@@ -10,11 +10,11 @@ public class UserEntity
         _sessions = new List<AuthSessionEntity>();
         _authProviders = new List<AuthProviderEntity>();
     }
-    public UserEntity(Email email,string username, string givenName, string familyName, string passwordHash=null)
+    public UserEntity(Email email, string givenName, string familyName, string passwordHash=null)
     {
         Email = email;
         PasswordHash = passwordHash;
-        Status = UserStatus.Disabled;
+        Status = UserStatus.Active;
         EmailVerified = false;
         _sessions = new List<AuthSessionEntity>();
         _authProviders = new List<AuthProviderEntity>();
@@ -23,8 +23,19 @@ public class UserEntity
         GivenName = givenName;
         FamilyName = familyName;
         Role = UserRole.Customer;
-        Username = username;
+        Username = GenerateUsername( givenName, familyName);
 
+    }
+    
+    private static string GenerateUsername(string givenName, string familyName)
+    {
+        var baseName = (givenName + familyName)
+            .ToLower()
+            .Replace(" ", "");
+
+        var suffix = Random.Shared.Next(1000, 9999);
+
+        return $"{baseName}{suffix}";
     }
     
     public long Id { get; private set; } 
