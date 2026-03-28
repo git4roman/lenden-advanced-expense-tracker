@@ -15,7 +15,7 @@ public interface IGroupRepository
     Task<bool> ExistsAsync(long id, CancellationToken ct = default);
 
     void Remove(GroupEntity group);
-    
+    Task<List<UserGroupEntity>> GetMembershipsAsync(long userId, CancellationToken ct = default);
     // Task<UserEntity?> GetGroupMemberByUserPublicIdAsync(Guid groupId, Guid userId, CancellationToken ct = default);
-   
+
 }

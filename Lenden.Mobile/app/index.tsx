@@ -1,13 +1,12 @@
-import { store } from "@/src/shared/store/store";
+import { useSelector } from "react-redux";
+import { RootState } from "@/src/shared/store/store";
 import { Redirect } from "expo-router";
 
-const index = () => {
-  const token = store.getState().auth.accessToken;
-  console.log("Token from the first page", token);
+const Index = () => {
+  const token = useSelector((state: RootState) => state.auth.accessToken);
 
-  return <Redirect href={token ? "/(tabs)/(groups)" : "/(auth)/login"} />;
-  // return <Redirect href={"/(tabs)/(groups)"} />;
-  // return null;
+  if (token === undefined) return null;
+  return <Redirect href={token ? "/(tabs)/(home)" : "/(auth)/login"} />;
 };
 
-export default index;
+export default Index;

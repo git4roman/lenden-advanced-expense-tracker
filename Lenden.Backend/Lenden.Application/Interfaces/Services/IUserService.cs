@@ -7,4 +7,5 @@ public interface IUserService
 {
     Task<UserService.UserResponseDto> GetUserByIdAsync(long userId);
     Task<UserEntity> GetUserByEmailAsync(string email);
+    Task<decimal> GetOverallBalance(long userId);
 }

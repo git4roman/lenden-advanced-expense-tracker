@@ -5,7 +5,7 @@ const groupApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getGroups: builder.query({
       query: () => ({
-        url: "/Group",
+        url: "/groups",
         method: "GET",
       }),
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
@@ -18,13 +18,13 @@ const groupApi = api.injectEndpoints({
             }),
           );
         } catch (error) {
-          console.log("Group APi Error", error);
+          console.log("Group APi Error", JSON.stringify(error, null, 2));
         }
       },
     }),
     getGroup: builder.query({
       query: (payload) => ({
-        url: `/Group/${payload}`,
+        url: `/Groups/${payload}`,
         method: "GET",
       }),
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {

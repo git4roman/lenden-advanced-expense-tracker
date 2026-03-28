@@ -1,22 +1,25 @@
 import { setAuthCredentials } from "@/src/shared/store/slices/auth-slice";
 import { api } from "@/src/shared/store/apiSlices/apiClient";
+import { setUserInfo } from "../slices/user-slice";
 
 const userApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    login: builder.mutation({
-      query: (payload) => ({
-        url: "/auth/login",
-        method: "POST",
-        body: payload,
+    me: builder.query({
+      query: () => ({
+        url: "/users/me",
+        method: "GET",
       }),
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
           dispatch(
-            setAuthCredentials({
-              accessToken: data.accessToken,
-              refreshToken: data.refreshToken,
-              user: data.user,
+            setUserInfo({
+              firstName: data.firstName,
+              lastName: data.lastName,
+              username: data.username,
+              email: data.email,
+              phone: data.phone,
+              memberSince: data.memberSince,
             }),
           );
         } catch (error) {
@@ -24,27 +27,7 @@ const userApi = api.injectEndpoints({
         }
       },
     }),
-
-    register: builder.mutation({
-      query: (payload) => ({
-        url: "/Auth/register",
-        method: "POST",
-        body: payload,
-      }),
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-          dispatch(
-            setAuthCredentials({
-              accessToken: data.accessToken,
-              refreshToken: data.refreshToken,
-              user: data.user,
-            }),
-          );
-        } catch (error) {}
-      },
-    }),
   }),
 });
 
-export const { useLoginMutation, useRegisterMutation } = userApi;
+export const { useMeQuery } = userApi;

@@ -26,6 +26,7 @@ import { RootState } from "@/src/shared/store/store";
 import { formatDate } from "@/src/shared/utils/format-date.utils";
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 import { getInitials } from "@/src/shared/utils/get-initials.utils";
+import { onLogout } from "@/src/shared/services/auth/google-auth.service";
 
 type AcccountItems = {
   title: string;
@@ -405,6 +406,7 @@ export default function Account() {
                 onPress={() => {
                   setIsLogoutModalVisible(false);
                   console.log("I am clicked");
+                  onLogout();
                   dispatch(logout());
                   clearAuth();
                   router.replace("/(auth)/login");

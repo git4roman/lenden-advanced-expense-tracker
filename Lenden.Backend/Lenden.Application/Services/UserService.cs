@@ -21,10 +21,17 @@ public class UserService: IUserService
             FamilyName = user.FamilyName,
             GivenName = user.GivenName,
             Email = user.Email.Value,
-            Address = user.UserInfo.Address,
-            PhoneNumber = user.UserInfo.PhoneNumber,
+            Address = user.UserInfo?.Address ?? "",
+            PhoneNumber = user.UserInfo?.PhoneNumber ?? "",
         };
         return response;
+    }
+
+    public async Task<decimal> GetOverallBalance(long userId)
+    {
+        var memberships = await _unitOfWork.GroupRepository.GetMembershipsAsync(userId);
+        var balance = memberships.Sum(u => u.NetBalance);
+        return balance;
     }
 
     public async Task<UserEntity> GetUserByEmailAsync(string email)

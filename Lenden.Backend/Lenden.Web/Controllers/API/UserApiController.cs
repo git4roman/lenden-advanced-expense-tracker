@@ -27,5 +27,16 @@ namespace Lenden.Web.Controllers.API
             var user = await _userService.GetUserByIdAsync(currentUser.Id);
             return Ok(user);
         }
+        
+        [HttpGet("dashboard-info")]
+        public async Task<IActionResult> GetDashboardInfo()
+        {
+            var currentUser = await _authService.ValidateUserAsync(User);
+            if (currentUser == null) return Unauthorized();
+            // var user = await _userService.GetUserByIdAsync(currentUser.Id);
+            var balance = await _userService.GetOverallBalance(currentUser.Id);
+            
+            return Ok(balance);
+        }
     }
 }

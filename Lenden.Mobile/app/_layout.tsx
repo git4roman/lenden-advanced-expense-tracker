@@ -1,5 +1,5 @@
 // app/_layout.tsx
-import { Provider, useSelector } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import { Stack } from "expo-router";
 import Toast from "react-native-toast-message";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -22,11 +22,50 @@ import {
 import { ThemeProvider } from "@/src/shared/providers/ThemeProviders";
 import { persistor, store, RootState } from "@/src/shared/store/store";
 import { PersistGate } from "redux-persist/integration/react";
+import { useEffect, useState } from "react";
+import { useMeQuery } from "@/src/shared/store/apiSlices/user-api-slice";
+import { logout } from "@/src/shared/store/slices/auth-slice";
+import { LogoutService } from "@/src/shared/services/auth/logout.service";
+
+function AppBootstrap({ children }: { children: React.ReactNode }) {
+  const token = useSelector((state: RootState) => state.auth.accessToken);
+  console.log("Token from the first page", token);
+
+  const { isLoading, isError, error } = useMeQuery(undefined, {
+    skip: !token,
+  });
+
+  useEffect(() => {
+    if (!isError || !error) return;
+
+    const status = (error as any)?.status;
+
+    if (status === 401) {
+      Toast.show({
+        type: "error",
+        text1: "Session Expired",
+        text2: "Please log in again.",
+      });
+      LogoutService();
+    } else {
+      // 500 or other — don't logout, just warn
+      Toast.show({
+        type: "error",
+        text1: "Server Error",
+        text2: "Something went wrong. Please try again later.",
+      });
+      LogoutService();
+    }
+  }, [isError]);
+  if (token && isLoading) return null;
+
+  return <>{children}</>;
+}
 
 function RootNavigator() {
   const token = useSelector((state: RootState) => state.auth.accessToken);
-  const isLoggedIn = Boolean(token);
-  // const isLoggedIn = true;
+  const user = useSelector((state: RootState) => state.userInfo);
+  const isLoggedIn = Boolean(token && user?.email);
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
@@ -64,7 +103,9 @@ export default function RootLayout() {
       <PersistGate loading={null} persistor={persistor}>
         <SafeAreaProvider>
           <ThemeProvider>
-            <RootNavigator />
+            <AppBootstrap>
+              <RootNavigator />
+            </AppBootstrap>
             <Toast />
           </ThemeProvider>
         </SafeAreaProvider>

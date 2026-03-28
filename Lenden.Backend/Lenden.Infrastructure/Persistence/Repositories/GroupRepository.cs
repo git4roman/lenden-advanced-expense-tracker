@@ -64,4 +64,15 @@ public class GroupRepository : IGroupRepository
         var group = await _context.Groups.Where(g=>g.Status==GroupStatus.Active).FirstOrDefaultAsync(u => u.Slug == groupId, ct);
         return group;
     }
+
+    public async Task<List<UserGroupEntity>> GetMembershipsAsync(long userId, CancellationToken ct = default)
+    {
+        return await _context.UserGroups.Include(u=>u.Group)
+            .Where(ug => ug.UserId == userId)
+            .ToListAsync(ct);
+    }
+    
+  
+    
+    
 }

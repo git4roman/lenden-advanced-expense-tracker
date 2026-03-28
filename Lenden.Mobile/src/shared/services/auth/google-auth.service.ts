@@ -2,6 +2,7 @@ import {
   GoogleAuthProvider,
   getAuth,
   signInWithCredential,
+  signOut,
 } from "@react-native-firebase/auth";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
@@ -28,4 +29,21 @@ export async function onGoogleButtonPress() {
   console.log("This is user credentials", userCredential);
 
   return userCredential;
+}
+
+export async function onLogout() {
+  try {
+    // Firebase logout
+    await signOut(getAuth());
+
+    // Google logout (clears cached account)
+    await GoogleSignin.signOut();
+
+    // Optional: disconnect completely (revokes access)
+    // await GoogleSignin.revokeAccess();
+
+    console.log("User logged out");
+  } catch (error) {
+    console.error("Logout error", error);
+  }
 }
