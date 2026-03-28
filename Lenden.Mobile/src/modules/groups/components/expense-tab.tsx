@@ -1,4 +1,4 @@
-import { View, ScrollView, Pressable } from "react-native";
+import { View, ScrollView, Pressable, RefreshControl } from "react-native";
 import React from "react";
 import { CText } from "@/src/shared/ui/components/CText";
 import { ActivityItem } from "./activity-item";

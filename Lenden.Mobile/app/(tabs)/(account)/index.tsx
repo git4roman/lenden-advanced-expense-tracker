@@ -8,6 +8,7 @@ import {
   ScrollView,
   View,
   Image,
+  RefreshControl,
 } from "react-native";
 import BellICon from "@/assets/icons/bell.png";
 import ChervonRight from "@/assets/icons/chevron-right.png";
@@ -27,6 +28,7 @@ import { formatDate } from "@/src/shared/utils/format-date.utils";
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 import { getInitials } from "@/src/shared/utils/get-initials.utils";
 import { onLogout } from "@/src/shared/services/auth/google-auth.service";
+import { useMeQuery } from "@/src/shared/store/apiSlices/user-api-slice";
 
 type AcccountItems = {
   title: string;
@@ -119,11 +121,14 @@ export default function Account() {
   const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
   const [isRateModalVisible, setIsRateModalVisible] = useState(false);
 
+  const { refetch, isFetching } = useMeQuery(undefined, {
+    skip: !useSelector((state: RootState) => state.auth.accessToken),
+  });
+
   const userInfo = useSelector((state: RootState) => state.userInfo);
-  console.log("The user info is ", userInfo.userInfo);
 
   const infoRows = {
-    fullName: `${userInfo.firstName} ${userInfo.lastName}` || "-",
+    fullName: `${userInfo.givenName} ${userInfo.familyName}` || "-",
     username: userInfo.username || "-",
     phone: userInfo.phone || "-",
     memberSince: userInfo.memberSince
@@ -137,7 +142,7 @@ export default function Account() {
       style={{ backgroundColor: Colors.neutral[950], flex: 1 }}
       edges={["top"]}
     >
-      {userInfo.userInfo === null ? (
+      {userInfo === null ? (
         <View
           style={{
             flex: 1,
@@ -171,6 +176,14 @@ export default function Account() {
           contentContainerStyle={{ flex: 1 }}
           scrollEnabled={false}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={isFetching}
+              onRefresh={refetch}
+              tintColor={Colors.neutral[200]}
+              colors={[Colors.accent[400]]}
+            />
+          }
         >
           <View
             style={{

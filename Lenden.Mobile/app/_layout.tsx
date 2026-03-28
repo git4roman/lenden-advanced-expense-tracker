@@ -29,11 +29,11 @@ import { LogoutService } from "@/src/shared/services/auth/logout.service";
 
 function AppBootstrap({ children }: { children: React.ReactNode }) {
   const token = useSelector((state: RootState) => state.auth.accessToken);
-  console.log("Token from the first page", token);
 
-  const { isLoading, isError, error } = useMeQuery(undefined, {
+  const { isLoading, isError, error, data } = useMeQuery(undefined, {
     skip: !token,
   });
+  console.log("Layout:", data);
 
   useEffect(() => {
     if (!isError || !error) return;
@@ -54,7 +54,7 @@ function AppBootstrap({ children }: { children: React.ReactNode }) {
         text1: "Server Error",
         text2: "Something went wrong. Please try again later.",
       });
-      LogoutService();
+      // LogoutService();
     }
   }, [isError]);
   if (token && isLoading) return null;

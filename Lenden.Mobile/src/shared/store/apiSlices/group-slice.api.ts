@@ -8,6 +8,7 @@ const groupApi = api.injectEndpoints({
         url: "/groups",
         method: "GET",
       }),
+      providesTags: [{ type: "Group", id: "LIST" }],
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
@@ -27,6 +28,9 @@ const groupApi = api.injectEndpoints({
         url: `/Groups/${payload}`,
         method: "GET",
       }),
+      providesTags: (result, error, groupId) => [
+        { type: "Group", id: groupId },
+      ],
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
@@ -44,6 +48,7 @@ const groupApi = api.injectEndpoints({
         method: "POST",
         body: payload,
       }),
+      invalidatesTags: [{ type: "Group", id: "LIST" }],
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
@@ -72,6 +77,7 @@ const groupApi = api.injectEndpoints({
           );
         } catch (error) {}
       },
+      invalidatesTags: [{ type: "Group", id: "LIST" }],
     }),
   }),
 });

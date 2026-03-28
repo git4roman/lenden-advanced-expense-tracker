@@ -1,171 +1,171 @@
-import { View, Text, ScrollView, Pressable, Image } from "react-native";
-import React, { useState } from "react";
-import { CText } from "@/src/shared/ui/components/CText";
-import { Colors } from "@/src/shared/ui/theme/colors";
-import { userProfilesData } from "@/app/(tabs)/(groups)/groups.mock";
-import { Feather } from "@expo/vector-icons";
-import { useGetExpensesQuery } from "@/src/shared/store/apiSlices/expense-slice.api";
-import { useGetGroupQuery } from "@/src/shared/store/apiSlices/group-slice.api";
-import { GroupMember } from "../types/group-member";
+  import { View, Text, ScrollView, Pressable, Image } from "react-native";
+  import React, { useState } from "react";
+  import { CText } from "@/src/shared/ui/components/CText";
+  import { Colors } from "@/src/shared/ui/theme/colors";
+  import { userProfilesData } from "@/app/(tabs)/(groups)/groups.mock";
+  import { Feather } from "@expo/vector-icons";
+  import { useGetExpensesQuery } from "@/src/shared/store/apiSlices/expense-slice.api";
+  import { useGetGroupQuery } from "@/src/shared/store/apiSlices/group-slice.api";
+  import { GroupMember } from "../types/group-member";
 
-const GroupInfoTab = ({ groupId }: { groupId: string }) => {
-  const { data: group } = useGetGroupQuery(groupId as string);
-  console.log("The Group Data is:", JSON.stringify(group, null, 2));
-  const [text, setText] = useState("");
-  return (
-    <ScrollView
-      style={{ flex: 1 }}
-      contentContainerStyle={{
-        gap: 16,
-        paddingHorizontal: 8,
-        paddingBottom: 20,
-      }}
-    >
-      <View style={{ gap: 8 }}>
-        <View style={{ gap: 4 }}>
-          <CText style={{ color: Colors.neutral[300] }} size="xs">
-            Group Title
-          </CText>
-          <CText
-            style={{ color: Colors.neutral[50] }}
-            weight="medium"
-            size="ssm"
-          >
-            {group.name}
-          </CText>
-        </View>
-        <View style={{ gap: 4 }}>
-          <CText style={{ color: Colors.neutral[300] }} size="xs">
-            Description
-          </CText>
-          <CText
-            style={{ color: Colors.neutral[50] }}
-            weight="medium"
-            size="ssm"
-          >
-            Vacationing with college friends in Japan
-          </CText>
-        </View>
-        <View style={{ gap: 4 }}>
-          <CText style={{ color: Colors.neutral[300] }} size="xs">
-            Currency
-          </CText>
-          <CText
-            style={{ color: Colors.neutral[50] }}
-            weight="medium"
-            size="ssm"
-          >
-            NRs
-          </CText>
-        </View>
-        <View style={{ gap: 4 }}>
-          <CText style={{ color: Colors.neutral[300] }} size="xs">
-            Category
-          </CText>
-          <CText
-            style={{ color: Colors.neutral[50] }}
-            weight="medium"
-            size="ssm"
-          >
-            Trip ✈️
-          </CText>
-        </View>
-      </View>
-      <View
-        style={{
-          width: "100%",
-          height: 0.5,
-          backgroundColor: Colors.neutral[700],
+  const GroupInfoTab = ({ groupId }: { groupId: string }) => {
+    const { data: group } = useGetGroupQuery(groupId as string);
+    console.log("The Group Data is:", JSON.stringify(group, null, 2));
+    const [text, setText] = useState("");
+    return (
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{
+          gap: 16,
+          paddingHorizontal: 8,
+          paddingBottom: 20,
         }}
-      />
-      <View style={{ gap: 4 }}>
+      >
+        <View style={{ gap: 8 }}>
+          <View style={{ gap: 4 }}>
+            <CText style={{ color: Colors.neutral[300] }} size="xs">
+              Group Title
+            </CText>
+            <CText
+              style={{ color: Colors.neutral[50] }}
+              weight="medium"
+              size="ssm"
+            >
+              {group.name}
+            </CText>
+          </View>
+          <View style={{ gap: 4 }}>
+            <CText style={{ color: Colors.neutral[300] }} size="xs">
+              Description
+            </CText>
+            <CText
+              style={{ color: Colors.neutral[50] }}
+              weight="medium"
+              size="ssm"
+            >
+              Vacationing with college friends in Japan
+            </CText>
+          </View>
+          <View style={{ gap: 4 }}>
+            <CText style={{ color: Colors.neutral[300] }} size="xs">
+              Currency
+            </CText>
+            <CText
+              style={{ color: Colors.neutral[50] }}
+              weight="medium"
+              size="ssm"
+            >
+              NRs
+            </CText>
+          </View>
+          <View style={{ gap: 4 }}>
+            <CText style={{ color: Colors.neutral[300] }} size="xs">
+              Category
+            </CText>
+            <CText
+              style={{ color: Colors.neutral[50] }}
+              weight="medium"
+              size="ssm"
+            >
+              Trip ✈️
+            </CText>
+          </View>
+        </View>
         <View
           style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
+            width: "100%",
+            height: 0.5,
+            backgroundColor: Colors.neutral[700],
           }}
-        >
-          <CText weight="semibold" size="md" color="neutral" shade={100}>
-            Group Members
-          </CText>
-          <Pressable
+        />
+        <View style={{ gap: 4 }}>
+          <View
             style={{
-              borderWidth: 1,
-              borderColor: Colors.accent[500],
-              paddingHorizontal: 16,
-              paddingVertical: 8,
-              borderRadius: 20,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
-            <CText weight="semibold" size="sm" color="neutral" shade={100}>
-              + Add
+            <CText weight="semibold" size="md" color="neutral" shade={100}>
+              Group Members
             </CText>
-          </Pressable>
-        </View>
-        <View style={{ gap: 8 }}>
-          {group.members.map((item: GroupMember, index: number) => (
-            <View
-              key={item.id}
+            <Pressable
               style={{
-                flexDirection: "row",
-                justifyContent: "flex-start",
-                alignItems: "center",
-                gap: 8,
+                borderWidth: 1,
+                borderColor: Colors.accent[500],
+                paddingHorizontal: 16,
+                paddingVertical: 8,
+                borderRadius: 20,
               }}
             >
+              <CText weight="semibold" size="sm" color="neutral" shade={100}>
+                + Add
+              </CText>
+            </Pressable>
+          </View>
+          <View style={{ gap: 8 }}>
+            {group.members.map((item: GroupMember, index: number) => (
               <View
-                style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: 22,
-                  borderWidth: 1,
-                  borderColor: Colors.neutral[400],
-                  overflow: "hidden",
-                }}
-              >
-                <Image
-                  source={{ uri: item.imgUrl ?? "" }}
-                  resizeMode="cover"
-                  style={{ width: "100%", height: "100%" }}
-                />
-              </View>
-              <View
+                key={item.id}
                 style={{
                   flexDirection: "row",
-                  justifyContent: "space-between",
+                  justifyContent: "flex-start",
                   alignItems: "center",
-                  flex: 1,
+                  gap: 8,
                 }}
               >
-                <View>
-                  <CText
-                    color="neutral"
-                    shade={300}
-                    weight="semibold"
-                    size="ssm"
-                  >
-                    {item.givenName} {item.familyName}
-                    {item.id === 1 ? " (You)" : ""}
-                  </CText>
-                  <CText color="neutral" shade={400}>
-                    {item.email}
-                  </CText>
-                </View>
-                <Pressable onPress={() => {}}>
-                  <Feather
-                    name="more-vertical"
-                    size={24}
-                    color={Colors.neutral[200]}
+                <View
+                  style={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: 22,
+                    borderWidth: 1,
+                    borderColor: Colors.neutral[400],
+                    overflow: "hidden",
+                  }}
+                >
+                  <Image
+                    source={{ uri: item.imgUrl ?? "" }}
+                    resizeMode="cover"
+                    style={{ width: "100%", height: "100%" }}
                   />
-                </Pressable>
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    flex: 1,
+                  }}
+                >
+                  <View>
+                    <CText
+                      color="neutral"
+                      shade={300}
+                      weight="semibold"
+                      size="ssm"
+                    >
+                      {item.givenName} {item.familyName}
+                      {item.id === 1 ? " (You)" : ""}
+                    </CText>
+                    <CText color="neutral" shade={400}>
+                      {item.email}
+                    </CText>
+                  </View>
+                  <Pressable onPress={() => {}}>
+                    <Feather
+                      name="more-vertical"
+                      size={24}
+                      color={Colors.neutral[200]}
+                    />
+                  </Pressable>
+                </View>
               </View>
-            </View>
-          ))}
+            ))}
+          </View>
         </View>
-      </View>
-    </ScrollView>
-  );
-};
+      </ScrollView>
+    );
+  };
 
-export default GroupInfoTab;
+  export default GroupInfoTab;

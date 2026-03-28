@@ -8,9 +8,14 @@ const expenseApi = api.injectEndpoints({
         url: `/Expense/${payload}`,
         method: "GET",
       }),
+      providesTags: (result, error, groupId) => [
+        { type: "Expense", id: groupId },
+      ],
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
+          console.log("The Expenses Data is:", JSON.stringify(data, null, 2));
+
           dispatch(
             setExpenses({
               expenses: data.expenses,
@@ -24,6 +29,7 @@ const expenseApi = api.injectEndpoints({
         url: "/ExpenseApi",
         method: "GET",
       }),
+      providesTags: (result, error, id) => [{ type: "Expense", id }],
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
@@ -41,6 +47,9 @@ const expenseApi = api.injectEndpoints({
         method: "POST",
         body: payload,
       }),
+      invalidatesTags: (result, error, payload) => [
+        { type: "Expense", id: payload.groupId },
+      ],
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
@@ -49,7 +58,9 @@ const expenseApi = api.injectEndpoints({
               expenses: data.expenses,
             }),
           );
-        } catch (error) {}
+        } catch (error) {
+          console.log("The error from Create Expense");
+        }
       },
     }),
 
@@ -59,6 +70,10 @@ const expenseApi = api.injectEndpoints({
         method: "DELETE",
         body: payload,
       }),
+      invalidatesTags: (result, error, payload) => [
+        { type: "Expense", id: payload.groupId },
+        { type: "Expense", id: payload.id },
+      ],
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;

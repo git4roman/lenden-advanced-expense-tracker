@@ -1,6 +1,7 @@
 import { RootState } from "@/src/shared/store/store";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
+import { formatDate } from "@/src/shared/utils/format-date.utils";
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
@@ -11,12 +12,14 @@ export default function PersonalInfoScreen() {
   const infoRows = [
     {
       label: "Full Name",
-      value: userInfo ? `${userInfo.firstName} ${userInfo.lastName}` : "-",
+      value: userInfo ? `${userInfo.givenName} ${userInfo.familyName}` : "-",
     },
     { label: "Username", value: userInfo?.username ?? "-" },
     { label: "Email", value: userInfo?.email ?? "-" },
     { label: "Phone", value: userInfo?.phone ?? "-" },
-    { label: "Member Since", value: userInfo?.memberSince ?? "-" },
+    { label: "Member Since", value: userInfo.memberSince
+          ? formatDate(userInfo.memberSince, { month: "long", year: "numeric" })
+          : "-" },
   ];
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.neutral[950] }}>

@@ -1,11 +1,4 @@
-import {
-  View,
-  Pressable,
-  Image,
-  Modal,
-  ScrollView,
-  RefreshControl,
-} from "react-native";
+import { View, Pressable, Image, Modal, ScrollView, RefreshControl } from "react-native";
 import React, { useCallback, useState } from "react";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -20,9 +13,13 @@ import TotalTab from "@/src/modules/groups/components/total-tab";
 import GroupInfoTab from "@/src/modules/groups/components/group-info-tab";
 import { groupButtonsLabel } from "@/src/modules/groups/constants/group-buttons-label.constant";
 import { useGetGroupQuery } from "@/src/shared/store/apiSlices/group-slice.api";
+import { useDispatch } from "react-redux";
+import { api } from "@/src/shared/store/apiSlices/apiClient";
 
 const GroupScreen = () => {
   const { groupId } = useLocalSearchParams();
+  const groupIdParam = Array.isArray(groupId) ? groupId[0] : groupId;
+  const dispatch = useDispatch();
   const TAB_CONTENT: Record<string, React.FC<{ groupId: string }>> = {
     Expenses: ExpenseTab,
     label2: BalanceTab,

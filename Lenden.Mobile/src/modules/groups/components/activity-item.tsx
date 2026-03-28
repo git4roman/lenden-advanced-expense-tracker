@@ -7,7 +7,7 @@ import { Pressable, View } from "react-native";
 export const sharedExpenseCategories = [
   {
     id: 1,
-    key: "accommodation",
+    key: "Accommodation",
     label: "Accommodation",
     tags: ["Rent", "Deposit", "Maintenance", "Room Repairs"],
     icon: (
@@ -16,7 +16,7 @@ export const sharedExpenseCategories = [
   },
   {
     id: 2,
-    key: "household_utilities",
+    key: "Household",
     label: "Household & Utilities",
     tags: [
       "Electricity",
@@ -37,7 +37,7 @@ export const sharedExpenseCategories = [
   },
   {
     id: 3,
-    key: "food_groceries",
+    key: "Groceries",
     label: "Food & Groceries",
     tags: [
       "Groceries",
@@ -57,7 +57,7 @@ export const sharedExpenseCategories = [
   },
   {
     id: 4,
-    key: "transportation_travel",
+    key: "Travel",
     label: "Transportation & Travel",
     tags: ["Petrol", "Taxi/Pathao", "Bus Fare", "Trips"],
     icon: (
@@ -66,7 +66,7 @@ export const sharedExpenseCategories = [
   },
   {
     id: 5,
-    key: "lifestyle_personal",
+    key: "Personal",
     label: "Lifestyle & Personal",
     tags: [
       "Entertainment",
@@ -89,7 +89,7 @@ export const sharedExpenseCategories = [
 
 export const ActivityItem = ({ item }: any) => {
   const category = sharedExpenseCategories.find(
-    (cat) => cat.label === item.categoryKey,
+    (cat) => cat.key === item.categoryKey,
   );
   return (
     <View

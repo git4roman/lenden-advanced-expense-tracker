@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-type UserInfoState = {
-  firstName: string;
-  lastName: string;
+export type UserInfoState = {
+  givenName: string;
+  familyName: string;
   username: string;
   email: string;
   phone: string;
@@ -10,8 +10,8 @@ type UserInfoState = {
 };
 
 const initialState: UserInfoState = {
-  firstName: "",
-  lastName: "",
+  givenName: "",
+  familyName: "",
   username: "",
   email: "",
   phone: "",

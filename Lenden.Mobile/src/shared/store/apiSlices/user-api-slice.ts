@@ -1,10 +1,10 @@
 import { setAuthCredentials } from "@/src/shared/store/slices/auth-slice";
 import { api } from "@/src/shared/store/apiSlices/apiClient";
-import { setUserInfo } from "../slices/user-slice";
+import { setUserInfo, UserInfoState } from "../slices/user-slice";
 
 const userApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    me: builder.query({
+    me: builder.query<UserInfoState, void>({
       query: () => ({
         url: "/users/me",
         method: "GET",
@@ -12,10 +12,11 @@ const userApi = api.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
+          console.log("Slice:", data);
           dispatch(
             setUserInfo({
-              firstName: data.firstName,
-              lastName: data.lastName,
+              givenName: data.givenName,
+              familyName: data.familyName,
               username: data.username,
               email: data.email,
               phone: data.phone,

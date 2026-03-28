@@ -9,6 +9,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { persistStore, persistReducer } from "redux-persist";
 
 import { combineReducers } from "@reduxjs/toolkit";
+import { setupListeners } from "@reduxjs/toolkit/query";
 
 const rootReducer = combineReducers({
   [api.reducerPath]: api.reducer,
@@ -21,7 +22,7 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key: "root",
   storage: AsyncStorage,
-  whitelist: ["auth", "group", "userInfo", "expense"],
+  whitelist: ["auth", "group", "userInfo", "expense", api.reducerPath],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -33,6 +34,7 @@ export const store = configureStore({
       serializableCheck: false,
     }).concat(api.middleware),
 });
+setupListeners(store.dispatch);
 
 export const persistor = persistStore(store);
 
