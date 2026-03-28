@@ -23,6 +23,8 @@ public class UserService: IUserService
             Email = user.Email.Value,
             Address = user.UserInfo?.Address ?? "",
             PhoneNumber = user.UserInfo?.PhoneNumber ?? "",
+            Username = user.Username,
+            MemberSince = user.CreatedAt,
         };
         return response;
     }
@@ -42,10 +44,12 @@ public class UserService: IUserService
     public class UserResponseDto
     {
         public Guid Id { get; set; }
+        public string Username { get; set; }
         public string Email { get; set; }
         public string FamilyName { get; set; }
         public string GivenName { get; set; }
         public string Address { get; set; }
         public string PhoneNumber { get; set; }
+        public DateTimeOffset MemberSince { get; set; }
     }
 }
