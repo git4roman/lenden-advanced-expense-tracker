@@ -16,7 +16,6 @@ const authApi = api.injectEndpoints({
             setAuthCredentials({
               accessToken: data.accessToken,
               refreshToken: data.refreshToken,
-              user: data.user,
             }),
           );
         } catch (error) {
