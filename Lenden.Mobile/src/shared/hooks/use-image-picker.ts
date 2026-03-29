@@ -7,12 +7,15 @@ export const useImagePicker = () => {
       const uri = await MediaService.pick(source);
 
       if (!uri) {
-        Alert.alert(
-          "Permission Needed",
-          source === "camera"
-            ? "Camera permission is required."
-            : "Gallery permission is required."
-        );
+        const permission = await MediaService.requestPermission(source);
+        if (!permission.granted) {
+          Alert.alert(
+            "Permission Needed",
+            source === "camera"
+              ? "Camera permission is required."
+              : "Gallery permission is required."
+          );
+        }
       }
 
       return uri;

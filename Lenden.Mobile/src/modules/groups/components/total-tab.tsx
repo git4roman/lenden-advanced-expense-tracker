@@ -36,7 +36,7 @@ const categories = [
   { key: "Total You recieved", amount: "NPR. 654.5" },
 ];
 
-const TotalTab = () => {
+const TotalTab = ({groupId}) => {
   const [selectedTab, setSelectedTab] = useState("oneday");
   return (
     <>

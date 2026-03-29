@@ -2,95 +2,74 @@ import { View, FlatList, ScrollView } from "react-native";
 import React from "react";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { CText } from "@/src/shared/ui/components/CText";
+import {
+  useGetGroupBalanceQuery,
+  useGetGroupQuery,
+  useGetGroupsQuery,
+} from "@/src/shared/store/apiSlices/group-slice.api";
 
-const balanceData = [
-  {
-    groupId: 5,
-    user: {
-      id: 4,
-      givenName: "John",
-      familyName: "Doe",
-    },
-    balance: 370,
-  },
-  {
-    groupId: 5,
-    user: {
-      id: 5,
-      givenName: "Jane",
-      familyName: "Smith",
-    },
-    balance: -120,
-  },
-  {
-    groupId: 5,
-    user: {
-      id: 6,
-      givenName: "Alex",
-      familyName: "Johnson",
-    },
-    balance: 0,
-  },
-  {
-    groupId: 7,
-    user: {
-      id: 8,
-      givenName: "Emily",
-      familyName: "Brown",
-    },
-    balance: 540,
-  },
-  {
-    groupId: 7,
-    user: {
-      id: 9,
-      givenName: "Michael",
-      familyName: "Lee",
-    },
-    balance: -2500,
-  },
-  {
-    groupId: 9,
-    user: {
-      id: 11,
-      givenName: "Sara",
-      familyName: "Wilson",
-    },
-    balance: 90,
-  },
-];
+const BalanceTab = ({ groupId }: { groupId: string }) => {
+  const { data: group, isLoading: isGroupLoading } = useGetGroupQuery(groupId);
+  const { data: groupsData } = useGetGroupsQuery(undefined);
+  const { data: mutualBalances } = useGetGroupBalanceQuery(groupId);
+  const balanceItems = React.useMemo(() => {
+    const groups = (groupsData as any)?.groups ?? groupsData ?? [];
+    const groupFromList = Array.isArray(groups)
+      ? groups.find((g: any) => g.id === groupId)
+      : undefined;
+    const members = groupFromList?.members ?? group?.members ?? [];
+    return members.map((member: any) => ({
+      user: member,
+      balance: member.netBalance ?? 0,
+    }));
+  }, [group?.members, groupId, groupsData]);
+  const maxBalance = React.useMemo(() => {
+    const values = balanceItems
+      .map((b) => Math.abs(Number(b.balance) || 0))
+      .filter((v) => Number.isFinite(v));
+    if (values.length === 0) return 1;
+    return Math.max(1, ...values);
+  }, [balanceItems]);
 
-const groupMutualBalance = [
-  { from: "Maryland Winkles", to: "Andrew", balance: 2503 },
-  { from: "John Doe", to: "Jane Smith", balance: 1200 },
-  { from: "Alex Johnson", to: "Emily Brown", balance: 540 },
-  { from: "Michael Lee", to: "Sara Wilson", balance: 875 },
-];
-
-const BalanceTab = () => {
-  const maxBalance = Math.max(...balanceData.map((b) => Math.abs(b.balance)));
   return (
     <ScrollView style={{}} showsVerticalScrollIndicator={false}>
       <View style={{ gap: 12, paddingBottom: 20 }}>
-        <FlatList
-          data={balanceData}
-          renderItem={({ item }) => (
-            <BalanceItem item={item} maxBalance={maxBalance} />
-          )}
-          contentContainerStyle={{
-            gap: 10,
-            borderWidth: 1,
-            borderRadius: 12,
-            paddingVertical: 12,
-            backgroundColor: Colors.neutral[900],
-            borderColor: Colors.neutral[800],
-          }}
-          keyExtractor={(item) => item.user.id.toString()}
-          scrollEnabled={false}
-        />
+        {balanceItems.length === 0 && !isGroupLoading ? (
+          <View
+            style={{
+              borderWidth: 1,
+              borderRadius: 12,
+              paddingVertical: 16,
+              backgroundColor: Colors.neutral[900],
+              borderColor: Colors.neutral[800],
+              alignItems: "center",
+            }}
+          >
+            <CText size="sm" color="neutral" shade={400}>
+              No member balances yet.
+            </CText>
+          </View>
+        ) : (
+          <FlatList
+            data={balanceItems}
+            renderItem={({ item }) => (
+              <BalanceItem item={item} maxBalance={maxBalance} />
+            )}
+            contentContainerStyle={{
+              gap: 10,
+              borderWidth: 1,
+              borderRadius: 12,
+              paddingVertical: 12,
+              backgroundColor: Colors.neutral[900],
+              borderColor: Colors.neutral[800],
+            }}
+            keyExtractor={(item) => item.user.id?.toString() ?? item.user.email}
+            scrollEnabled={false}
+          />
+        )}
         <FlatList
           keyExtractor={(_, index) => index.toString()}
-          data={groupMutualBalance}
+          data={mutualBalances ?? []}
           renderItem={({ item }) => <GroupMemberMutualBalance item={item} />}
           contentContainerStyle={{
             gap: 10,
@@ -136,8 +115,6 @@ function BalanceItem({ item, maxBalance }: { item: any; maxBalance: any }) {
           ),
         );
 
-  if (absBalance === 0) return;
-
   return (
     <View style={{ flexDirection: isPositive ? "row" : "row-reverse" }}>
       <View style={{ flex: 1, padding: 8 }}>
@@ -153,7 +130,12 @@ function BalanceItem({ item, maxBalance }: { item: any; maxBalance: any }) {
         <View
           style={{
             width: `${widthPercent}%`,
-            backgroundColor: isPositive ? "green" : "red",
+            backgroundColor:
+              absBalance === 0
+                ? Colors.neutral[700]
+                : isPositive
+                  ? "green"
+                  : "red",
             padding: 8,
             borderTopRightRadius: isPositive ? 8 : 0,
             borderBottomRightRadius: isPositive ? 8 : 0,
@@ -163,7 +145,11 @@ function BalanceItem({ item, maxBalance }: { item: any; maxBalance: any }) {
           }}
         >
           <CText shade={50} size="sm" letterSpacing={0.4}>
-            {isPositive ? `+ NPR ${absBalance} ` : `- NPR ${absBalance} `}
+            {absBalance === 0
+              ? `NPR ${absBalance} `
+              : isPositive
+                ? `+ NPR ${absBalance} `
+                : `- NPR ${absBalance} `}
           </CText>
         </View>
       </View>
@@ -172,6 +158,9 @@ function BalanceItem({ item, maxBalance }: { item: any; maxBalance: any }) {
 }
 
 function GroupMemberMutualBalance({ item }: { item: any }) {
+  const from = item.from ?? item.From ?? "";
+  const to = item.to ?? item.To ?? "";
+  const amount = item.amount ?? item.Amount ?? 0;
   return (
     <View
       style={{
@@ -196,7 +185,7 @@ function GroupMemberMutualBalance({ item }: { item: any }) {
         <View style={{ gap: 2 }}>
           <View>
             <CText color="neutral" shade={300} weight="semibold" size="md">
-              {item.from}
+              {from}
             </CText>
           </View>
           <CText color="neutral" shade={500} weight="regular" size="ssm">
@@ -204,13 +193,13 @@ function GroupMemberMutualBalance({ item }: { item: any }) {
           </CText>
           <View>
             <CText color="neutral" shade={300} weight="semibold" size="md">
-              {item.to}
+              {to}
             </CText>
           </View>
         </View>
         <View style={{ alignItems: "flex-end", gap: 2 }}>
           <CText color="accent" shade={300} weight="bold" size="md">
-            NPR {item.balance}
+            NPR {amount}
           </CText>
         </View>
       </View>

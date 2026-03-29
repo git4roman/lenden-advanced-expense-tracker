@@ -26,6 +26,7 @@ import { useEffect, useState } from "react";
 import { useMeQuery } from "@/src/shared/store/apiSlices/user-api-slice";
 import { logout } from "@/src/shared/store/slices/auth-slice";
 import { LogoutService } from "@/src/shared/services/auth/logout.service";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function AppBootstrap({ children }: { children: React.ReactNode }) {
   const token = useSelector((state: RootState) => state.auth.accessToken);
@@ -34,6 +35,10 @@ function AppBootstrap({ children }: { children: React.ReactNode }) {
     skip: !token,
   });
   console.log("Layout:", data);
+
+  // useEffect(() => {
+  //   AsyncStorage.clear().then(() => console.log("AsyncStorage cleared"));
+  // }, []);
 
   useEffect(() => {
     if (!isError || !error) return;

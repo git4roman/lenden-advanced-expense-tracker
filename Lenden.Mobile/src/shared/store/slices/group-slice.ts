@@ -1,34 +1,50 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-type MutualBalanceUser = {
-  userId: number;
-  fullName: string;
-};
-type MutualBalanceData = {
-  fromUserId: number;
-  fromUser: MutualBalanceUser;
-  toUserId: number;
-  toUser: MutualBalanceUser;
-  amount: number;
-};
+// type MutualBalanceUser = {
+//   userId: number;
+//   fullName: string;
+// };
+// type MutualBalanceData = {
+//   fromUserId: number;
+//   fromUser: MutualBalanceUser;
+//   toUserId: number;
+//   toUser: MutualBalanceUser;
+//   amount: number;
+// };
 type Member = {
-  firstName: string;
-  imageUrl: string;
+  id: string;
+  email: string;
+  givenName: string;
+  familyName: string;
+  netBalance?: number;
 };
 type Group = {
+  id: string;
   name: string;
   imageUrl: string;
-  updatedAt: string;
   members: Member[];
-  createdBy: number;
-  mutualBalanceData: MutualBalanceData[];
+  updatedAt?: string;
+  createdBy?: number;
+  // mutualBalanceData: MutualBalanceData[];
+  transaction: Transaction[];
 };
 type GroupState = {
   groups: Group[] | null;
 };
 
+type Transaction = {
+  from: string;
+  to: string;
+  amount: number;
+};
+
 const initialState: GroupState = {
   groups: null,
+};
+
+type SetGroupBalancePayload = {
+  groupId: string;
+  transactions: Transaction[];
 };
 
 const groupSlice = createSlice({
@@ -38,8 +54,15 @@ const groupSlice = createSlice({
     setUserGroups: (state, action: PayloadAction<GroupState>) => {
       state.groups = action.payload.groups ?? null;
     },
+    setGroupBalance: (state, action: PayloadAction<SetGroupBalancePayload>) => {
+      const { groupId, transactions } = action.payload;
+      const group = state.groups?.find((g) => g.id === groupId);
+      if (group) {
+        group.transaction = transactions;
+      }
+    },
   },
 });
 
-export const { setUserGroups } = groupSlice.actions;
+export const { setUserGroups, setGroupBalance } = groupSlice.actions;
 export default groupSlice.reducer;

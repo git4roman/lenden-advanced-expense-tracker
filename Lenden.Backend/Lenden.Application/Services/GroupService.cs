@@ -1,4 +1,5 @@
-﻿using Lenden.Application.DTOs;
+﻿using System.Transactions;
+using Lenden.Application.DTOs;
 using Lenden.Application.Interfaces;
 using Lenden.Application.Interfaces.Services;
 using Lenden.Application.Managers;
@@ -128,5 +129,52 @@ public class GroupService : IGroupService
     public async Task<IEnumerable<GroupEntity?>> GetGroupsByUserIdAsync(Guid userId,CancellationToken ct = default)
     {
         return await _unitOfWork.GroupRepository.GetByUserPublicIdAsync(userId);
+    }
+
+    public async Task<List<Transaction>> GetBalance(Guid groupId, CancellationToken ct = default)
+    {
+        var group = await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId);
+        if (group is null) throw new Exception("Group not found");
+        var memberships = group.Members.AsQueryable();
+        
+        var transactions = new List<Transaction>();
+
+        // Split into creditors and debtors
+        var creditors = memberships.Where(p => p.NetBalance > 0).OrderByDescending(p => p.NetBalance).ToList();
+        var debtors = memberships.Where(p => p.NetBalance < 0).OrderBy(d => d.NetBalance).ToList();
+
+        int i = 0, j = 0;
+
+        while (i < debtors.Count && j < creditors.Count)
+        {
+            var debtor = debtors[i];
+            var creditor = creditors[j];
+
+            decimal amount = Math.Min(-debtor.NetBalance, creditor.NetBalance);
+
+            transactions.Add(new Transaction
+            {
+                From = debtor.User.GivenName,
+                To = creditor.User.GivenName,
+                Amount = amount
+            });
+
+            debtor.UpdateNetBalance(amount);
+            creditor.UpdateNetBalance(-amount);
+
+            if (debtor.NetBalance == 0) i++;
+            if (creditor.NetBalance == 0) j++;
+        }
+
+        return transactions;
+        
+
+    }
+    
+    public class Transaction
+    {
+        public string From { get; set; }
+        public string To { get; set; }
+        public decimal Amount { get; set; }
     }
 }

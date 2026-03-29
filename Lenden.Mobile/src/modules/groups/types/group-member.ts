@@ -20,4 +20,5 @@ export type GroupMember = {
   email: string;
   givenName: string;
   familyName: string;
+  netBalance?: number;
 };

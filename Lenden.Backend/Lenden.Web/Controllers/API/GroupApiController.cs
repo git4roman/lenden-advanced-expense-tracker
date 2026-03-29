@@ -34,7 +34,8 @@ public class GroupApiController : ControllerBase
                 Id = m.User.Slug,
                 Email = m.User.Email.Value,
                 GivenName = m.User.GivenName,
-                FamilyName = m.User.FamilyName
+                FamilyName = m.User.FamilyName,
+                NetBalance = m.NetBalance,
             }).ToList()
         });
 
@@ -126,6 +127,14 @@ public class GroupApiController : ControllerBase
        var allGroups = await _groupService.GetAllActiveAsync();
        return Ok(allGroups);
     }
+
+    [HttpGet("balance")]
+    public async Task<IActionResult> GetGroupBalance(Guid groupId, CancellationToken ct = default)
+    {
+        
+        var transcations = await _groupService.GetBalance(groupId, ct);
+        return Ok(transcations);
+    }
     
     public class GroupDto
     {
@@ -141,5 +150,8 @@ public class GroupApiController : ControllerBase
         public string Email { get; set; }
         public string GivenName { get; set; }
         public string FamilyName { get; set; }
+        public decimal NetBalance { get; set; }
     }
+    
+    
 }

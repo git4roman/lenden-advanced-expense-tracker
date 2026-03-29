@@ -8,13 +8,13 @@ const expenseApi = api.injectEndpoints({
         url: `/Expense/${payload}`,
         method: "GET",
       }),
-      providesTags: (result, error, groupId) => [
-        { type: "Expense", id: groupId },
-      ],
+      providesTags: (result, error, groupId) => {
+        console.log("providesTags fired with groupId:", groupId);
+        return [{ type: "Expense", id: groupId }];
+      },
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          console.log("The Expenses Data is:", JSON.stringify(data, null, 2));
 
           dispatch(
             setExpenses({
