@@ -16,7 +16,7 @@ const Expense = () => {
   const [selectedCategory, setSelectedCategory] = useState(
     sharedExpenseCategories[0],
   );
-  const [paidBy, setPaidBy] = useState<string>("");
+  const [paidBy, setPaidBy] = useState<string[]>([]);
   const [splitBetween, setSplitBetween] = useState<string[]>([]);
   const [notes, setNotes] = useState("");
   const [createExpense] = useCreateExpenseMutation();
@@ -24,7 +24,7 @@ const Expense = () => {
   useEffect(() => {
     if (groups?.length) {
       setSelectedGroup(groups[0]);
-      setPaidBy(groups[0].members[0].id);
+      setPaidBy(groups[0].members[0]?.id ? [groups[0].members[0].id] : []);
       setSplitBetween(groups[0].members.map((m: any) => m.id));
     }
   }, [groups]);
@@ -35,8 +35,24 @@ const Expense = () => {
     return (total / splitBetween.length).toFixed(2);
   }, [amount, splitBetween.length]);
 
+  const perPayerAmount = useMemo(() => {
+    const total = Number(amount || "0");
+    if (!paidBy.length || Number.isNaN(total)) return 0;
+    return total / paidBy.length;
+  }, [amount, paidBy.length]);
+
   const toggleSplitMember = (memberId: string) => {
     setSplitBetween((prev) => {
+      if (prev.includes(memberId)) {
+        if (prev.length === 1) return prev;
+        return prev.filter((item) => item !== memberId);
+      }
+      return [...prev, memberId];
+    });
+  };
+
+  const togglePayer = (memberId: string) => {
+    setPaidBy((prev) => {
       if (prev.includes(memberId)) {
         if (prev.length === 1) return prev;
         return prev.filter((item) => item !== memberId);
@@ -49,12 +65,12 @@ const Expense = () => {
     if (!selectedGroup?.members) return [];
     return selectedGroup.members.map((member: any) => ({
       userId: member.id,
-      paidAmount: paidBy === member.id ? Number(amount || 0) : 0,
+      paidAmount: paidBy.includes(member.id) ? Number(perPayerAmount) : 0,
       splitAmount: splitBetween.includes(member.id)
         ? Number(perPersonAmount)
         : 0,
     }));
-  }, [selectedGroup, paidBy, splitBetween, amount, perPersonAmount]);
+  }, [selectedGroup, paidBy, splitBetween, perPayerAmount, perPersonAmount]);
 
   const formData = {
     totalAmount: Number(amount || 0),
@@ -74,10 +90,26 @@ const Expense = () => {
     backgroundColor: active ? Colors.accent[900] : Colors.neutral[900],
   });
 
+  const resetForm = () => {
+    setAmount("");
+    setSelectedCategory(sharedExpenseCategories[0]);
+    setNotes("");
+    if (groups?.length) {
+      setSelectedGroup(groups[0]);
+      setPaidBy(groups[0].members[0]?.id ? [groups[0].members[0].id] : []);
+      setSplitBetween(groups[0].members.map((m: any) => m.id));
+    } else {
+      setSelectedGroup(null);
+      setPaidBy([]);
+      setSplitBetween([]);
+    }
+  };
+
   const handleSubmit = async () => {
     try {
       const response = await createExpense(formData).unwrap();
       console.log("The Response from create Expense is", response);
+      resetForm();
       router.replace("/(tabs)/(groups)");
     } catch (e) {
       console.log("The error is :", e);
@@ -85,6 +117,7 @@ const Expense = () => {
   };
 
   const handleCancel = () => {
+    resetForm();
     router.replace("/(tabs)/(groups)");
   };
 
@@ -182,7 +215,9 @@ const Expense = () => {
                 style={chipStyle(selectedGroup === group)}
                 onPress={() => {
                   setSelectedGroup(group);
-                  setPaidBy(group.members[0].id);
+                  setPaidBy(
+                    group.members[0]?.id ? [group.members[0].id] : [],
+                  );
                   setSplitBetween(group.members.map((m: any) => m.id));
                 }}
               >
@@ -229,12 +264,12 @@ const Expense = () => {
             {selectedGroup.members.map((member: any) => (
               <Pressable
                 key={member.id}
-                style={chipStyle(paidBy === member.id)}
-                onPress={() => setPaidBy(member.id)}
+                style={chipStyle(paidBy.includes(member.id))}
+                onPress={() => togglePayer(member.id)}
               >
                 <CText
                   size="sm"
-                  color={paidBy === member.id ? "accent" : "neutral"}
+                  color={paidBy.includes(member.id) ? "accent" : "neutral"}
                   shade={300}
                 >
                   {member.givenName}
@@ -242,6 +277,9 @@ const Expense = () => {
               </Pressable>
             ))}
           </View>
+          <CText size="xs" color="neutral" shade={500}>
+            Split paid: NPR {perPayerAmount.toFixed(2)} each
+          </CText>
         </View>
 
         <View style={{ gap: 8 }}>

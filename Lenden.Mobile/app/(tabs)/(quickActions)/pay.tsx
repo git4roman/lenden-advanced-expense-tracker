@@ -53,7 +53,17 @@ const Pay = () => {
     backgroundColor: active ? Colors.accent[900] : Colors.neutral[900],
   });
 
+  const resetForm = () => {
+    setAmount("");
+    setGroup(groups[0]);
+    setRecipient(recipients[0]);
+    setMethod(methods[0]);
+    setEvidenceUrl("");
+    setNotes("");
+  };
+
   const handleCancel = () => {
+    resetForm();
     if (from === "groupDetails" && groupId) {
       router.replace({
         pathname: "/(tabs)/(groups)/[groupId]/details",
@@ -81,6 +91,7 @@ const Pay = () => {
       evidenceUrl,
       notes,
     });
+    resetForm();
   };
 
   return (

@@ -5,34 +5,25 @@ import { CText } from "@/src/shared/ui/components/CText";
 import {
   useGetGroupBalanceQuery,
   useGetGroupQuery,
-  useGetGroupsQuery,
 } from "@/src/shared/store/apiSlices/group-slice.api";
 
 const BalanceTab = ({ groupId }: { groupId: string }) => {
   const { data: group, isLoading: isGroupLoading } = useGetGroupQuery(groupId);
-  const { data: groupsData } = useGetGroupsQuery(undefined);
   const { data: mutualBalances } = useGetGroupBalanceQuery(groupId);
-  const balanceItems = React.useMemo(() => {
-    const groups = (groupsData as any)?.groups ?? groupsData ?? [];
-    const groupFromList = Array.isArray(groups)
-      ? groups.find((g: any) => g.id === groupId)
-      : undefined;
-    const members = groupFromList?.members ?? group?.members ?? [];
-    return members.map((member: any) => ({
-      user: member,
-      balance: member.netBalance ?? 0,
-    }));
-  }, [group?.members, groupId, groupsData]);
-  const maxBalance = React.useMemo(() => {
-    const values = balanceItems
-      .map((b) => Math.abs(Number(b.balance) || 0))
-      .filter((v) => Number.isFinite(v));
-    if (values.length === 0) return 1;
-    return Math.max(1, ...values);
-  }, [balanceItems]);
+  const balanceItems = (group?.members ?? []).map((member: any) => ({
+    user: member,
+    balance: member.netBalance ?? 0,
+  }));
+  const maxBalance =
+    Math.max(
+      1,
+      ...balanceItems
+        .map((b: any) => Math.abs(Number(b.balance) || 0))
+        .filter((v: any) => Number.isFinite(v)),
+    ) || 1;
 
   return (
-    <ScrollView style={{}} showsVerticalScrollIndicator={false}>
+    <ScrollView showsVerticalScrollIndicator={false}>
       <View style={{ gap: 12, paddingBottom: 20 }}>
         {balanceItems.length === 0 && !isGroupLoading ? (
           <View

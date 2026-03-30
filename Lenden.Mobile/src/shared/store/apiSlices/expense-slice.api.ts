@@ -49,6 +49,8 @@ const expenseApi = api.injectEndpoints({
       }),
       invalidatesTags: (result, error, payload) => [
         { type: "Expense", id: payload.groupId },
+        { type: "Group", id: payload.groupId },
+        { type: "Group", id: "LIST" },
       ],
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
@@ -73,6 +75,8 @@ const expenseApi = api.injectEndpoints({
       invalidatesTags: (result, error, payload) => [
         { type: "Expense", id: payload.groupId },
         { type: "Expense", id: payload.id },
+        { type: "Group", id: payload.groupId },
+        { type: "Group", id: "LIST" },
       ],
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {

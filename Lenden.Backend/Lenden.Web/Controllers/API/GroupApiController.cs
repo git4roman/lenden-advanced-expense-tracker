@@ -61,7 +61,8 @@ public class GroupApiController : ControllerBase
                     Id = m.User.Slug,
                     Email = m.User.Email.Value,
                     GivenName = m.User.GivenName,
-                    FamilyName = m.User.FamilyName
+                    FamilyName = m.User.FamilyName,
+                    NetBalance = m.NetBalance,
                 }).ToList()
             };
 
