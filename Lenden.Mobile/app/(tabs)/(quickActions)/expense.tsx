@@ -18,14 +18,20 @@ const Expense = () => {
   );
   const [paidBy, setPaidBy] = useState<string[]>([]);
   const [splitBetween, setSplitBetween] = useState<string[]>([]);
+  const [useEqualPayerSplit, setUseEqualPayerSplit] = useState(true);
+  const [paidAmounts, setPaidAmounts] = useState<Record<string, string>>({});
   const [notes, setNotes] = useState("");
   const [createExpense] = useCreateExpenseMutation();
+
+  const roundTo2 = (value: number) => Math.round(value * 100) / 100;
 
   useEffect(() => {
     if (groups?.length) {
       setSelectedGroup(groups[0]);
       setPaidBy(groups[0].members[0]?.id ? [groups[0].members[0].id] : []);
       setSplitBetween(groups[0].members.map((m: any) => m.id));
+      setPaidAmounts({});
+      setUseEqualPayerSplit(true);
     }
   }, [groups]);
 
@@ -38,7 +44,7 @@ const Expense = () => {
   const perPayerAmount = useMemo(() => {
     const total = Number(amount || "0");
     if (!paidBy.length || Number.isNaN(total)) return 0;
-    return total / paidBy.length;
+    return roundTo2(total / paidBy.length);
   }, [amount, paidBy.length]);
 
   const toggleSplitMember = (memberId: string) => {
@@ -59,21 +65,58 @@ const Expense = () => {
       }
       return [...prev, memberId];
     });
+    setPaidAmounts((prev) => {
+      if (useEqualPayerSplit) return prev;
+      if (prev[memberId] !== undefined) {
+        const { [memberId]: _, ...rest } = prev;
+        return rest;
+      }
+      return { ...prev, [memberId]: "0.00" };
+    });
   };
+
+  const totalPaid = useMemo(() => {
+    if (!paidBy.length) return 0;
+    if (useEqualPayerSplit) return perPayerAmount * paidBy.length;
+    return paidBy.reduce((sum, id) => sum + Number(paidAmounts[id] || 0), 0);
+  }, [paidBy, useEqualPayerSplit, perPayerAmount, paidAmounts]);
+
+  const remainingPaid = useMemo(() => {
+    const total = Number(amount || "0");
+    if (Number.isNaN(total)) return 0;
+    return total - totalPaid;
+  }, [amount, totalPaid]);
 
   const users = useMemo(() => {
     if (!selectedGroup?.members) return [];
-    return selectedGroup.members.map((member: any) => ({
-      userId: member.id,
-      paidAmount: paidBy.includes(member.id) ? Number(perPayerAmount) : 0,
-      splitAmount: splitBetween.includes(member.id)
-        ? Number(perPersonAmount)
-        : 0,
-    }));
-  }, [selectedGroup, paidBy, splitBetween, perPayerAmount, perPersonAmount]);
+    return selectedGroup.members
+      .filter(
+        (member: any) =>
+          paidBy.includes(member.id) || splitBetween.includes(member.id),
+      )
+      .map((member: any) => ({
+        userId: member.id,
+        paidAmount: paidBy.includes(member.id)
+          ? useEqualPayerSplit
+            ? roundTo2(Number(perPayerAmount) || 0)
+            : roundTo2(Number(paidAmounts[member.id] || 0))
+          : 0,
+        splitAmount: splitBetween.includes(member.id)
+          ? roundTo2(Number(perPersonAmount) || 0)
+          : 0,
+      }));
+  }, [
+    selectedGroup,
+    paidBy,
+    splitBetween,
+    perPayerAmount,
+    perPersonAmount,
+    useEqualPayerSplit,
+    paidAmounts,
+  ]);
 
   const formData = {
-    totalAmount: Number(amount || 0),
+    totalAmount: roundTo2(Number(amount || 0)),
     groupPublicId: selectedGroup?.id,
     category: selectedCategory.id,
     description: notes,
@@ -98,15 +141,20 @@ const Expense = () => {
       setSelectedGroup(groups[0]);
       setPaidBy(groups[0].members[0]?.id ? [groups[0].members[0].id] : []);
       setSplitBetween(groups[0].members.map((m: any) => m.id));
+      setPaidAmounts({});
+      setUseEqualPayerSplit(true);
     } else {
       setSelectedGroup(null);
       setPaidBy([]);
       setSplitBetween([]);
+      setPaidAmounts({});
+      setUseEqualPayerSplit(true);
     }
   };
 
   const handleSubmit = async () => {
     try {
+      console.log("Create Expense payload", formData);
       const response = await createExpense(formData).unwrap();
       console.log("The Response from create Expense is", response);
       resetForm();
@@ -215,10 +263,10 @@ const Expense = () => {
                 style={chipStyle(selectedGroup === group)}
                 onPress={() => {
                   setSelectedGroup(group);
-                  setPaidBy(
-                    group.members[0]?.id ? [group.members[0].id] : [],
-                  );
+                  setPaidBy(group.members[0]?.id ? [group.members[0].id] : []);
                   setSplitBetween(group.members.map((m: any) => m.id));
+                  setPaidAmounts({});
+                  setUseEqualPayerSplit(true);
                 }}
               >
                 <CText
@@ -277,9 +325,104 @@ const Expense = () => {
               </Pressable>
             ))}
           </View>
-          <CText size="xs" color="neutral" shade={500}>
-            Split paid: NPR {perPayerAmount.toFixed(2)} each
-          </CText>
+          <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
+            <Pressable
+              onPress={() => {
+                setUseEqualPayerSplit((prev) => {
+                  const next = !prev;
+                  if (prev && !next) {
+                    setPaidAmounts((curr) => {
+                      const nextAmounts = { ...curr };
+                      paidBy.forEach((id) => {
+                        if (nextAmounts[id] === undefined) {
+                          nextAmounts[id] = perPayerAmount.toFixed(2);
+                        }
+                      });
+                      return nextAmounts;
+                    });
+                  }
+                  return next;
+                });
+              }}
+              style={{
+                paddingHorizontal: 10,
+                paddingVertical: 6,
+                borderRadius: 999,
+                borderWidth: 1,
+                borderColor: Colors.neutral[700],
+                backgroundColor: Colors.neutral[800],
+              }}
+            >
+              <CText size="xs" weight="semibold" color="neutral" shade={300}>
+                {useEqualPayerSplit ? "Unequal payments" : "Equal split"}
+              </CText>
+            </Pressable>
+            {useEqualPayerSplit ? (
+              <CText size="xs" color="neutral" shade={500}>
+                Split paid: NPR {perPayerAmount.toFixed(2)} each
+              </CText>
+            ) : (
+              <CText size="xs" color="neutral" shade={500}>
+                Total paid: NPR {totalPaid.toFixed(2)} · Remaining: NPR{" "}
+                {remainingPaid.toFixed(2)}
+              </CText>
+            )}
+          </View>
+
+          {!useEqualPayerSplit && paidBy.length > 0 && (
+            <View style={{ gap: 8 }}>
+              {paidBy.map((payerId) => {
+                const member = selectedGroup.members.find(
+                  (m: any) => m.id === payerId,
+                );
+                if (!member) return null;
+                return (
+                  <View
+                    key={payerId}
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      gap: 12,
+                      paddingHorizontal: 12,
+                      paddingVertical: 10,
+                      borderRadius: 12,
+                      backgroundColor: Colors.neutral[800],
+                      borderWidth: 1,
+                      borderColor: Colors.neutral[700],
+                    }}
+                  >
+                    <CText size="sm" color="neutral" shade={200}>
+                      {member.givenName}
+                    </CText>
+                    <TextInput
+                      value={paidAmounts[payerId] ?? ""}
+                      onChangeText={(value) =>
+                        setPaidAmounts((prev) => ({
+                          ...prev,
+                          [payerId]: value,
+                        }))
+                      }
+                      placeholder="0.00"
+                      keyboardType="decimal-pad"
+                      placeholderTextColor={Colors.neutral[600]}
+                      style={{
+                        minWidth: 90,
+                        textAlign: "right",
+                        color: Colors.neutral[100],
+                        paddingHorizontal: 10,
+                        paddingVertical: 6,
+                        borderRadius: 10,
+                        backgroundColor: Colors.neutral[900],
+                        borderColor: Colors.neutral[700],
+                        borderWidth: 1,
+                      }}
+                    />
+                  </View>
+                );
+              })}
+            </View>
+          )}
         </View>
 
         <View style={{ gap: 8 }}>

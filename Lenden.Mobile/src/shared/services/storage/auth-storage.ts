@@ -4,10 +4,13 @@ const TOKEN_KEY = "auth_token";
 const USER_KEY = "auth_user";
 
 export const saveAuth = async (token: string, user: any) => {
-  await AsyncStorage.multiSet([
-    [TOKEN_KEY, token],
-    [USER_KEY, JSON.stringify(user)],
-  ]);
+  const data: [string, string][] = [[TOKEN_KEY, token]];
+
+  if (user) {
+    data.push([USER_KEY, JSON.stringify(user)]);
+  }
+
+  await AsyncStorage.multiSet(data);
 };
 
 export const loadAuth = async () => {

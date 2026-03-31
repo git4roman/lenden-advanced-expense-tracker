@@ -1,5 +1,6 @@
 import { setAuthCredentials } from "@/src/shared/store/slices/auth-slice";
 import { api } from "@/src/shared/store/apiSlices/apiClient";
+import { saveAuth } from "../../services/storage/auth-storage";
 
 const authApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -18,6 +19,7 @@ const authApi = api.injectEndpoints({
               refreshToken: data.refreshToken,
             }),
           );
+          await saveAuth(data.accessToken, null);
         } catch (error) {
           console.log("Error From Auth Login", error);
         }
@@ -37,7 +39,6 @@ const authApi = api.injectEndpoints({
             setAuthCredentials({
               accessToken: data.accessToken,
               refreshToken: data.refreshToken,
-              user: data.user,
             }),
           );
         } catch (error) {}

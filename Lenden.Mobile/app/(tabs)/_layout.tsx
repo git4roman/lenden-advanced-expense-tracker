@@ -1,5 +1,5 @@
 import { Pressable, View } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { router, Tabs } from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -11,7 +11,9 @@ import {
   Profile,
   Profile2User,
 } from "iconsax-react-nativejs";
-import { store } from "@/src/shared/store/store";
+import { RootState, store } from "@/src/shared/store/store";
+import { loadAuth } from "@/src/shared/services/storage/auth-storage";
+import { useSelector } from "react-redux";
 
 export default function _layout() {
   const TAB_ICON_SIZE = 18;

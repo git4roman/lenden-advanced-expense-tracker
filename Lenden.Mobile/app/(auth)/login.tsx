@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Pressable, TextInput, View, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
@@ -8,11 +8,15 @@ import { Colors } from "@/src/shared/ui/theme/colors";
 import { useLoginHandler } from "@/src/modules/auth/hooks/use-login- handler";
 import { onGoogleButtonPress } from "@/src/shared/services/auth/google-auth.service";
 import { useGoogleHandler } from "@/src/modules/auth/hooks/use-google-handler";
+import { RootState } from "@/src/shared/store/store";
+import { useSelector } from "react-redux";
+import { loadAuth } from "@/src/shared/services/storage/auth-storage";
 
 export default function LoginScreen() {
   const { email, setEmail, password, setPassword, handleLogin, isLoading } =
     useLoginHandler();
   const { handleGoogle } = useGoogleHandler();
+  const token = useSelector((state: RootState) => state.auth.accessToken);
 
   const handleGoogleLogin = async () => {
     const data = await onGoogleButtonPress();
