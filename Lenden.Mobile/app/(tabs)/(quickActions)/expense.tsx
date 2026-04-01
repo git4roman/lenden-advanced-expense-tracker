@@ -16,6 +16,8 @@ const Expense = () => {
   const [selectedCategory, setSelectedCategory] = useState(
     sharedExpenseCategories[0],
   );
+  const [isGroupMenuOpen, setIsGroupMenuOpen] = useState(false);
+  const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
   const [paidBy, setPaidBy] = useState<string[]>([]);
   const [splitBetween, setSplitBetween] = useState<string[]>([]);
   const [useEqualPayerSplit, setUseEqualPayerSplit] = useState(true);
@@ -125,8 +127,8 @@ const Expense = () => {
   };
 
   const chipStyle = (active: boolean) => ({
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     borderRadius: 999,
     borderWidth: 1,
     borderColor: active ? Colors.accent[500] : Colors.neutral[700],
@@ -179,7 +181,7 @@ const Expense = () => {
     <SafeAreaView
       style={{
         flex: 1,
-        paddingHorizontal: 16,
+        paddingHorizontal: 14,
         backgroundColor: Colors.neutral[900],
       }}
     >
@@ -188,18 +190,18 @@ const Expense = () => {
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
-          paddingVertical: 10,
+          paddingVertical: 6,
         }}
       >
-        <CText weight="bold" size="xmd" color="neutral" shade={200}>
+        <CText weight="bold" size="md" color="neutral" shade={200}>
           Add Expense
         </CText>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
           <Pressable
             onPress={handleCancel}
             style={{
-              paddingHorizontal: 12,
-              paddingVertical: 8,
+              paddingHorizontal: 10,
+              paddingVertical: 6,
               borderRadius: 10,
               borderWidth: 1,
               borderColor: Colors.neutral[700],
@@ -213,102 +215,284 @@ const Expense = () => {
           <Pressable
             onPress={handleSubmit}
             style={{
-              width: 38,
-              height: 38,
+              width: 34,
+              height: 34,
               borderRadius: 999,
               backgroundColor: Colors.accent[500],
               justifyContent: "center",
               alignItems: "center",
             }}
           >
-            <Ionicons name="checkmark" size={22} color={Colors.neutral[900]} />
+            <Ionicons name="checkmark" size={20} color={Colors.neutral[900]} />
           </Pressable>
         </View>
       </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ gap: 16, paddingBottom: 24 }}
+        contentContainerStyle={{ gap: 6, paddingBottom: 24 }}
       >
-        <View style={{ gap: 8 }}>
-          <CText weight="semibold" size="sm" color="neutral" shade={300}>
-            Amount
-          </CText>
-          <TextInput
-            value={amount}
-            onChangeText={setAmount}
-            placeholder="0.00"
-            keyboardType="decimal-pad"
-            placeholderTextColor={Colors.neutral[600]}
-            style={{
-              backgroundColor: Colors.neutral[800],
-              borderColor: Colors.neutral[700],
-              borderWidth: 1,
-              borderRadius: 14,
-              paddingHorizontal: 14,
-              paddingVertical: 12,
-              color: Colors.neutral[100],
-              fontSize: 28,
-            }}
-          />
+        <View
+          style={{
+            gap: 6,
+            padding: 10,
+            borderRadius: 14,
+            backgroundColor: Colors.neutral[850],
+            borderWidth: 1,
+            borderColor: Colors.neutral[800],
+          }}
+        >
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <CText weight="semibold" size="sm" color="neutral" shade={300}>
+              Amount
+            </CText>
+            <TextInput
+              value={amount}
+              onChangeText={setAmount}
+              placeholder="0.00"
+              keyboardType="decimal-pad"
+              placeholderTextColor={Colors.neutral[600]}
+              style={{
+                flex: 1,
+                backgroundColor: Colors.neutral[800],
+                borderColor: Colors.neutral[700],
+                borderWidth: 1,
+                borderRadius: 14,
+                paddingHorizontal: 12,
+                paddingVertical: 10,
+                color: Colors.neutral[100],
+                fontSize: 22,
+              }}
+            />
+          </View>
         </View>
 
-        <View style={{ gap: 8 }}>
-          <CText weight="semibold" size="sm" color="neutral" shade={300}>
-            Group Selection
-          </CText>
-          <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
-            {groups.map((group: any) => (
-              <Pressable
-                key={group.id}
-                style={chipStyle(selectedGroup === group)}
-                onPress={() => {
-                  setSelectedGroup(group);
-                  setPaidBy(group.members[0]?.id ? [group.members[0].id] : []);
-                  setSplitBetween(group.members.map((m: any) => m.id));
-                  setPaidAmounts({});
-                  setUseEqualPayerSplit(true);
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
+          <View
+            style={{
+              width: "48.5%",
+              minWidth: 0,
+              gap: 8,
+              padding: 10,
+              borderRadius: 14,
+              backgroundColor: Colors.neutral[850],
+              borderWidth: 1,
+              borderColor: Colors.neutral[800],
+              position: "relative",
+              overflow: "visible",
+            }}
+          >
+            <CText weight="semibold" size="sm" color="neutral" shade={300}>
+              Group
+            </CText>
+            <Pressable
+              onPress={() => setIsGroupMenuOpen((prev) => !prev)}
+              style={{
+                minWidth: 0,
+                paddingHorizontal: 10,
+                paddingVertical: 10,
+                borderRadius: 12,
+                borderWidth: 1,
+                borderColor: Colors.neutral[700],
+                backgroundColor: Colors.neutral[900],
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <CText
+                size="sm"
+                color="neutral"
+                shade={200}
+                weight="semibold"
+                numberOfLines={1}
+                style={{ flex: 1 }}
+              >
+                {selectedGroup?.name ?? "Select group"}
+              </CText>
+              <Ionicons
+                name={isGroupMenuOpen ? "chevron-up" : "chevron-down"}
+                size={18}
+                color={Colors.neutral[400]}
+              />
+            </Pressable>
+            {isGroupMenuOpen && (
+              <View
+                style={{
+                  borderWidth: 1,
+                  borderColor: Colors.neutral[700],
+                  backgroundColor: Colors.neutral[900],
+                  borderRadius: 12,
+                  overflow: "hidden",
+                  position: "absolute",
+                  left: 0,
+                  right: 0,
+                  top: 82,
+                  zIndex: 10,
+                  elevation: 6,
                 }}
               >
-                <CText
-                  size="sm"
-                  color={selectedGroup === group ? "accent" : "neutral"}
-                  shade={300}
-                >
-                  {group.name}
-                </CText>
-              </Pressable>
-            ))}
+                {groups.map((group: any) => (
+                  <Pressable
+                    key={group.id}
+                    onPress={() => {
+                      setSelectedGroup(group);
+                      setPaidBy(
+                        group.members[0]?.id ? [group.members[0].id] : [],
+                      );
+                      setSplitBetween(group.members.map((m: any) => m.id));
+                      setPaidAmounts({});
+                      setUseEqualPayerSplit(true);
+                      setIsGroupMenuOpen(false);
+                    }}
+                    style={{
+                      paddingHorizontal: 10,
+                      paddingVertical: 8,
+                      borderBottomWidth:
+                        group.id === groups[groups.length - 1]?.id ? 0 : 1,
+                      borderBottomColor: Colors.neutral[800],
+                      backgroundColor:
+                        selectedGroup?.id === group.id
+                          ? Colors.neutral[800]
+                          : Colors.neutral[900],
+                    }}
+                  >
+                    <CText
+                      size="sm"
+                      color={
+                        selectedGroup?.id === group.id ? "accent" : "neutral"
+                      }
+                      shade={300}
+                      weight="semibold"
+                    >
+                      {group.name}
+                    </CText>
+                  </Pressable>
+                ))}
+              </View>
+            )}
           </View>
-        </View>
 
-        <View style={{ gap: 8 }}>
-          <CText weight="semibold" size="sm" color="neutral" shade={300}>
-            Category
-          </CText>
-          <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
-            {sharedExpenseCategories.map((category) => (
-              <Pressable
-                key={category.key}
-                style={chipStyle(selectedCategory === category)}
-                onPress={() => setSelectedCategory(category)}
+          <View
+            style={{
+              width: "48.5%",
+              minWidth: 0,
+              gap: 8,
+              padding: 10,
+              borderRadius: 14,
+              backgroundColor: Colors.neutral[850],
+              borderWidth: 1,
+              borderColor: Colors.neutral[800],
+              position: "relative",
+              overflow: "visible",
+            }}
+          >
+            <CText weight="semibold" size="sm" color="neutral" shade={300}>
+              Category
+            </CText>
+            <Pressable
+              onPress={() => setIsCategoryMenuOpen((prev) => !prev)}
+              style={{
+                minWidth: 0,
+                paddingHorizontal: 10,
+                paddingVertical: 10,
+                borderRadius: 12,
+                borderWidth: 1,
+                borderColor: Colors.neutral[700],
+                backgroundColor: Colors.neutral[900],
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <CText
+                size="sm"
+                color="neutral"
+                shade={200}
+                weight="semibold"
+                numberOfLines={1}
+                style={{ flex: 1 }}
               >
-                <CText
-                  size="sm"
-                  color={selectedCategory === category ? "accent" : "neutral"}
-                  shade={300}
-                >
-                  {category.label}
-                </CText>
-              </Pressable>
-            ))}
+                {selectedCategory?.label ?? "Select category"}
+              </CText>
+              <Ionicons
+                name={isCategoryMenuOpen ? "chevron-up" : "chevron-down"}
+                size={18}
+                color={Colors.neutral[400]}
+              />
+            </Pressable>
+            {isCategoryMenuOpen && (
+              <View
+                style={{
+                  borderWidth: 1,
+                  borderColor: Colors.neutral[700],
+                  backgroundColor: Colors.neutral[900],
+                  borderRadius: 12,
+                  overflow: "hidden",
+                  position: "absolute",
+                  left: 0,
+                  right: 0,
+                  top: 82,
+                  zIndex: 10,
+                  elevation: 6,
+                }}
+              >
+                {sharedExpenseCategories.map((category, index) => (
+                  <Pressable
+                    key={category.key}
+                    onPress={() => {
+                      setSelectedCategory(category);
+                      setIsCategoryMenuOpen(false);
+                    }}
+                    style={{
+                      paddingHorizontal: 10,
+                      paddingVertical: 8,
+                      borderBottomWidth:
+                        index === sharedExpenseCategories.length - 1 ? 0 : 1,
+                      borderBottomColor: Colors.neutral[800],
+                      backgroundColor:
+                        selectedCategory?.key === category.key
+                          ? Colors.neutral[800]
+                          : Colors.neutral[900],
+                    }}
+                  >
+                    <CText
+                      size="sm"
+                      color={
+                        selectedCategory?.key === category.key
+                          ? "accent"
+                          : "neutral"
+                      }
+                      shade={300}
+                      weight="semibold"
+                    >
+                      {category.label}
+                    </CText>
+                  </Pressable>
+                ))}
+              </View>
+            )}
           </View>
         </View>
 
-        <View style={{ gap: 8 }}>
+        <View
+          style={{
+            gap: 8,
+            padding: 10,
+            borderRadius: 14,
+            backgroundColor: Colors.neutral[850],
+            borderWidth: 1,
+            borderColor: Colors.neutral[800],
+          }}
+        >
           <CText weight="semibold" size="sm" color="neutral" shade={300}>
             Paid By
           </CText>
-          <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
+          <View style={{ flexDirection: "row", gap: 6, flexWrap: "wrap" }}>
             {selectedGroup.members.map((member: any) => (
               <Pressable
                 key={member.id}
@@ -325,7 +509,7 @@ const Expense = () => {
               </Pressable>
             ))}
           </View>
-          <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
+          <View style={{ flexDirection: "row", gap: 6, alignItems: "center" }}>
             <Pressable
               onPress={() => {
                 setUseEqualPayerSplit((prev) => {
@@ -345,8 +529,8 @@ const Expense = () => {
                 });
               }}
               style={{
-                paddingHorizontal: 10,
-                paddingVertical: 6,
+                paddingHorizontal: 8,
+                paddingVertical: 4,
                 borderRadius: 999,
                 borderWidth: 1,
                 borderColor: Colors.neutral[700],
@@ -370,7 +554,7 @@ const Expense = () => {
           </View>
 
           {!useEqualPayerSplit && paidBy.length > 0 && (
-            <View style={{ gap: 8 }}>
+            <View style={{ gap: 6 }}>
               {paidBy.map((payerId) => {
                 const member = selectedGroup.members.find(
                   (m: any) => m.id === payerId,
@@ -384,8 +568,8 @@ const Expense = () => {
                       alignItems: "center",
                       justifyContent: "space-between",
                       gap: 12,
-                      paddingHorizontal: 12,
-                      paddingVertical: 10,
+                      paddingHorizontal: 10,
+                      paddingVertical: 8,
                       borderRadius: 12,
                       backgroundColor: Colors.neutral[800],
                       borderWidth: 1,
@@ -410,8 +594,8 @@ const Expense = () => {
                         minWidth: 90,
                         textAlign: "right",
                         color: Colors.neutral[100],
-                        paddingHorizontal: 10,
-                        paddingVertical: 6,
+                        paddingHorizontal: 8,
+                        paddingVertical: 4,
                         borderRadius: 10,
                         backgroundColor: Colors.neutral[900],
                         borderColor: Colors.neutral[700],
@@ -425,11 +609,20 @@ const Expense = () => {
           )}
         </View>
 
-        <View style={{ gap: 8 }}>
+        <View
+          style={{
+            gap: 8,
+            padding: 10,
+            borderRadius: 14,
+            backgroundColor: Colors.neutral[850],
+            borderWidth: 1,
+            borderColor: Colors.neutral[800],
+          }}
+        >
           <CText weight="semibold" size="sm" color="neutral" shade={300}>
             Split Between
           </CText>
-          <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
+          <View style={{ flexDirection: "row", gap: 6, flexWrap: "wrap" }}>
             {selectedGroup.members.map((member: any) => {
               const isSelected = splitBetween.includes(member.id);
               return (
@@ -454,28 +647,37 @@ const Expense = () => {
           </CText>
         </View>
 
-        <View style={{ gap: 8 }}>
-          <CText weight="semibold" size="sm" color="neutral" shade={300}>
-            Notes
-          </CText>
-          <TextInput
-            value={notes}
-            onChangeText={setNotes}
-            placeholder="Add note about this expense"
-            placeholderTextColor={Colors.neutral[600]}
-            multiline
-            textAlignVertical="top"
-            style={{
-              backgroundColor: Colors.neutral[800],
-              borderColor: Colors.neutral[700],
-              borderWidth: 1,
-              borderRadius: 14,
-              paddingHorizontal: 14,
-              paddingVertical: 12,
-              minHeight: 96,
-              color: Colors.neutral[100],
-            }}
-          />
+        <View
+          style={{
+            gap: 8,
+            padding: 10,
+            borderRadius: 14,
+            backgroundColor: Colors.neutral[850],
+            borderWidth: 1,
+            borderColor: Colors.neutral[800],
+          }}
+        >
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <CText weight="semibold" size="sm" color="neutral" shade={300}>
+              Notes
+            </CText>
+            <TextInput
+              value={notes}
+              onChangeText={setNotes}
+              placeholder="Add note"
+              placeholderTextColor={Colors.neutral[600]}
+              style={{
+                flex: 1,
+                backgroundColor: Colors.neutral[800],
+                borderColor: Colors.neutral[700],
+                borderWidth: 1,
+                borderRadius: 14,
+                paddingHorizontal: 10,
+                paddingVertical: 8,
+                color: Colors.neutral[100],
+              }}
+            />
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
