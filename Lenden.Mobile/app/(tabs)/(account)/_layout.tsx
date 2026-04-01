@@ -17,6 +17,10 @@ export default function AccountLayout() {
         name="personalinfo"
         options={{ title: "Personal Information" }}
       />
+      <Stack.Screen
+        name="editPersonalInfo"
+        options={{ title: "Edit Personal Information" }}
+      />
       <Stack.Screen name="security" options={{ title: "Security" }} />
       <Stack.Screen name="settings" options={{ title: "Settings" }} />
       <Stack.Screen name="notification" options={{ title: "Notification" }} />

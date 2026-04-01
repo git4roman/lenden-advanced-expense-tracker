@@ -87,7 +87,7 @@ public class GroupApiController : ControllerBase
         return Ok();
     }
 
-    [HttpPut("{groupId:Guid}")]
+    [HttpPut("{groupId:guid}")]
     public async Task<IActionResult> UpdateGroup(Guid groupId, UpdateGroupRequest request,CancellationToken ct = default)
     {
         await _authService.ValidateUserAsync(User, ct);
@@ -95,7 +95,7 @@ public class GroupApiController : ControllerBase
         return NoContent();
     }
 
-    [HttpPost("{groupId:Guid}/members")]
+    [HttpPost("{groupId:guid}/members")]
     public async Task<IActionResult> AddMember(Guid groupId, AddMemberRequestDto requestDto,CancellationToken ct = default)
     {
         var currentUser = await _authService.ValidateUserAsync(User, ct);
@@ -104,7 +104,7 @@ public class GroupApiController : ControllerBase
         return NoContent();
     }
 
-    [HttpPost("{groupId:Guid}/leave")]
+    [HttpPost("{groupId:guid}/leave")]
     public async Task<IActionResult> LeaveGroup([FromRoute]Guid groupId,CancellationToken ct = default)
     {
         var currentUser = await _authService.ValidateUserAsync(User, ct);
@@ -112,7 +112,7 @@ public class GroupApiController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{groupId:Guid}")]
+    [HttpDelete("{groupId:guid}")]
     public async Task<IActionResult> DeleteGroup([FromRoute]Guid groupId,CancellationToken ct = default)
     {
        var currenUser= await _authService.ValidateUserAsync(User, ct);
@@ -129,8 +129,8 @@ public class GroupApiController : ControllerBase
        return Ok(allGroups);
     }
 
-    [HttpGet("balance")]
-    public async Task<IActionResult> GetGroupBalance(Guid groupId, CancellationToken ct = default)
+    [HttpGet("{groupId:guid}/balance")]
+    public async Task<IActionResult> GetGroupBalance([FromRoute]Guid groupId, CancellationToken ct = default)
     {
         
         var transcations = await _groupService.GetBalance(groupId, ct);

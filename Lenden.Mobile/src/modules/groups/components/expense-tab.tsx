@@ -155,8 +155,8 @@ const ExpenseTab = ({ groupId, filterKey }: ExpenseTabProps) => {
                     borderWidth: 1,
                     borderRadius: 12,
                     borderColor: Colors.neutral[700],
+                    marginHorizontal: 10,
                     paddingHorizontal: 10,
-                    paddingVertical: 2,
                   }}
                 >
                   <ActivityItem item={item} />
