@@ -1,4 +1,4 @@
-import { View, ScrollView, Pressable } from "react-native";
+import { View, FlatList, Pressable, ActivityIndicator } from "react-native";
 import React from "react";
 import { CText } from "@/src/shared/ui/components/CText";
 import { ActivityItem } from "./activity-item";
@@ -23,6 +23,23 @@ type ExpenseTabProps = {
 
 const ExpenseTab = ({ groupId, filterKey }: ExpenseTabProps) => {
   const { data: expenses } = useGetExpensesQuery(groupId as string);
+  const [visibleCount, setVisibleCount] = React.useState(5);
+  const [isLoadingMore, setIsLoadingMore] = React.useState(false);
+  const loadMoreTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+
+  React.useEffect(() => {
+    setVisibleCount(5);
+  }, [groupId, filterKey]);
+
+  React.useEffect(() => {
+    return () => {
+      if (loadMoreTimeoutRef.current) {
+        clearTimeout(loadMoreTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const filteredExpenses = React.useMemo(() => {
     const items = expenses ?? [];
@@ -47,9 +64,14 @@ const ExpenseTab = ({ groupId, filterKey }: ExpenseTabProps) => {
       });
   }, [expenses, filterKey]);
 
+  const pagedExpenses = React.useMemo(
+    () => filteredExpenses.slice(0, visibleCount),
+    [filteredExpenses, visibleCount],
+  );
+
   const activityData = React.useMemo(
     () =>
-      filteredExpenses.map((expense: any) => {
+      pagedExpenses.map((expense: any) => {
         const { date, time } = formatDateTime(expense.createdAt);
 
         const payers = expense.participants.filter((p: any) => p.paid > 0);
@@ -77,7 +99,7 @@ const ExpenseTab = ({ groupId, filterKey }: ExpenseTabProps) => {
           amount: expense.totalAmount?.toString() ?? "0",
         };
       }),
-    [filteredExpenses],
+    [pagedExpenses],
   );
 
   const groupedActivityData = React.useMemo(() => {
@@ -93,80 +115,125 @@ const ExpenseTab = ({ groupId, filterKey }: ExpenseTabProps) => {
     }));
   }, [activityData]);
 
+  const canLoadMore = visibleCount < filteredExpenses.length;
+
+  const handleLoadMore = React.useCallback(() => {
+    if (!canLoadMore || isLoadingMore) return;
+    setIsLoadingMore(true);
+    loadMoreTimeoutRef.current = setTimeout(() => {
+      setVisibleCount((prev) => prev + 5);
+      setIsLoadingMore(false);
+    }, 500);
+  }, [canLoadMore, isLoadingMore]);
+
+  const checkLoadMore = React.useCallback(
+    (nativeEvent: any) => {
+      const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
+      const paddingToBottom = 64;
+      const isNearBottom =
+        layoutMeasurement.height + contentOffset.y >=
+        contentSize.height - paddingToBottom;
+      if (isNearBottom) {
+        handleLoadMore();
+      }
+    },
+    [handleLoadMore],
+  );
+
   return (
-    <ScrollView
+    <FlatList
+      data={groupedActivityData}
+      keyExtractor={(item) => item.date}
       style={{ borderColor: "transparent", flex: 1 }}
       contentContainerStyle={{ paddingTop: 4, paddingBottom: 96 }}
       showsVerticalScrollIndicator={false}
-    >
-      <View style={{ gap: 12 }}>
-        {groupedActivityData.map((group) => (
-          <View key={group.date} style={{ gap: 10 }}>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-                width: "100%",
-                marginBottom: 4,
-              }}
-            >
-              <CText
-                color="neutral"
-                shade={400}
-                size="ssm"
-                style={{ paddingHorizontal: 10 }}
-                weight="medium"
-              >
-                {group.date}
+      onEndReachedThreshold={0.4}
+      onEndReached={() => handleLoadMore()}
+      ListFooterComponent={
+        isLoadingMore || canLoadMore ? (
+          <View
+            style={{
+              paddingVertical: 12,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {isLoadingMore ? (
+              <ActivityIndicator size="small" color={Colors.neutral[400]} />
+            ) : (
+              <CText size="ssm" color="neutral" shade={500}>
+                Scroll to load more
               </CText>
-              <View
-                style={{
-                  flex: 1,
-                  height: 1,
-                  backgroundColor: Colors.neutral[700],
-                }}
-              />
-            </View>
+            )}
+          </View>
+        ) : null
+      }
+      renderItem={({ item: group }) => (
+        <View style={{ gap: 10, marginBottom: 12 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+              marginBottom: 4,
+            }}
+          >
+            <CText
+              color="neutral"
+              shade={400}
+              size="ssm"
+              style={{ paddingHorizontal: 10 }}
+              weight="medium"
+            >
+              {group.date}
+            </CText>
             <View
               style={{
-                borderRadius: 10,
-                gap: 10,
+                flex: 1,
+                height: 1,
+                backgroundColor: Colors.neutral[700],
               }}
-            >
-              {group.items.map((item, index) => (
-                <Pressable
-                  key={`${group.date}-${index}`}
-                  onPress={() => {
-                    router.push({
-                      pathname: "/(tabs)/(groups)/[groupId]/details",
-                      params: {
-                        groupId: groupId ?? "",
-                        date: item.date,
-                        time: item.time,
-                        categoryKey: item.categoryKey,
-                        description: item.description,
-                        amount: item.amount,
-                      },
-                    });
-                  }}
-                  style={{
-                    backgroundColor: Colors.neutral[800],
-                    borderWidth: 1,
-                    borderRadius: 12,
-                    borderColor: Colors.neutral[700],
-                    marginHorizontal: 10,
-                    paddingHorizontal: 10,
-                  }}
-                >
-                  <ActivityItem item={item} />
-                </Pressable>
-              ))}
-            </View>
+            />
           </View>
-        ))}
-      </View>
-    </ScrollView>
+          <View
+            style={{
+              borderRadius: 10,
+              gap: 10,
+            }}
+          >
+            {group.items.map((item, index) => (
+              <Pressable
+                key={`${group.date}-${index}`}
+                onPress={() => {
+                  router.push({
+                    pathname: "/(tabs)/(groups)/[groupId]/details",
+                    params: {
+                      groupId: groupId ?? "",
+                      date: item.date,
+                      time: item.time,
+                      categoryKey: item.categoryKey,
+                      description: item.description,
+                      amount: item.amount,
+                    },
+                  });
+                }}
+                style={{
+                  backgroundColor: Colors.neutral[800],
+                  borderWidth: 1,
+                  borderRadius: 12,
+                  borderColor: Colors.neutral[700],
+                  marginHorizontal: 10,
+                  paddingHorizontal: 10,
+                }}
+              >
+                <ActivityItem item={item} />
+              </Pressable>
+            ))}
+          </View>
+        </View>
+      )}
+    />
   );
 };
 
