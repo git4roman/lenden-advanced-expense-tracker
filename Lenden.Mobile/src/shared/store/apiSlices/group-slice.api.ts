@@ -58,7 +58,7 @@ const groupApi = api.injectEndpoints({
 
     getGroupBalance: builder.query({
       query: (groupId: string) => ({
-        url: `/groups/balance?groupId=${groupId}`,
+        url: `/groups/${groupId}/balance`,
         method: "GET",
       }),
 
