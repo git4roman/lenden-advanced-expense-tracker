@@ -145,6 +145,7 @@ const ExpenseTab = ({ groupId, filterKey }: ExpenseTabProps) => {
       data={groupedActivityData}
       keyExtractor={(item) => item.date}
       style={{ borderColor: "transparent", flex: 1 }}
+      nestedScrollEnabled
       contentContainerStyle={{ paddingTop: 4, paddingBottom: 96 }}
       showsVerticalScrollIndicator={false}
       onEndReachedThreshold={0.4}

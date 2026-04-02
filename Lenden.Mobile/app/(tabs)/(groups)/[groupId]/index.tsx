@@ -156,6 +156,8 @@ const GroupScreen = () => {
     EXPENSE_FILTER_OPTIONS.find((option) => option.key === selectedFilterKey)
       ?.label ?? EXPENSE_FILTER_OPTIONS[0].label;
 
+  const isExpensesTab = selectedTab === "Expenses";
+
   const AciveTabScreen = React.useMemo(() => {
     if (selectedTab === "Expenses") {
       return (
@@ -173,75 +175,121 @@ const GroupScreen = () => {
 
   return (
     <View style={{ flex: 1, backgroundColor: Colors.neutral[900] }}>
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ flexGrow: 1, gap: 4 }}
-        refreshControl={
-          <RefreshControl
-            refreshing={isLoading}
-            onRefresh={handleRefresh}
-            tintColor={Colors.neutral[200]}
-            colors={[Colors.accent[400]]}
-          />
-        }
-      >
-        <Stack.Screen
-          options={{
-            title: group?.name ?? "Group",
-            headerRight: () => (
-              <Pressable
-                onPress={() => {
-                  setIsMenuOpen((prev) => !prev);
-                }}
-              >
-                <Feather
-                  name="more-vertical"
-                  size={24}
-                  color={Colors.neutral[200]}
-                />
-              </Pressable>
-            ),
-          }}
-        />
-        <View
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-            paddingHorizontal: 12,
-            paddingVertical: 12,
-            marginBottom: 8,
-            borderRadius: 16,
-            overflow: "hidden",
-          }}
-        >
-          <Image
-            source={{
-              uri: group?.imageUrl,
-            }}
-            style={{
-              width: "100%",
-              height: 150,
-              borderRadius: 16,
-            }}
-            resizeMode="cover"
-          />
-        </View>
+      <Stack.Screen
+        options={{
+          title: group?.name ?? "Group",
+          headerRight: () => (
+            <Pressable
+              onPress={() => {
+                setIsMenuOpen((prev) => !prev);
+              }}
+            >
+              <Feather
+                name="more-vertical"
+                size={24}
+                color={Colors.neutral[200]}
+              />
+            </Pressable>
+          ),
+        }}
+      />
 
-        <View
-          style={{
-            gap: 12,
-            paddingHorizontal: 8,
-            flex: 1,
-            position: "relative",
-          }}
-        >
-          <GroupTabs
-            selectedTab={selectedTab}
-            setSelectedTab={setSelectedTab}
-          />
-          {AciveTabScreen}
+      {isExpensesTab ? (
+        <View style={{ flex: 1, gap: 4 }}>
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              paddingHorizontal: 12,
+              paddingVertical: 12,
+              marginBottom: 8,
+              borderRadius: 16,
+              overflow: "hidden",
+            }}
+          >
+            <Image
+              source={{
+                uri: group?.imageUrl,
+              }}
+              style={{
+                width: "100%",
+                height: 150,
+                borderRadius: 16,
+              }}
+              resizeMode="cover"
+            />
+          </View>
+
+          <View
+            style={{
+              gap: 12,
+              paddingHorizontal: 8,
+              position: "relative",
+            }}
+          >
+            <GroupTabs
+              selectedTab={selectedTab}
+              setSelectedTab={setSelectedTab}
+            />
+          </View>
+
+          <View style={{ flex: 1 }}>
+            {AciveTabScreen}
+          </View>
         </View>
-      </ScrollView>
+      ) : (
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{ flexGrow: 1, gap: 4 }}
+          refreshControl={
+            <RefreshControl
+              refreshing={isLoading}
+              onRefresh={handleRefresh}
+              tintColor={Colors.neutral[200]}
+              colors={[Colors.accent[400]]}
+            />
+          }
+        >
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              paddingHorizontal: 12,
+              paddingVertical: 12,
+              marginBottom: 8,
+              borderRadius: 16,
+              overflow: "hidden",
+            }}
+          >
+            <Image
+              source={{
+                uri: group?.imageUrl,
+              }}
+              style={{
+                width: "100%",
+                height: 150,
+                borderRadius: 16,
+              }}
+              resizeMode="cover"
+            />
+          </View>
+
+          <View
+            style={{
+              gap: 12,
+              paddingHorizontal: 8,
+              flex: 1,
+              position: "relative",
+            }}
+          >
+            <GroupTabs
+              selectedTab={selectedTab}
+              setSelectedTab={setSelectedTab}
+            />
+            {AciveTabScreen}
+          </View>
+        </ScrollView>
+      )}
 
       {selectedTab === "Expenses" && (
         <Pressable
