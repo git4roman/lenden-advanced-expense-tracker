@@ -1,4 +1,5 @@
-﻿using Lenden.Application.Interfaces;
+﻿using Lenden.Application.DTOs;
+using Lenden.Application.Interfaces;
 using Lenden.Application.Interfaces.Services;
 using Lenden.Domain.Entities;
 
@@ -36,20 +37,25 @@ public class UserService: IUserService
         return balance;
     }
 
+    public async Task UpdateUserProfile(UserUpdateRequestDto requestDto)
+    {
+        requestDto.User.UpdateName(requestDto.GivenName, requestDto.FamilyName);
+        requestDto.User.UpdateUserInfo(requestDto.Address, requestDto.PhoneNumber,requestDto.ImageUrl, requestDto.DateOfBirth);
+        await _unitOfWork.UserRepository.UpdateUserAsync(requestDto.User);
+        await _unitOfWork.SaveChangesAsync();
+    }
+
     public async Task<UserEntity> GetUserByEmailAsync(string email)
     {
         throw new NotImplementedException();
     }
 
-    public class UserResponseDto
+    public async Task DeactivateAccount(UserEntity user)
     {
-        public Guid Id { get; set; }
-        public string Username { get; set; }
-        public string Email { get; set; }
-        public string FamilyName { get; set; }
-        public string GivenName { get; set; }
-        public string Address { get; set; }
-        public string PhoneNumber { get; set; }
-        public DateTimeOffset MemberSince { get; set; }
+        user.UserStatusChange(UserStatus.Disabled);
+        await _unitOfWork.UserRepository.UpdateUserAsync(user);
+        await _unitOfWork.SaveChangesAsync();
     }
+
+    
 }

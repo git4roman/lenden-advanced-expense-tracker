@@ -70,4 +70,19 @@ public class ExpenseEntity
         return participant;
     }
     
+    public void UpdateExpense(decimal totalAmount,int Category,string? description, string? imageUrl)
+    {
+        TotalAmount = totalAmount;
+        Category = ExpenseCategory.FromValue(Category);
+        if (description is not null)
+            Description = description;
+        if (imageUrl is not null)
+            ImageUrl = imageUrl;
+    }
+    
+    public void ClearParticipants()
+    {
+        _participants.Clear();
+    }
+    
 }

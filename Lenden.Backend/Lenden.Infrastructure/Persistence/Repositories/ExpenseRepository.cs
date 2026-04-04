@@ -20,11 +20,19 @@ public class ExpenseRepository: IExpenseRepository
 
     public async Task<ExpenseEntity?> GetByPublicIdAsync(Guid id, CancellationToken ct = default)
     {
-        return await _dbContext.Expenses.FirstOrDefaultAsync(e => e.PublicId == id, ct);
+        return await _dbContext.Expenses.Include(e=>e.Participants).FirstOrDefaultAsync(e => e.PublicId == id, ct);
     }
 
     public async Task<IEnumerable<ExpenseEntity>> GetByGroupAsync(Guid groupId, CancellationToken ct = default)
     {
         return await _dbContext.Expenses.Include(e=>e.Participants).ThenInclude(p=>p.User).Where(e=>e.Group.Slug == groupId).ToListAsync(ct);
     }
+    
+    public async Task RemoveExpenseAsync(Guid id, CancellationToken ct = default)
+    {
+        var expense = await _dbContext.Expenses.FirstOrDefaultAsync(e => e.PublicId == id, ct);
+        if(expense != null) _dbContext.Expenses.Remove(expense);
+    }
+    
+    
 }

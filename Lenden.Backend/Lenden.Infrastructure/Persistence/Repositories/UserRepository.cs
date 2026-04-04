@@ -57,4 +57,10 @@ public class UserRepository: IUserRepository
         var user = await _dbContext.Users.Include(u=>u.UserInfo).FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
         return user;
     }
+    
+    public Task UpdateUserAsync (UserEntity user)
+    {
+        _dbContext.Users.Update(user);
+        return Task.CompletedTask;
+    }
 }

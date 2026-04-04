@@ -42,6 +42,7 @@ public class ExpenseApiController : ControllerBase
             throw new Exception(e.Message);
         }
     } 
+    
     [HttpDelete]
     public async Task<IActionResult> DeleteExpense(
         DeleteExpenseRequest request,
@@ -79,6 +80,25 @@ public class ExpenseApiController : ControllerBase
                 CategoryKey = r.Category.Name,
             });
         return Ok(response);
+    }
+
+    [HttpPost("{id:guid}/edit")]
+    public async Task<IActionResult> UpdateExpense(UpdateExpenseRequest dto)
+    {
+        try
+        {
+            var currentUser = await _authService.ValidateUserAsync(User);
+            if (currentUser == null) return Unauthorized();
+
+            await _expenseService.UpdateExpense(dto);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+
     }
 
 

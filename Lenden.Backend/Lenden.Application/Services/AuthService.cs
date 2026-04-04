@@ -31,14 +31,13 @@ public class AuthService: IAuthService
        
         await _unitOfWork.SaveChangesAsync();
         return session;
-        
     }
-
     public async Task<AuthResponseDto> RegisterAsync(RegisterRequestDto dto)
     {
         var user = await _unitOfWork.UserRepository.GetUserByEmailAsync(dto.Email);
         if (user != null) throw new Exception("User already exists.");
         var entity = new UserEntity(Email.Create(dto.Email), dto.FirstName, dto.LastName, dto.Password);
+        entity.CreateUserInfo( dto.Address, dto.PhoneNumber,dto.ImageUrl ,dto.DateOfBirth);
         await _unitOfWork.UserRepository.CreateUserAsync(entity);
         var requestDto = new AuthRequest(dto.deviceInfo, dto.ipAddress);
         var session = await _tokenService.DispatchAccessAndRefreshToken(entity,requestDto);

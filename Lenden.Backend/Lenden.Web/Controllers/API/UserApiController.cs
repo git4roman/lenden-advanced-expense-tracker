@@ -1,3 +1,4 @@
+using Lenden.Application.DTOs;
 using Lenden.Application.Interfaces.Services;
 using Lenden.Application.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -37,6 +38,42 @@ namespace Lenden.Web.Controllers.API
             var balance = await _userService.GetOverallBalance(currentUser.Id);
             
             return Ok(balance);
+        }
+
+        [HttpPost("{id:guid}/edit")]
+        public async Task<IActionResult> EditUser(UserUpdateRequestDto dto)
+        {
+            try
+            {
+                var currentUser = await _authService.ValidateUserAsync(User);
+                if (currentUser == null) return Unauthorized();
+                dto.User = currentUser;
+                await _userService.UpdateUserProfile(dto);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        [HttpPost("{id:guid}/deactivate")]
+        public async Task<IActionResult> DeactivateAccount([FromRoute] Guid id)
+        {
+            try
+            {
+                var currentUser = await _authService.ValidateUserAsync(User);
+                if (currentUser == null) return Unauthorized();
+                await _userService.DeactivateAccount(currentUser);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            
         }
     }
 }
