@@ -65,24 +65,22 @@ public class ExpenseEntity
 
     public ExpenseParticipantEntity  AddExpenseParticipant(long userId, decimal paid, decimal split)
     {
-        var participant = ExpenseParticipantEntity.CreateExpenseParticipant(Id,userId, paid, split);
+        var participant = ExpenseParticipantEntity.CreateExpenseParticipant(this,userId, paid, split);
         _participants.Add(participant);
         return participant;
     }
     
-    public void UpdateExpense(decimal totalAmount,int Category,string? description, string? imageUrl)
+    public void UpdateExpense(decimal totalAmount,int category,string? description, string? imageUrl)
     {
         TotalAmount = totalAmount;
-        Category = ExpenseCategory.FromValue(Category);
-        if (description is not null)
+        Category = ExpenseCategory.FromValue(category);
             Description = description;
-        if (imageUrl is not null)
             ImageUrl = imageUrl;
     }
     
-    public void ClearParticipants()
+    public void RemoveParticipant(ExpenseParticipantEntity participant)
     {
-        _participants.Clear();
+        _participants.Remove(participant);
     }
     
 }

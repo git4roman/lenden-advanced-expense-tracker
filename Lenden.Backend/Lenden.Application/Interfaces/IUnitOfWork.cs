@@ -15,4 +15,8 @@ public interface IUnitOfWork
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default); 
     Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken ct = default);
+    Task ReloadEntityAsync<T>(T entity) where T : class;
+    void DetachEntity<T>(T entity) where T : class;
+    void DetachAllEntities<T>() where T : class;
+    void ClearChangeTracker();
 }

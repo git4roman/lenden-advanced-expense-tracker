@@ -13,14 +13,14 @@ public class ExpenseParticipantEntity
     private ExpenseParticipantEntity() { }
 
     private ExpenseParticipantEntity(
-        Guid expenseId,
+        ExpenseEntity expense,
         long userInternalId,
         decimal paid,
         decimal split,
         decimal net
         )
     {
-        ExpenseId = expenseId;
+        Expense = expense;
         UserId = userInternalId;
         Paid = paid;
         Split = split;
@@ -28,7 +28,7 @@ public class ExpenseParticipantEntity
     }
     
     internal static ExpenseParticipantEntity CreateExpenseParticipant(
-        Guid expenseId,
+        ExpenseEntity expense,
         long userInternalId,
         decimal paid,
         decimal split
@@ -36,6 +36,13 @@ public class ExpenseParticipantEntity
         )
     {
         var net = paid - split;
-        return new ExpenseParticipantEntity(expenseId, userInternalId, paid, split, net);
+        return new ExpenseParticipantEntity(expense, userInternalId, paid, split, net);
+    }
+    
+    public void Update(decimal paid, decimal split)
+    {
+        Paid = paid;
+        Split = split;
+        Net = paid - split;
     }
 }

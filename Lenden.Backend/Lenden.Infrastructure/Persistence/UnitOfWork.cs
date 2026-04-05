@@ -2,6 +2,7 @@
 using Lenden.Application.Interfaces.Repositories;
 using Lenden.Infrastructure.Persistence.DbContexts;
 using Lenden.Infrastructure.Persistence.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using IUserRepository = Lenden.Application.Interfaces.IUserRepository;
 
@@ -37,5 +38,37 @@ public class UnitOfWork : IUnitOfWork
     public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken ct = default)
     {
         return await _context.Database.BeginTransactionAsync(ct);
+    }
+    
+    public async Task ReloadEntityAsync<T>(T entity) where T : class
+    {
+        await _context.Entry(entity).ReloadAsync();
+    }
+    
+    
+    // Detach a single entity
+    public void DetachEntity<T>(T entity) where T : class
+    {
+        var entry = _context.Entry(entity);
+        if (entry.State != EntityState.Detached)
+        {
+            entry.State = EntityState.Detached;
+        }
+    }
+    
+    // Detach all entities of a specific type
+    public void DetachAllEntities<T>() where T : class
+    {
+        var entries = _context.ChangeTracker.Entries<T>().ToList();
+        foreach (var entry in entries)
+        {
+            entry.State = EntityState.Detached;
+        }
+    }
+    
+    // Clear the entire change tracker (detach ALL tracked entities)
+    public void ClearChangeTracker()
+    {
+        _context.ChangeTracker.Clear();
     }
 }

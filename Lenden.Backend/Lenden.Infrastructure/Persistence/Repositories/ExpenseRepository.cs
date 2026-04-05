@@ -34,5 +34,12 @@ public class ExpenseRepository: IExpenseRepository
         if(expense != null) _dbContext.Expenses.Remove(expense);
     }
     
-    
+    public async Task DeleteParticipantsAsync(Guid expensePublicId, CancellationToken ct = default)
+    {
+        var participants = await _dbContext.ExpenseParticipants
+            .Where(p => p.Expense.PublicId == expensePublicId)
+            .ToListAsync(ct);
+
+        _dbContext.ExpenseParticipants.RemoveRange(participants);
+    }
 }

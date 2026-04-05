@@ -10,5 +10,5 @@ public interface IExpenseService
     Task<IEnumerable<ExpenseEntity>> GetGroupExpensesAsync(Guid groupId, CancellationToken ct = default);
     Task DeleteExpenseAsync(long userId, DeleteExpenseRequest request, CancellationToken ct = default);
 
-    // Task UpdateExpense(UpdateExpenseRequest request, CancellationToken ct = default);
+    Task UpdateExpense(UpdateExpenseRequest request, CancellationToken ct = default);
 }
