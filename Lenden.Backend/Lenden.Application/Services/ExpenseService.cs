@@ -175,6 +175,7 @@ public class ExpenseService : IExpenseService
 
         expense.RemoveParticipant(participant);
     }
+    
 
     await _unitOfWork.SaveChangesAsync(ct);
 }

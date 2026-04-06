@@ -26,26 +26,42 @@ public class AuthService: IAuthService
     {
         var user = await _unitOfWork.UserRepository.GetUserByEmailAsync(dto.Email);
         if (user == null) throw new Exception("User not found.");
+        
         var requestDto = new AuthRequest(dto.deviceInfo, dto.ipAddress);
-        var session =await _tokenService.DispatchAccessAndRefreshToken(user,requestDto);
-       
+        
+        
+        var (accessToken,expiresAt) = await _tokenService.DispatchAccessToken(user);
+        var refreshToken = await _tokenService.DispatchRefreshToken(user);
+        
+        var session = new AuthResponseDto(accessToken, refreshToken, expiresAt, user.Slug);
+        user.AddAuthSession(refreshToken, dto.deviceInfo, dto.ipAddress, expiresAt);
         await _unitOfWork.SaveChangesAsync();
+        
         return session;
     }
     public async Task<AuthResponseDto> RegisterAsync(RegisterRequestDto dto)
     {
         var user = await _unitOfWork.UserRepository.GetUserByEmailAsync(dto.Email);
         if (user != null) throw new Exception("User already exists.");
+        
         var entity = new UserEntity(Email.Create(dto.Email), dto.FirstName, dto.LastName, dto.Password);
-        entity.CreateUserInfo( dto.Address, dto.PhoneNumber,dto.ImageUrl ,dto.DateOfBirth);
+        entity.CreateUserInfo( dto.Address, dto.PhoneNumber, dto.ImageUrl ,dto.DateOfBirth);
         await _unitOfWork.UserRepository.CreateUserAsync(entity);
+        
         var requestDto = new AuthRequest(dto.deviceInfo, dto.ipAddress);
-        var session = await _tokenService.DispatchAccessAndRefreshToken(entity,requestDto);
+        
+        var (accessToken,expiresAt) = await _tokenService.DispatchAccessToken(user);
+        var refreshToken = await _tokenService.DispatchRefreshToken(user);
+        
+        var session = new AuthResponseDto(accessToken, refreshToken, expiresAt, user.Slug);
+        user.AddAuthSession(refreshToken, dto.deviceInfo, dto.ipAddress, expiresAt);
+        
         await _unitOfWork.SaveChangesAsync();
+        
         return session;
     }
     
-    public async Task<RefreshTokenResponse?> RefreshTokenAsync(RefreshTokenRequest request)
+    public async Task<AuthResponseDto?> RefreshTokenAsync(RefreshTokenRequest request)
     {
        
         var hashedToken = AuthSessionEntity.HashToken(request.RefreshToken);
@@ -55,24 +71,26 @@ public class AuthService: IAuthService
             return null;
         
         session.Revoke();
-
-        var user = await _unitOfWork.UserRepository.GetUserByIdAsync(session.UserId);
-        if (user == null) return null;
-
-        var newAccessToken = _tokenService.GenerateToken(user);
-
+        request.User.RevokeAllSessions();
+        
+        var (accessToken,expiresAt) = await _tokenService.DispatchAccessToken(request.User);
+        var refreshToken = await _tokenService.DispatchRefreshToken(request.User);
+        
+        
         var newRefreshToken = Guid.NewGuid().ToString();
-        user.AddAuthSession(
+        request.User.AddAuthSession(
             refreshToken: newRefreshToken,
             deviceInfo: request.DeviceInfo,
             ipAddress: request.IpAddress,
             expiresAt: DateTime.UtcNow.AddDays(7)
         );
-
+        
         await _unitOfWork.SaveChangesAsync();
-
-        return new RefreshTokenResponse(newAccessToken, newRefreshToken);
+        
+        return new AuthResponseDto(accessToken, refreshToken,expiresAt, request.User.Slug);
     }
+
+    
     
     public async Task<UserEntity> ValidateUserAsync(ClaimsPrincipal userClaims, CancellationToken ct = default)
     {

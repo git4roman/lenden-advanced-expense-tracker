@@ -110,6 +110,14 @@ public class UserEntity
         UserInfo?.UpdateUserInfo(address, phoneNumber, imageUrl, dob);
         UpdatedAt = DateTimeOffset.UtcNow;
     }
+
+    public void RevokeAllSessions()
+    {
+        foreach (var session in _sessions)
+        {
+            session.Revoke();
+        }
+    }
    
     public void CreateUserInfo(string address, string phoneNumber, string imageUrl, DateTime dateOfBirth)
     {

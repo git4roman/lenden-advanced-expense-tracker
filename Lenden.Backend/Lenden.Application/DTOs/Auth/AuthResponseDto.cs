@@ -1,5 +1,5 @@
 ﻿namespace Lenden.Application.DTOs;
 
-public record AuthResponseDto(string AccessToken, string RefreshToken);
+public record AuthResponseDto(string AccessToken, string RefreshToken, DateTime expiresAt, Guid userId);
 
 public record AuthRequest(string deviceInfo, string ipAddress);

@@ -1,5 +1,7 @@
-﻿namespace Lenden.Application.DTOs;
+﻿using Lenden.Domain.Entities;
 
-public record RefreshTokenRequest(string RefreshToken, string DeviceInfo, string IpAddress);
+namespace Lenden.Application.DTOs;
+
+public record RefreshTokenRequest(UserEntity User,string RefreshToken, string DeviceInfo, string IpAddress);
 
 public record RefreshTokenResponse(string AccessToken, string RefreshToken);

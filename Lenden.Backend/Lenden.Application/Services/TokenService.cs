@@ -48,20 +48,33 @@ public class TokenService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
     
-    public async Task<AuthResponseDto> DispatchAccessAndRefreshToken(UserEntity user, AuthRequest request)
+    // public async Task<AuthResponseDto> DispatchAccessAndRefreshToken(UserEntity user, AuthRequest request)
+    // {
+    //     var accessToken = GenerateToken(user);
+    //     
+    //     user.AddAuthSession(
+    //         refreshToken: refreshToken,
+    //         deviceInfo: request.deviceInfo,
+    //         ipAddress: request.ipAddress,
+    //         expiresAt: DateTime.UtcNow.AddDays(7) 
+    //     );
+    //     
+    //     var authresponse = new AuthResponseDto(accessToken, refreshToken);
+    //     
+    //     return authresponse;
+    // }
+    
+    public async  Task<(string, DateTime)> DispatchAccessToken(UserEntity user)
     {
         var accessToken = GenerateToken(user);
+        var expiresAt = DateTime.UtcNow.AddMinutes(15);
+        
+        return (accessToken, expiresAt);
+    }
+    public async Task<string> DispatchRefreshToken(UserEntity user)
+    {
+        user.RevokeAllSessions();
         var refreshToken = Guid.NewGuid().ToString(); 
-        
-        user.AddAuthSession(
-            refreshToken: refreshToken,
-            deviceInfo: request.deviceInfo,
-            ipAddress: request.ipAddress,
-            expiresAt: DateTime.UtcNow.AddDays(7) 
-        );
-        
-        var authresponse = new AuthResponseDto(accessToken, refreshToken);
-        
-        return authresponse;
+        return refreshToken;
     }
 }

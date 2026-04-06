@@ -17,6 +17,7 @@ public class AuthSessionEntity
     public DateTime ExpiresAt { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? RevokedAt { get; private set; }
+    public DateTime? LastUsedAt { get; private set; }
 
 
     private AuthSessionEntity(long userId, string refreshToken,
@@ -44,10 +45,22 @@ public class AuthSessionEntity
             ipAddress,
             expiresAt);
     }
+    
+    internal static AuthSessionEntity Revoke(AuthSessionEntity session)
+    {
+        session.Revoke();
+        return session;
+    }
 
     public void Revoke()
     {
         RevokedAt = DateTime.UtcNow;
+    }
+    
+    public void RecordUsage(string currentIp)
+    {
+        LastUsedAt = DateTime.UtcNow;
+        IpAddress = currentIp; 
     }
     
     public static string HashToken(string token)

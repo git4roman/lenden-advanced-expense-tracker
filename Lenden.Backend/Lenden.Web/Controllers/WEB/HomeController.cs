@@ -7,6 +7,7 @@ public class HomeController : Controller
     // GET
     public IActionResult Index()
     {
-        return View();
+        var data = "Hello from the";
+        return View(model:data);
     }
 }

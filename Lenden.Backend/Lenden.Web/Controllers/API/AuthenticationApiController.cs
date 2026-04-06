@@ -18,11 +18,11 @@ namespace Lenden.Web.Controllers.API
         {
             try
             {
-                AuthResponseDto token = await _authService.LoginAsync(request);
-                if (token == null)
+                AuthResponseDto response = await _authService.LoginAsync(request);
+                if (response == null)
                     return Unauthorized(new { message = "Invalid email or password." });
-
-                return Ok(token);
+                
+                return Ok(response);
             }
             catch (UnauthorizedAccessException)
             {
@@ -37,18 +37,39 @@ namespace Lenden.Web.Controllers.API
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterRequestDto request)
         {
-            var token =await _authService.RegisterAsync(request);
-            return Ok(token);
+            try
+            {
+                AuthResponseDto response = await _authService.RegisterAsync(request);
+                if (response == null)
+                    return Unauthorized(new { message = "Invalid email or password." });
+                
+                return Ok(response);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized(new { message = "Invalid email or password." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken(RefreshTokenRequest request)
         {
-            var tokens = await _authService.RefreshTokenAsync(request);
-            if (tokens == null)
-                return Unauthorized("Invalid or expired refresh token");
+            try
+            {
+                var tokens = await _authService.RefreshTokenAsync(request);
+                if (tokens == null)
+                    return Unauthorized("Invalid or expired refresh token");
 
-            return Ok(tokens);
+                return Ok(tokens);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
     }
