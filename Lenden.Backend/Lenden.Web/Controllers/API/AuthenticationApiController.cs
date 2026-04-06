@@ -60,7 +60,9 @@ namespace Lenden.Web.Controllers.API
         {
             try
             {
-                var tokens = await _authService.RefreshTokenAsync(request);
+                var currentUser = await _authService.ValidateUserAsync(User);
+                if (currentUser == null) return Unauthorized();
+                var tokens = await _authService.RefreshTokenAsync(currentUser,request);
                 if (tokens == null)
                     return Unauthorized("Invalid or expired refresh token");
 

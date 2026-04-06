@@ -58,6 +58,18 @@ namespace Lenden.Web.Controllers.API
             }
         }
 
+        [HttpPost("/logout")]
+        public async Task<IActionResult> Logout()
+        {
+            var currentUser = await _authService.ValidateUserAsync(User);
+                if (currentUser == null) return Unauthorized();
+                await _userService.LogoutAsync(currentUser);
+                
+                return Ok();
+
+
+        }
+
         [HttpPost("{id:guid}/deactivate")]
         public async Task<IActionResult> DeactivateAccount([FromRoute] Guid id)
         {

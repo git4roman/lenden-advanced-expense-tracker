@@ -57,5 +57,10 @@ public class UserService: IUserService
         await _unitOfWork.SaveChangesAsync();
     }
 
-    
+    public async Task LogoutAsync(UserEntity user)
+    {
+        user.RevokeAllSessions();
+        await _unitOfWork.SaveChangesAsync();
+        
+    }
 }

@@ -11,4 +11,5 @@ public interface IUserService
     Task<decimal> GetOverallBalance(long userId);
     Task UpdateUserProfile(UserUpdateRequestDto requestDto);
     Task DeactivateAccount(UserEntity user);
+    Task LogoutAsync(UserEntity user);
 }

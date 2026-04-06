@@ -61,16 +61,16 @@ public class AuthService: IAuthService
         return session;
     }
     
-    public async Task<AuthResponseDto?> RefreshTokenAsync(RefreshTokenRequest request)
+    public async Task<AuthResponseDto?> RefreshTokenAsync(UserEntity user,RefreshTokenRequest request)
     {
        
         var hashedToken = AuthSessionEntity.HashToken(request.RefreshToken);
-        AuthSessionEntity session = await _unitOfWork.AuthRepository
-            .GetActiveSessionByRefreshTokenHashAsync(hashedToken);
+        // AuthSessionEntity session = await _unitOfWork.AuthRepository
+        //     .GetActiveSessionByRefreshTokenHashAsync(hashedToken);
+        AuthSessionEntity session = user.Sessions.FirstOrDefault(s => s.RefreshTokenHash == hashedToken);
         if (session == null || !session.IsActive())
             return null;
         
-        session.Revoke();
         request.User.RevokeAllSessions();
         
         var (accessToken,expiresAt) = await _tokenService.DispatchAccessToken(request.User);

@@ -46,13 +46,9 @@ public class AuthSessionEntity
             expiresAt);
     }
     
-    internal static AuthSessionEntity Revoke(AuthSessionEntity session)
-    {
-        session.Revoke();
-        return session;
-    }
+   
 
-    public void Revoke()
+    internal void Revoke()
     {
         RevokedAt = DateTime.UtcNow;
     }
