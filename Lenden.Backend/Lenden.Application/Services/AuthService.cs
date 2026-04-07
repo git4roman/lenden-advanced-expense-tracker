@@ -5,6 +5,7 @@ using Lenden.Application.Interfaces.Repositories;
 using Lenden.Application.Interfaces.Services;
 using Lenden.Domain.Entities;
 using Lenden.Domain.ValueObjects;
+using Microsoft.AspNetCore.Identity;
 using IUserRepository = Lenden.Application.Interfaces.IUserRepository;
 
 namespace Lenden.Application.Services;
@@ -13,13 +14,14 @@ public class AuthService: IAuthService
 {
     private readonly TokenService _tokenService;
     private readonly IUnitOfWork _unitOfWork;
-   
+    private readonly IPasswordHasher<UserEntity> _passwordHasher;
     
-    public AuthService( TokenService tokenService, IUnitOfWork unitOfWork)
+    public AuthService( TokenService tokenService, IUnitOfWork unitOfWork, IPasswordHasher<UserEntity> passwordHasher)
     {
        
         _tokenService = tokenService;
         _unitOfWork = unitOfWork;
+        _passwordHasher = passwordHasher;
     }
 
     public async Task<AuthResponseDto> LoginAsync(LoginRequestDto dto)
@@ -27,7 +29,9 @@ public class AuthService: IAuthService
         var user = await _unitOfWork.UserRepository.GetUserByEmailAsync(dto.Email);
         if (user == null) throw new Exception("User not found.");
         
-        var requestDto = new AuthRequest(dto.deviceInfo, dto.ipAddress);
+        var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, dto.Password);
+        if (result == PasswordVerificationResult.Failed)
+            throw new Exception("Invalid credentials");
         
         
         var (accessToken,expiresAt) = await _tokenService.DispatchAccessToken(user);
@@ -45,16 +49,16 @@ public class AuthService: IAuthService
         if (user != null) throw new Exception("User already exists.");
         
         var entity = new UserEntity(Email.Create(dto.Email), dto.FirstName, dto.LastName, dto.Password);
+        var hashedPassword = _passwordHasher.HashPassword(entity, dto.Password);
+        entity.SetPassword(hashedPassword);
         entity.CreateUserInfo( dto.Address, dto.PhoneNumber, dto.ImageUrl ,dto.DateOfBirth);
         await _unitOfWork.UserRepository.CreateUserAsync(entity);
         
-        var requestDto = new AuthRequest(dto.deviceInfo, dto.ipAddress);
+        var (accessToken,expiresAt) = await _tokenService.DispatchAccessToken(entity);
+        var refreshToken = await _tokenService.DispatchRefreshToken(entity);
         
-        var (accessToken,expiresAt) = await _tokenService.DispatchAccessToken(user);
-        var refreshToken = await _tokenService.DispatchRefreshToken(user);
-        
-        var session = new AuthResponseDto(accessToken, refreshToken, expiresAt, user.Slug);
-        user.AddAuthSession(refreshToken, dto.deviceInfo, dto.ipAddress, expiresAt);
+        var session = new AuthResponseDto(accessToken, refreshToken, expiresAt, entity.Slug);
+        entity.AddAuthSession(refreshToken, dto.deviceInfo, dto.ipAddress, expiresAt);
         
         await _unitOfWork.SaveChangesAsync();
         
@@ -65,8 +69,7 @@ public class AuthService: IAuthService
     {
        
         var hashedToken = AuthSessionEntity.HashToken(request.RefreshToken);
-        // AuthSessionEntity session = await _unitOfWork.AuthRepository
-        //     .GetActiveSessionByRefreshTokenHashAsync(hashedToken);
+        
         AuthSessionEntity session = user.Sessions.FirstOrDefault(s => s.RefreshTokenHash == hashedToken);
         if (session == null || !session.IsActive())
             return null;
@@ -109,5 +112,21 @@ public class AuthService: IAuthService
         return user;
     }
 
+    public async Task ResetPassword(UserEntity user, ChangePasswordRequest request)
+    {
+        var newPassword = _passwordHasher.HashPassword(user, request.NewPassword);
+        user.SetPassword(newPassword);
+        await _unitOfWork.UserRepository.UpdateUserAsync(user);
+        await _unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task ForgetPassword(ForgetPasswordRequest request)
+    {
+        var user = await _unitOfWork.UserRepository.GetUserByEmailAsync(request.Email);
+        var newPassword = _passwordHasher.HashPassword(user, request.Password);
+        user.SetPassword(newPassword);
+        await _unitOfWork.UserRepository.UpdateUserAsync(user);
+        await _unitOfWork.SaveChangesAsync();
+    }
     
 }

@@ -1,5 +1,6 @@
 using Lenden.Application.DTOs;
 using Lenden.Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lenden.Web.Controllers.API
@@ -67,6 +68,36 @@ namespace Lenden.Web.Controllers.API
                     return Unauthorized("Invalid or expired refresh token");
 
                 return Ok(tokens);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword(ChangePasswordRequest request)
+        {
+            try
+            {
+                var currentUser = await _authService.ValidateUserAsync(User);
+                await _authService.ResetPassword(currentUser, request);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+               return BadRequest(e.Message);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("forget-password")]
+        public async Task<IActionResult> ForgetPassword(ForgetPasswordRequest request)
+        {
+            try
+            {
+                await _authService.ForgetPassword(request);
+                return Ok();
             }
             catch (Exception e)
             {

@@ -3,6 +3,8 @@
     using Lenden.Application.Managers;
     using Lenden.Application.Services;
     using Lenden.Application.Validatiors;
+    using Lenden.Domain.Entities;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.DependencyInjection;
 
     namespace Lenden.Application;
@@ -19,6 +21,7 @@
             services.AddScoped<IFriendshipService, FriendshipService>();
             services.AddScoped<AuthManager>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IPasswordHasher<UserEntity>, PasswordHasher<UserEntity>>();
             return services;
         }
     }

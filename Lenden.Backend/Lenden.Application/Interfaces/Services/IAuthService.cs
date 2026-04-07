@@ -10,6 +10,9 @@ public interface IAuthService
    Task<AuthResponseDto> RegisterAsync(RegisterRequestDto dto);
    Task<AuthResponseDto?> RefreshTokenAsync(UserEntity user,RefreshTokenRequest request);
    Task<UserEntity> ValidateUserAsync(ClaimsPrincipal userClaims, CancellationToken ct = default);
-   
+
+   Task ResetPassword(UserEntity user, ChangePasswordRequest request);
+   Task ForgetPassword(ForgetPasswordRequest request);
+
 
 }
