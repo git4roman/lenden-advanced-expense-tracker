@@ -22,6 +22,18 @@ export default function LoginScreen() {
     const data = await onGoogleButtonPress();
     console.log("Google Sign-In Response:", data);
     handleGoogle(data.user);
+
+    //     {
+    //   uid: data.user.uid,
+    //   email: data.user.email,
+    //   emailVerified: data.user.emailVerified,
+    //   displayName: data.user.displayName,
+    //   givenName: data.additionalUserInfo.profile.given_name,
+    //   familyName: data.additionalUserInfo.profile.family_name ?? null,
+    //   photoURL: data.user.photoURL,
+    //   provider: data.additionalUserInfo.providerId,
+    //   isNewUser: data.additionalUserInfo.isNewUser
+    // }
   };
 
   return (

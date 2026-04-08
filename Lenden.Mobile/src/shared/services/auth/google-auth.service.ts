@@ -26,7 +26,7 @@ export async function onGoogleButtonPress() {
     getAuth(),
     googleCredential,
   );
-  console.log("This is user credentials", userCredential);
+  console.log("This is user credentials", JSON.stringify(userCredential,null,4));
 
   return userCredential;
 }

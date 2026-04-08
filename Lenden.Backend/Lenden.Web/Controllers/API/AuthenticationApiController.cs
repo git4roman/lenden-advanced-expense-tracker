@@ -1,5 +1,6 @@
 using Lenden.Application.DTOs;
 using Lenden.Application.Interfaces.Services;
+using Lenden.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,9 +11,11 @@ namespace Lenden.Web.Controllers.API
     public class AuthenticationApiController : ControllerBase
     {
         private readonly IAuthService _authService;
-        public AuthenticationApiController( IAuthService _authService)
+        private readonly FirebaseService _firebaseService;
+        public AuthenticationApiController( IAuthService _authService, FirebaseService _firebaseService)
         {
             this._authService = _authService;
+            this._firebaseService = _firebaseService;
         }
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequestDto request)
@@ -40,7 +43,20 @@ namespace Lenden.Web.Controllers.API
         {
             try
             {
-                var response = await _authService.GoogleHandlerAsync(request);
+                var decoded = await _firebaseService.VerifyTokenAsync(request.IdToken);
+                if (decoded == null)
+                    return Unauthorized(new { message = "Invalid Firebase token." });
+                var verifiedRequest = new GoogleLoginRequestDto
+                {
+                    Uid = decoded.Uid,
+                    Email = decoded.Claims["email"].ToString(),
+                    EmailVerified = (bool)decoded.Claims["email_verified"],
+                    GivenName = decoded.Claims.GetValueOrDefault("given_name")?.ToString(),
+                    FamilyName = decoded.Claims.GetValueOrDefault("family_name")?.ToString(),
+                    PhotoUrl = decoded.Claims.GetValueOrDefault("picture")?.ToString(),
+                    IsNewUser = request.IsNewUser 
+                };
+                var response = await _authService.GoogleHandlerAsync(verifiedRequest);
                 return response is not null ? Ok(response) : Unauthorized(new { message = "Invalid email or password." });
             }
             catch (Exception e)
