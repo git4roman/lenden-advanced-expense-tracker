@@ -34,6 +34,21 @@ namespace Lenden.Web.Controllers.API
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost("google")]
+        public async Task<IActionResult> Google(GoogleLoginRequestDto request)
+        {
+            try
+            {
+                var response = await _authService.GoogleHandlerAsync(request);
+                return response is not null ? Ok(response) : Unauthorized(new { message = "Invalid email or password." });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
         
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterRequestDto request)

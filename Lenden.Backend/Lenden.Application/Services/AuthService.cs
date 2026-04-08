@@ -128,5 +128,39 @@ public class AuthService: IAuthService
         await _unitOfWork.UserRepository.UpdateUserAsync(user);
         await _unitOfWork.SaveChangesAsync();
     }
+
+    public async Task<AuthResponseDto?> GoogleHandlerAsync(GoogleLoginRequestDto request)
+    {
+        if (request.IsNewUser)
+        {
+            var registerDto = new RegisterRequestDto(
+                Email: request.Email,
+                Password: Guid.NewGuid().ToString(),
+                FirstName: request.GivenName,
+                LastName: request.FamilyName,
+                Address: null,
+                PhoneNumber: null,
+                DateOfBirth: DateTime.MinValue, 
+                ImageUrl: request.PhotoUrl,
+                deviceInfo: request.DeviceId??"",
+                ipAddress: request.IpAddress??""
+            );
+            var session = await RegisterAsync(registerDto);
+            return session;
+        }
+        else
+        {
+            var existingUser = await _unitOfWork.UserRepository.GetUserByEmailAsync(request.Email);
+            if (existingUser == null) throw new Exception("User not found.");
+            var (accessToken,expiresAt) = await _tokenService.DispatchAccessToken(existingUser);
+            var refreshToken = await _tokenService.DispatchRefreshToken(existingUser);
+        
+            var session = new AuthResponseDto(accessToken, refreshToken, expiresAt, existingUser.Slug);
+            existingUser.AddAuthSession(refreshToken, request.DeviceId, request.IpAddress, expiresAt);
+            await _unitOfWork.SaveChangesAsync();
+        
+            return session;
+        }
+    }
     
 }
