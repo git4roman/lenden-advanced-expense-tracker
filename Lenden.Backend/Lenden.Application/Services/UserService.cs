@@ -21,6 +21,7 @@ public class UserService: IUserService
             Id = user.Slug,
             FamilyName = user.FamilyName,
             GivenName = user.GivenName,
+            ImageUrl = user.UserInfo?.ImageUrl ?? "",
             Email = user.Email.Value,
             Address = user.UserInfo?.Address ?? "",
             PhoneNumber = user.UserInfo?.PhoneNumber ?? "",

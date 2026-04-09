@@ -1,3 +1,5 @@
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Lenden.Application;
 using Lenden.Infrastructure;
 using Lenden.Web.ServiceCollectionExtensions;
@@ -15,6 +17,13 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddCorsPolicies();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerDocumentation(); 
+
+var serviceAccountPath = builder.Configuration["Firebase:ServiceAccountPath"];
+
+FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.FromFile(serviceAccountPath)
+});
 
 var app = builder.Build();
 

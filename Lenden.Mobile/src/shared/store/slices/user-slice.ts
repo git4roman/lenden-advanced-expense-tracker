@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 export type UserInfoState = {
   givenName: string;
   familyName: string;
+  imgUrl:string;
   username: string;
   email: string;
   phone: string;
@@ -12,6 +13,7 @@ export type UserInfoState = {
 const initialState: UserInfoState = {
   givenName: "",
   familyName: "",
+  imgUrl:"",
   username: "",
   email: "",
   phone: "",

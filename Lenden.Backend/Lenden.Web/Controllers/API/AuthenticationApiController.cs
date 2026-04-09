@@ -46,7 +46,7 @@ namespace Lenden.Web.Controllers.API
                 var decoded = await _firebaseService.VerifyTokenAsync(request.IdToken);
                 if (decoded == null)
                     return Unauthorized(new { message = "Invalid Firebase token." });
-                var verifiedRequest = new GoogleLoginRequestDto
+                var verifiedRequest = new GoogleLoginDto
                 {
                     Uid = decoded.Uid,
                     Email = decoded.Claims["email"].ToString(),
@@ -54,7 +54,8 @@ namespace Lenden.Web.Controllers.API
                     GivenName = decoded.Claims.GetValueOrDefault("given_name")?.ToString(),
                     FamilyName = decoded.Claims.GetValueOrDefault("family_name")?.ToString(),
                     PhotoUrl = decoded.Claims.GetValueOrDefault("picture")?.ToString(),
-                    IsNewUser = request.IsNewUser 
+                    DeviceInfo = request.DeviceInfo,
+                    IpAddress = request.IpAddress,
                 };
                 var response = await _authService.GoogleHandlerAsync(verifiedRequest);
                 return response is not null ? Ok(response) : Unauthorized(new { message = "Invalid email or password." });

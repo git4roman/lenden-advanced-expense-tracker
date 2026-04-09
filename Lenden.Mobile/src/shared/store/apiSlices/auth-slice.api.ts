@@ -17,6 +17,29 @@ const authApi = api.injectEndpoints({
             setAuthCredentials({
               accessToken: data.accessToken,
               refreshToken: data.refreshToken,
+              expiresAt: data.expiresAt,
+            }),
+          );
+          await saveAuth(data.accessToken, null);
+        } catch (error) {
+          console.log("Error From Auth Login", error);
+        }
+      },
+    }),
+    google: builder.mutation({
+      query: (payload) => ({
+        url: "/auth/google",
+        method: "POST",
+        body: payload,
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(
+            setAuthCredentials({
+              accessToken: data.accessToken,
+              refreshToken: data.refreshToken,
+              expiresAt: data.expiresAt,
             }),
           );
           await saveAuth(data.accessToken, null);
@@ -39,6 +62,7 @@ const authApi = api.injectEndpoints({
             setAuthCredentials({
               accessToken: data.accessToken,
               refreshToken: data.refreshToken,
+              expiresAt: data.expiresAt,
             }),
           );
         } catch (error) {}
@@ -47,4 +71,5 @@ const authApi = api.injectEndpoints({
   }),
 });
 
-export const { useLoginMutation, useRegisterMutation } = authApi;
+export const { useLoginMutation, useRegisterMutation, useGoogleMutation } =
+  authApi;

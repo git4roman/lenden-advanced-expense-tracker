@@ -20,6 +20,7 @@
             services.AddScoped<IGroupValidators, GroupValidator>();
             services.AddScoped<IFriendshipService, FriendshipService>();
             services.AddScoped<AuthManager>();
+            services.AddScoped<FirebaseService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IPasswordHasher<UserEntity>, PasswordHasher<UserEntity>>();
             return services;

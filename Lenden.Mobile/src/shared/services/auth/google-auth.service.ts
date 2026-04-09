@@ -26,9 +26,13 @@ export async function onGoogleButtonPress() {
     getAuth(),
     googleCredential,
   );
-  console.log("This is user credentials", JSON.stringify(userCredential,null,4));
+  const firebaseIdToken = await userCredential.user.getIdToken();
+  // console.log(
+  //   "This is user credentials",
+  //   JSON.stringify(firebaseIdToken, null, 4),
+  // );
 
-  return userCredential;
+  return firebaseIdToken;
 }
 
 export async function onLogout() {

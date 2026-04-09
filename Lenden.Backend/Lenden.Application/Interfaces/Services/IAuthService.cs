@@ -13,7 +13,7 @@ public interface IAuthService
 
    Task ResetPassword(UserEntity user, ChangePasswordRequest request);
    Task ForgetPassword(ForgetPasswordRequest request);
-   Task<AuthResponseDto?> GoogleHandlerAsync(GoogleLoginRequestDto request);
+   Task<AuthResponseDto?> GoogleHandlerAsync(GoogleLoginDto request);
 
 
 }

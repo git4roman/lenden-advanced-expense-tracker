@@ -19,21 +19,10 @@ export default function LoginScreen() {
   const token = useSelector((state: RootState) => state.auth.accessToken);
 
   const handleGoogleLogin = async () => {
+    console.log("I am clicked");
     const data = await onGoogleButtonPress();
-    console.log("Google Sign-In Response:", data);
-    handleGoogle(data.user);
-
-    //     {
-    //   uid: data.user.uid,
-    //   email: data.user.email,
-    //   emailVerified: data.user.emailVerified,
-    //   displayName: data.user.displayName,
-    //   givenName: data.additionalUserInfo.profile.given_name,
-    //   familyName: data.additionalUserInfo.profile.family_name ?? null,
-    //   photoURL: data.user.photoURL,
-    //   provider: data.additionalUserInfo.providerId,
-    //   isNewUser: data.additionalUserInfo.isNewUser
-    // }
+    // console.log("Google Sign-In Response:", data);
+    handleGoogle(data);
   };
 
   return (

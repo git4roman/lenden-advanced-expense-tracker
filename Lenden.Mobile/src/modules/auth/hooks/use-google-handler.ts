@@ -1,22 +1,24 @@
 import { useState } from "react";
 import { router } from "expo-router";
 import Toast from "react-native-toast-message";
-import { useLoginMutation } from "@/src/shared/store/apiSlices/auth-slice.api";
+import { useGoogleMutation, useLoginMutation } from "@/src/shared/store/apiSlices/auth-slice.api";
 
 export const useGoogleHandler = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("String123");
-  const [login, { isLoading }] = useLoginMutation();
+  const [google, { isLoading }] = useGoogleMutation();
 
   const handleGoogle = async (data: any) => {
-    console.log("Handle Google data", data.email);
+    console.log("Handle Google data", data);
+
+    const payload = {
+      idToken: data,
+      deviceInfo: "Android",
+      ipAddress: "192.168.1.0",
+    };
+
+    console.log("Payload", payload);
+
     try {
-      const response = await login({
-        email: data.email,
-        password,
-        ipAddress: "192.168.1.1",
-        deviceInfo: "android",
-      }).unwrap();
+      const response = await google(payload).unwrap();
       Toast.show({ type: "success", text1: "Login Successful" });
       router.replace("/(tabs)/(home)");
     } catch (error: any) {
@@ -29,5 +31,5 @@ export const useGoogleHandler = () => {
     }
   };
 
-  return { email, setEmail, password, setPassword, handleGoogle, isLoading };
+  return { handleGoogle, isLoading };
 };

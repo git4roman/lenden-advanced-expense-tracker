@@ -19,6 +19,7 @@ type AuthState = {
   accessToken: string | null;
   refreshToken: string | null;
   user: User | null;
+  expiresAt: string | null;
 };
 
 const decodeToken = (token: string): User | null => {
@@ -38,6 +39,7 @@ const initialState: AuthState = {
   accessToken: null,
   refreshToken: null,
   user: null,
+  expiresAt: null,
 };
 
 const authSlice = createSlice({
@@ -46,11 +48,16 @@ const authSlice = createSlice({
   reducers: {
     setAuthCredentials: (
       state,
-      action: PayloadAction<{ accessToken: string; refreshToken: string }>,
+      action: PayloadAction<{
+        accessToken: string;
+        refreshToken: string;
+        expiresAt: string;
+      }>,
     ) => {
       state.accessToken = action.payload.accessToken;
       state.refreshToken = action.payload.refreshToken;
-      state.user = decodeToken(action.payload.accessToken); // 👈 decoded here
+      state.user = decodeToken(action.payload.accessToken);
+      state.expiresAt = action.payload.expiresAt;
     },
     logout: (state) => {
       state.accessToken = null;

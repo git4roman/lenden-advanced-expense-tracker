@@ -1,6 +1,7 @@
 import { setAuthCredentials } from "@/src/shared/store/slices/auth-slice";
 import { api } from "@/src/shared/store/apiSlices/apiClient";
 import { setUserInfo, UserInfoState } from "../slices/user-slice";
+import { RootState } from "../store";
 
 export type UpdateUserPayload = Partial<UserInfoState>;
 export type UpdatePersonalInfoPayload = {
@@ -24,6 +25,7 @@ const userApi = api.injectEndpoints({
             setUserInfo({
               givenName: data.givenName,
               familyName: data.familyName,
+              imgUrl: data.imgUrl,
               username: data.username,
               email: data.email,
               phone: data.phone,
@@ -45,7 +47,7 @@ const userApi = api.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled, getState }) {
         try {
           const { data } = await queryFulfilled;
-          const state = getState() as { userInfo: UserInfoState };
+          const state = getState() as RootState;
           const current = state.userInfo;
           dispatch(
             setUserInfo({
@@ -56,6 +58,7 @@ const userApi = api.injectEndpoints({
               email: data?.email ?? arg.email ?? current.email,
               phone: data?.phone ?? arg.phone ?? current.phone,
               memberSince: data?.memberSince ?? current.memberSince,
+              imgUrl: data?.imgUrl ?? current.imgUrl,
             }),
           );
         } catch (error) {
@@ -63,7 +66,10 @@ const userApi = api.injectEndpoints({
         }
       },
     }),
-    updatePersonalInfo: builder.mutation<UserInfoState, UpdatePersonalInfoPayload>({
+    updatePersonalInfo: builder.mutation<
+      UserInfoState,
+      UpdatePersonalInfoPayload
+    >({
       query: ({ id, data }) => ({
         url: `/users/${id}/edit-personal-info`,
         method: "PUT",
@@ -73,26 +79,35 @@ const userApi = api.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled, getState }) {
         try {
           const { data } = await queryFulfilled;
-          const state = getState() as { userInfo: UserInfoState };
+          const state = getState() as RootState;
+
           const current = state.userInfo;
           dispatch(
             setUserInfo({
-              givenName: data?.givenName ?? arg.data.givenName ?? current.givenName,
+              givenName:
+                data?.givenName ?? arg.data.givenName ?? current.givenName,
               familyName:
                 data?.familyName ?? arg.data.familyName ?? current.familyName,
               username: data?.username ?? arg.data.username ?? current.username,
               email: data?.email ?? arg.data.email ?? current.email,
               phone: data?.phone ?? arg.data.phone ?? current.phone,
               memberSince: data?.memberSince ?? current.memberSince,
+              imgUrl: data?.imgUrl ?? current.imgUrl,
             }),
           );
         } catch (error) {
-          console.log("Update personal info error", JSON.stringify(error, null, 2));
+          console.log(
+            "Update personal info error",
+            JSON.stringify(error, null, 2),
+          );
         }
       },
     }),
   }),
 });
 
-export const { useMeQuery, useUpdateMeMutation, useUpdatePersonalInfoMutation } =
-  userApi;
+export const {
+  useMeQuery,
+  useUpdateMeMutation,
+  useUpdatePersonalInfoMutation,
+} = userApi;
