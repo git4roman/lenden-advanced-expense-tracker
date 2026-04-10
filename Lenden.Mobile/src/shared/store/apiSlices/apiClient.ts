@@ -8,7 +8,7 @@ const BASE_URL = `${API_CONFIG.BASE_URL}/api/v1`;
 
 export const api = createApi({
   reducerPath: "api",
-  tagTypes: ["Group", "User", "Expense"],
+  tagTypes: ["Group", "User", "Expense", "Friend"],
   baseQuery: async (args, apiApi, extraOptions) => {
     const rawBaseQuery = fetchBaseQuery({
       baseUrl: BASE_URL,

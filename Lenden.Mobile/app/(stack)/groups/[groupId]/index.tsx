@@ -195,7 +195,18 @@ const GroupScreen = () => {
       />
 
       {isExpensesTab ? (
-        <View style={{ flex: 1, gap: 4 }}>
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{ flexGrow: 1, gap: 4 }}
+          refreshControl={
+            <RefreshControl
+              refreshing={isLoading}
+              onRefresh={handleRefresh}
+              tintColor={Colors.neutral[200]}
+              colors={[Colors.accent[400]]}
+            />
+          }
+        >
           <View
             style={{
               justifyContent: "center",
@@ -236,7 +247,7 @@ const GroupScreen = () => {
           <View style={{ flex: 1 }}>
             {AciveTabScreen}
           </View>
-        </View>
+        </ScrollView>
       ) : (
         <ScrollView
           style={{ flex: 1 }}

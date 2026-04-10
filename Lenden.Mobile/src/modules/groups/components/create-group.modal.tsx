@@ -1,4 +1,4 @@
-import { View, Pressable, Modal, Image, TextInput } from "react-native";
+import { View, Pressable, Modal, Image, TextInput, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
@@ -58,11 +58,21 @@ export const CreateGroupModal = ({ visible, onClose, members }: Props) => {
   };
   const noFriends = !friends || friends.length === 0;
 
+  const handleCancel = () => {
+    setGroupName("My Group");
+    setGroupImageUri("");
+    setSelectedMembers([]);
+    setSuggestedMembers([]);
+    setSearch("");
+    setFriendEmail("");
+    onClose();
+  };
+
   return (
     <Modal transparent animationType="fade" visible={visible}>
       <View style={{ flex: 1 }}>
         <Pressable
-          onPress={onClose}
+          onPress={handleCancel}
           style={{
             position: "absolute",
             top: 0,
@@ -78,129 +88,205 @@ export const CreateGroupModal = ({ visible, onClose, members }: Props) => {
             position: "absolute",
             left: 12,
             right: 12,
-            top: "17%",
-            borderRadius: 14,
+            top: "12%",
+            borderRadius: 18,
             borderWidth: 1,
             borderColor: Colors.neutral[700],
             backgroundColor: Colors.neutral[800],
-            padding: 14,
+            padding: 16,
             gap: 12,
           }}
         >
-          <CText weight="bold" size="xmd" color="neutral" shade={200}>
-            Create Group
-          </CText>
-
-          <TextInput
-            value={groupName}
-            onChangeText={setGroupName}
-            placeholder="Group name"
-            placeholderTextColor={Colors.neutral[600]}
+          <View
             style={{
-              borderWidth: 1,
-              borderColor: Colors.neutral[700],
-              backgroundColor: Colors.neutral[900],
-              borderRadius: 10,
-              padding: 10,
-              color: Colors.neutral[100],
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
-          />
+          >
+            <View style={{ gap: 2 }}>
+              <CText weight="bold" size="xmd" color="neutral" shade={200}>
+                Create Group
+              </CText>
+              <CText size="xs" color="neutral" shade={500}>
+                Add a name, image, and members
+              </CText>
+            </View>
+          </View>
 
-          {!!groupImageUri && (
-            <Image
-              source={{ uri: groupImageUri }}
-              style={{ height: 130, borderRadius: 8 }}
-            />
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ gap: 12, paddingBottom: 8 }}
+            style={{ maxHeight: "75%" }}
+          >
+            <View style={{ gap: 6 }}>
+              <CText size="xs" color="neutral" shade={400} weight="semibold">
+                Group Name
+              </CText>
+              <TextInput
+                value={groupName}
+                onChangeText={setGroupName}
+                placeholder="Group name"
+                placeholderTextColor={Colors.neutral[600]}
+                style={{
+                  borderWidth: 1,
+                  borderColor: Colors.neutral[700],
+                  backgroundColor: Colors.neutral[900],
+                  borderRadius: 12,
+                  paddingHorizontal: 12,
+                  paddingVertical: 12,
+                  color: Colors.neutral[100],
+                }}
+              />
+            </View>
+
+          <View style={{ gap: 6 }}>
+            <CText size="xs" color="neutral" shade={400} weight="semibold">
+              Group Image
+            </CText>
+            {!!groupImageUri ? (
+              <Image
+                source={{ uri: groupImageUri }}
+                style={{ height: 140, borderRadius: 12 }}
+              />
+            ) : (
+              <View
+                style={{
+                  height: 140,
+                  borderRadius: 12,
+                  borderWidth: 1,
+                  borderStyle: "dashed",
+                  borderColor: Colors.neutral[700],
+                  backgroundColor: Colors.neutral[900],
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 6,
+                }}
+              >
+                <CText size="sm" color="neutral" shade={400}>
+                  No image selected
+                </CText>
+                <CText size="xs" color="neutral" shade={500}>
+                  Add one from camera or gallery
+                </CText>
+              </View>
+            )}
+
+            <View style={{ flexDirection: "row", gap: 8 }}>
+              <Pressable
+                onPress={async () => {
+                  const uri = await pickImage("camera");
+                  if (uri) setGroupImageUri(uri);
+                }}
+                style={{
+                  flex: 1,
+                  borderWidth: 1,
+                  borderColor: Colors.neutral[600],
+                  paddingVertical: 10,
+                  borderRadius: 10,
+                  alignItems: "center",
+                  backgroundColor: Colors.neutral[900],
+                }}
+              >
+                <CText size="xs" shade={300}>
+                  Camera
+                </CText>
+              </Pressable>
+
+              <Pressable
+                onPress={async () => {
+                  const uri = await pickImage("gallery");
+                  if (uri) setGroupImageUri(uri);
+                }}
+                style={{
+                  flex: 1,
+                  borderWidth: 1,
+                  borderColor: Colors.neutral[600],
+                  paddingVertical: 10,
+                  borderRadius: 10,
+                  alignItems: "center",
+                  backgroundColor: Colors.neutral[900],
+                }}
+              >
+                <CText size="xs" shade={300}>
+                  Gallery
+                </CText>
+              </Pressable>
+            </View>
+          </View>
+
+          {suggestedMembers.length > 0 && (
+            <View
+              style={{
+                maxHeight: 140,
+                backgroundColor: Colors.neutral[900],
+                borderRadius: 12,
+                borderWidth: 1,
+                borderColor: Colors.neutral[700],
+                padding: 6,
+                gap: 6,
+              }}
+            >
+              {suggestedMembers.map((member) => {
+                const active = selectedMembers.includes(member.id);
+                return (
+                  <Pressable
+                    key={member.id}
+                    onPress={() => {
+                      toggleMember(member.id);
+                      setFriendEmail("");
+                      setSuggestedMembers([]);
+                    }}
+                    style={{
+                      paddingHorizontal: 10,
+                      paddingVertical: 8,
+                      borderRadius: 10,
+                      backgroundColor: active
+                        ? Colors.accent[900]
+                        : Colors.neutral[800],
+                    }}
+                  >
+                    <CText size="xs" color="neutral" shade={200}>
+                      {member.givenName} {member.familyName}
+                    </CText>
+                    <CText size="xs" color="neutral" shade={500}>
+                      {member.email}
+                    </CText>
+                  </Pressable>
+                );
+              })}
+            </View>
           )}
 
-          <View style={{ flexDirection: "row", gap: 8 }}>
-            <Pressable
-              onPress={async () => {
-                const uri = await pickImage("camera");
-                if (uri) setGroupImageUri(uri);
-              }}
+          <View style={{ gap: 6 }}>
+            <CText size="xs" color="neutral" shade={400} weight="semibold">
+              Add Members
+            </CText>
+            <TextInput
+              value={search}
+              onChangeText={setSearch}
+              editable={!noFriends}
+              placeholder={
+                noFriends ? "No friends available" : "Search by name or email..."
+              }
+              placeholderTextColor={Colors.neutral[500]}
               style={{
-                flex: 1,
+                backgroundColor: Colors.neutral[900],
+                borderRadius: 12,
+                paddingHorizontal: 14,
+                paddingVertical: 12,
+                color: Colors.neutral[100],
                 borderWidth: 1,
-                borderColor: Colors.neutral[600],
-                padding: 10,
-                borderRadius: 8,
-                alignItems: "center",
+                borderColor: Colors.neutral[700],
+                opacity: noFriends ? 0.5 : 1,
               }}
-            >
-              <CText size="xs" shade={300}>
-                Camera
-              </CText>
-            </Pressable>
-
-            <Pressable
-              onPress={async () => {
-                const uri = await pickImage("gallery");
-                if (uri) setGroupImageUri(uri);
-              }}
-              style={{
-                flex: 1,
-                borderWidth: 1,
-                borderColor: Colors.neutral[600],
-                padding: 10,
-                borderRadius: 8,
-                alignItems: "center",
-              }}
-            >
-              <CText size="xs" shade={300}>
-                Gallery
-              </CText>
-            </Pressable>
+            />
           </View>
-
-          <View style={{ maxHeight: 120 }}>
-            {suggestedMembers.map((member) => {
-              const active = selectedMembers.includes(member.id);
-              return (
-                <Pressable
-                  key={member.id}
-                  onPress={() => {
-                    toggleMember(member.id);
-                    setFriendEmail("");
-                    setSuggestedMembers([]);
-                  }}
-                  style={{
-                    padding: 8,
-                    borderRadius: 8,
-                    backgroundColor: active
-                      ? Colors.accent[100]
-                      : Colors.neutral[700],
-                    marginVertical: 2,
-                  }}
-                >
-                  <CText size="xs">{`${member.givenName} ${member.familyName} (${member.email})`}</CText>
-                </Pressable>
-              );
-            })}
-          </View>
-
-          <TextInput
-            value={search}
-            onChangeText={setSearch}
-            editable={!noFriends}
-            placeholder={noFriends? "No friends available":"Search by name or email..."}
-            placeholderTextColor={Colors.neutral[500]}
-            style={{
-              backgroundColor: Colors.neutral[800],
-              borderRadius: 10,
-              paddingHorizontal: 14,
-              paddingVertical: 10,
-              color: Colors.neutral[100],
-              borderWidth: 1,
-              borderColor: Colors.neutral[700],
-              opacity: noFriends ? 0.5 : 1,
-            }}
-          />
           {suggestions.length > 0 && (
             <View
               style={{
-                backgroundColor: Colors.neutral[800],
-                borderRadius: 10,
+                backgroundColor: Colors.neutral[900],
+                borderRadius: 12,
                 borderWidth: 1,
                 borderColor: Colors.neutral[700],
                 marginTop: 4,
@@ -257,25 +343,27 @@ export const CreateGroupModal = ({ visible, onClose, members }: Props) => {
                     borderRadius: 999,
                     borderWidth: 1,
                     borderColor: Colors.accent[500],
+                    backgroundColor: Colors.accent[900],
                     flexDirection: "row",
                     alignItems: "center",
                     gap: 6,
                   }}
                 >
-                  <CText size="xs">
+                  <CText size="xs" color="accent" shade={200}>
                     {friend.givenName} {friend.familyName}
                   </CText>
-                  <CText size="xs" color="neutral" shade={400}>
-                    ✕
+                  <CText size="xs" color="accent" shade={200}>
+                    x
                   </CText>
                 </Pressable>
               );
             })}
           </View>
+          </ScrollView>
 
           <View style={{ flexDirection: "row", gap: 10 }}>
             <Pressable
-              onPress={onClose}
+              onPress={handleCancel}
               style={{
                 flex: 1,
                 borderWidth: 1,

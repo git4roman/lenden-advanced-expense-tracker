@@ -4,6 +4,7 @@ import authReducer from "./slices/auth-slice";
 import groupReducer from "./slices/group-slice";
 import userInfoReducer from "./slices/user-slice";
 import expenseReducer from "./slices/expense-slice";
+import friendsReducer from "./slices/friends-slice";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { persistStore, persistReducer } from "redux-persist";
@@ -17,12 +18,13 @@ const rootReducer = combineReducers({
   userInfo: userInfoReducer,
   group: groupReducer,
   expense: expenseReducer,
+  friends: friendsReducer,
 });
 
 const persistConfig = {
   key: "root",
   storage: AsyncStorage,
-  whitelist: ["auth", "group", "userInfo", "expense"],
+  whitelist: ["auth", "group", "userInfo", "expense", "friends"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

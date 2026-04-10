@@ -11,14 +11,8 @@ import * as Contacts from "expo-contacts";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { CText } from "@/src/shared/ui/components/CText";
-
-type Friend = {
-  id: string;
-  name: string;
-  username: string;
-  balance: string;
-  status: "settled" | "you-owe" | "owes-you";
-};
+import { useGetFriendsQuery } from "@/src/shared/store/apiSlices/friends-slice.api";
+import { Friend } from "@/src/shared/store/slices/friends-slice";
 
 type SyncedContact = {
   id: string;
@@ -26,62 +20,16 @@ type SyncedContact = {
   phone: string;
 };
 
-const mockFriends: Friend[] = [
-  {
-    id: "f1",
-    name: "Aayush Shrestha",
-    username: "@aayush",
-    balance: "You owe NPR 520",
-    status: "you-owe",
-  },
-  {
-    id: "f2",
-    name: "Sujita Karki",
-    username: "@sujita",
-    balance: "Settled up",
-    status: "settled",
-  },
-  {
-    id: "f3",
-    name: "Nabin Gurung",
-    username: "@nabin",
-    balance: "Owes you NPR 1,250",
-    status: "owes-you",
-  },
-  {
-    id: "f4",
-    name: "Ramesh Rai",
-    username: "@ramesh",
-    balance: "You owe NPR 240",
-    status: "you-owe",
-  },
-  {
-    id: "f5",
-    name: "Asmita KC",
-    username: "@asmita",
-    balance: "Owes you NPR 360",
-    status: "owes-you",
-  },
-];
-
-const getStatusColor = (status: Friend["status"]) => {
-  if (status === "you-owe") return Colors.warning[500];
-  if (status === "owes-you") return Colors.success[500];
-  return Colors.neutral[500];
-};
-
 const normalizePhone = (value: string) => value.replace(/[^\d+]/g, "");
 
 const FriendsScreen = () => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncedContacts, setSyncedContacts] = useState<SyncedContact[]>([]);
+  const { data: friends, isLoading, isFetching } = useGetFriendsQuery();
 
-  const totalFriends = mockFriends.length;
+  const totalFriends = friends?.length ?? 0;
 
-  const unsettledCount = useMemo(
-    () => mockFriends.filter((friend) => friend.status !== "settled").length,
-    [],
-  );
+  const friendList: Friend[] = useMemo(() => friends ?? [], [friends]);
 
   const handleSyncContacts = async () => {
     try {
@@ -159,7 +107,7 @@ const FriendsScreen = () => {
                 Your Network
               </CText>
               <CText size="ssm" color="neutral" shade={500}>
-                {totalFriends} friends, {unsettledCount} unsettled balances
+                {totalFriends} friends
               </CText>
             </View>
           </View>
@@ -192,69 +140,94 @@ const FriendsScreen = () => {
           <CText size="sm" color="neutral" shade={300} weight="semibold">
             Friends List
           </CText>
-          {mockFriends.map((friend) => (
+          {isLoading || isFetching ? (
             <View
-              key={friend.id}
               style={{
                 borderWidth: 1,
                 borderColor: Colors.neutral[700],
                 borderRadius: 12,
-                paddingVertical: 10,
+                paddingVertical: 12,
                 paddingHorizontal: 12,
                 backgroundColor: Colors.neutral[800],
-                flexDirection: "row",
                 alignItems: "center",
-                justifyContent: "space-between",
               }}
             >
-              <View
-                style={{
-                  flexDirection: "row",
-                  gap: 10,
-                  alignItems: "center",
-                  flex: 1,
-                }}
-              >
-                <View
-                  style={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: 18,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: Colors.accent[900],
-                  }}
-                >
-                  <CText size="ssm" color="accent" shade={400} weight="bold">
-                    {friend.name.charAt(0)}
-                  </CText>
-                </View>
-
-                <View style={{ flex: 1 }}>
-                  <CText
-                    size="sm"
-                    color="neutral"
-                    shade={200}
-                    weight="semibold"
-                  >
-                    {friend.name}
-                  </CText>
-                  <CText size="xs" color="neutral" shade={500}>
-                    {friend.username}
-                  </CText>
-                </View>
-              </View>
-
-              <CText
-                size="xs"
-                color={getStatusColor(friend.status)}
-                style={{ textAlign: "right" }}
-                weight="semibold"
-              >
-                {friend.balance}
+              <ActivityIndicator color={Colors.neutral[200]} />
+            </View>
+          ) : friendList.length === 0 ? (
+            <View
+              style={{
+                borderWidth: 1,
+                borderStyle: "dashed",
+                borderColor: Colors.neutral[700],
+                borderRadius: 12,
+                paddingVertical: 16,
+                paddingHorizontal: 12,
+              }}
+            >
+              <CText size="ssm" color="neutral" shade={500}>
+                No friends found yet.
               </CText>
             </View>
-          ))}
+          ) : (
+            friendList.map((friend) => {
+              const fullName = `${friend.givenName} ${friend.familyName}`.trim();
+              return (
+                <View
+                  key={friend.id}
+                  style={{
+                    borderWidth: 1,
+                    borderColor: Colors.neutral[700],
+                    borderRadius: 12,
+                    paddingVertical: 10,
+                    paddingHorizontal: 12,
+                    backgroundColor: Colors.neutral[800],
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      gap: 10,
+                      alignItems: "center",
+                      flex: 1,
+                    }}
+                  >
+                    <View
+                      style={{
+                        width: 36,
+                        height: 36,
+                        borderRadius: 18,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: Colors.accent[900],
+                      }}
+                    >
+                      <CText size="ssm" color="accent" shade={400} weight="bold">
+                        {(fullName || friend.email).charAt(0).toUpperCase()}
+                      </CText>
+                    </View>
+
+                    <View style={{ flex: 1 }}>
+                      <CText
+                        size="sm"
+                        color="neutral"
+                        shade={200}
+                        weight="semibold"
+                      >
+                        {fullName || friend.email}
+                      </CText>
+                      <CText size="xs" color="neutral" shade={500}>
+                        {friend.email}
+                      </CText>
+                    </View>
+                  </View>
+                </View>
+              );
+            })
+          )}
         </View>
 
         <View style={{ gap: 10, paddingBottom: 24 }}>

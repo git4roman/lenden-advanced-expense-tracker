@@ -227,6 +227,56 @@ const BalanceCard = () => (
   </ImageBackground>
 );
 
+const ActionCard = ({
+  label,
+  description,
+  onPress,
+  icon,
+}: {
+  label: string;
+  description: string;
+  onPress: () => void;
+  icon: React.ReactNode;
+}) => (
+  <View style={{ gap: 6 }}>
+    <CText weight="semibold" size="md" color="neutral" shade={100}>
+      {label}
+    </CText>
+    <View
+      style={{
+        backgroundColor: Colors.neutral[800],
+        borderRadius: 18,
+        padding: 14,
+        borderWidth: 1,
+        borderColor: Colors.neutral[700],
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 12,
+      }}
+    >
+      <View style={{ flex: 1 }}>
+        <CText size="sm" color="neutral" shade={400}>
+          {description}
+        </CText>
+      </View>
+      <Pressable
+        onPress={onPress}
+        style={{
+          width: 44,
+          height: 44,
+          borderRadius: 22,
+          backgroundColor: Colors.accent[500],
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {icon}
+      </Pressable>
+    </View>
+  </View>
+);
+
 const HomeScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [activities, setActivities] = useState(activityMockData);
@@ -269,6 +319,36 @@ const HomeScreen = () => {
         <Header />
         <View>
           <BalanceCard />
+        </View>
+        <View style={{ gap: 10, paddingTop: 12 }}>
+          <ActionCard
+            label="Pay Your Friends"
+            description="Pay your friends in a group"
+            onPress={() => router.push("/(stack)/quickActions/pay")}
+            icon={<Send2 size={22} color={Colors.neutral[100]} />}
+          />
+          <ActionCard
+            label="Request Money"
+            description="Request money from a friend or group"
+            onPress={() =>
+              router.push({
+                pathname: "/quickActions/request",
+                params: { from: "home" },
+              })
+            }
+            icon={<DirectInbox size={22} color={Colors.neutral[100]} />}
+          />
+          <ActionCard
+            label="View Statement"
+            description="See your recent statement summary"
+            onPress={() =>
+              router.push({
+                pathname: "/quickActions/statement",
+                params: { from: "home" },
+              })
+            }
+            icon={<TableDocument size={22} color={Colors.neutral[100]} />}
+          />
         </View>
 
         {/* <View style={{ paddingTop: 16 }}>
