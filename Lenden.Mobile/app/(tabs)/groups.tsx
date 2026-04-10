@@ -88,7 +88,7 @@ const GroupScreen = () => {
                 }}
                 onPress={() =>
                   router.push({
-                    pathname: "/[groupId]",
+                    pathname: "/(stack)/groups/[groupId]",
                     params: { groupId: group.id },
                   })
                 }

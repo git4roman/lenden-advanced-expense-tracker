@@ -137,12 +137,12 @@ public class AuthService: IAuthService
             var registerDto = new RegisterRequestDto(
                 Email: request.Email,
                 Password: Guid.NewGuid().ToString(),
-                FirstName: request.GivenName,
-                LastName: request.FamilyName,
-                Address: null,
-                PhoneNumber: null,
+                FirstName: request.GivenName ?? "",
+                LastName: request.FamilyName ?? " ",
+                Address: null ?? " ",
+                PhoneNumber: null ?? " ",
                 DateOfBirth: DateTime.MinValue, 
-                ImageUrl: request.PhotoUrl,
+                ImageUrl: request.PhotoUrl ?? "",
                 deviceInfo: request.DeviceInfo??"",
                 ipAddress: request.IpAddress??""
             );

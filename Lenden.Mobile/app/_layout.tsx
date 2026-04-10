@@ -76,6 +76,7 @@ function RootNavigator() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Protected guard={isLoggedIn}>
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="(stack)" />
       </Stack.Protected>
 
       <Stack.Protected guard={!isLoggedIn}>

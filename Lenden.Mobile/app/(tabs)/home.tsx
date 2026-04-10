@@ -17,7 +17,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ActivityItem } from "../../../src/modules/groups/components/activity-item";
+import { ActivityItem } from "../../src/modules/groups/components/activity-item";
 import { Href, router } from "expo-router";
 import { useTheme } from "@/src/shared/providers/ThemeProviders";
 
@@ -95,7 +95,7 @@ const Header = () => (
       LENDEN
     </CText>
     <View style={{ flex: 1, alignItems: "flex-end", marginRight: 10 }}>
-      <Pressable onPress={() => router.push("/(tabs)/(home)/notification")}>
+      <Pressable onPress={() => router.push("/(stack)/home/notification")}>
         <FontAwesome5 name="bell" size={24} color={Colors.accent[300]} />
       </Pressable>
     </View>
@@ -202,13 +202,13 @@ const BalanceCard = () => (
         // width: "60%",
       }}
     >
-      <IconCover label="Pay" path="/(tabs)/(quickActions)/pay">
+      <IconCover label="Pay" path="/(stack)/quickActions/pay">
         <Send2 size={28} color={Colors.accent[200]} />
       </IconCover>
       <IconCover
         label="Request"
         path={{
-          pathname: "/(tabs)/(quickActions)/request",
+          pathname: "/quickActions/request",
           params: { from: "home" },
         }}
       >
@@ -217,7 +217,7 @@ const BalanceCard = () => (
       <IconCover
         label="Statement"
         path={{
-          pathname: "/(tabs)/(quickActions)/statement",
+          pathname: "/quickActions/statement",
           params: { from: "home" },
         }}
       >

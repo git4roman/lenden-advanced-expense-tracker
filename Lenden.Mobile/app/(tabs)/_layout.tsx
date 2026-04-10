@@ -34,12 +34,10 @@ export default function _layout() {
           tabBarLabelStyle: { fontSize: 14, marginTop: -4 },
           headerShown: false,
         }}
-        initialRouteName="(groups)"
       >
         <Tabs.Screen
-          name="(home)"
+          name="home"
           options={{
-            // href: null,
             headerShown: false,
             title: "Home",
             tabBarIcon: ({ color }) => (
@@ -48,7 +46,7 @@ export default function _layout() {
           }}
         />
         <Tabs.Screen
-          name="(groups)"
+          name="groups"
           options={{
             headerShown: false,
             title: "Groups",
@@ -62,8 +60,9 @@ export default function _layout() {
             ),
           }}
         />
+
         <Tabs.Screen
-          name="(quickActions)"
+          name="quickAction"
           options={{
             title: "",
             tabBarLabel: () => null,
@@ -71,7 +70,7 @@ export default function _layout() {
             tabBarButton: () => (
               <Pressable
                 onPress={() => {
-                  router.push("/(tabs)/(quickActions)/expense");
+                  router.push("/(stack)/quickActions/expense");
                 }}
                 style={{
                   top: -16,
@@ -97,8 +96,9 @@ export default function _layout() {
             ),
           }}
         />
+
         <Tabs.Screen
-          name="(friends)"
+          name="friends"
           options={{
             headerShown: false,
             title: "Friends",
@@ -109,7 +109,7 @@ export default function _layout() {
         />
 
         <Tabs.Screen
-          name="(account)"
+          name="account"
           options={{
             title: "Account",
             tabBarIcon: ({ color }) => (
@@ -117,6 +117,8 @@ export default function _layout() {
             ),
           }}
         />
+
+        
       </Tabs>
     </SafeAreaProvider>
   );

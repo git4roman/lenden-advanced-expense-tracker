@@ -12,7 +12,6 @@ export default function AccountLayout() {
         headerTitleAlign: "center",
       }}
     >
-      <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen
         name="personalinfo"
         options={{ title: "Personal Information" }}

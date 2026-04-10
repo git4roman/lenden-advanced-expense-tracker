@@ -138,8 +138,8 @@ const Expense = () => {
   const sectionStyle = {
     gap: 4,
     padding: 12,
-    borderRadius: 14,
-    backgroundColor: Colors.neutral[900],
+    // borderRadius: 14,
+    // backgroundColor: Colors.neutral[900],
   } as const;
 
   const inputStyle = {
@@ -186,7 +186,7 @@ const Expense = () => {
       const response = await createExpense(formData).unwrap();
       console.log("Create Expense success response", response);
       resetForm();
-      router.replace("/(tabs)/(groups)");
+      router.replace("/(tabs)/home");
     } catch (e) {
       console.log("Create Expense error:", e);
     }
@@ -194,7 +194,7 @@ const Expense = () => {
 
   const handleCancel = () => {
     resetForm();
-    router.replace("/(tabs)/(groups)");
+    router.replace("/(tabs)/home");
   };
 
   if (isLoading || !selectedGroup) {
@@ -253,19 +253,46 @@ const Expense = () => {
           </Pressable>
         </View>
       </View>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ gap: 2, paddingBottom: 24 }}
-      >
+      <View style={{ flex: 1 }}>
         <View
           style={{
             paddingHorizontal: 4,
             borderRadius: 16,
-            backgroundColor: Colors.neutral[850],
+            // backgroundColor: Colors.neutral[800],
             borderWidth: 1,
             borderColor: Colors.neutral[800],
           }}
         >
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              paddingVertical: 14,
+            }}
+          >
+            <CText weight="semibold" size="md" color="neutral" shade={300}>
+              Amount (NPR)
+            </CText>
+            <TextInput
+              value={amount}
+              onChangeText={setAmount}
+              placeholder="0.00"
+              keyboardType="decimal-pad"
+              placeholderTextColor={Colors.neutral[600]}
+              style={[
+                {
+                  fontSize: 32,
+                  lineHeight: 32,
+                  borderBottomWidth: 1,
+                  borderBottomColor: Colors.primary[500],
+                  // paddingVertical: 0,
+                  // includeFontPadding: false,
+                  textAlignVertical: "center",
+                  color: Colors.neutral[500],
+                },
+              ]}
+            />
+          </View>
           <View
             style={[
               sectionStyle,
@@ -437,7 +464,7 @@ const Expense = () => {
                         paddingHorizontal: 10,
                         paddingVertical: 8,
                         borderRadius: 12,
-                        backgroundColor: Colors.neutral[850],
+                        backgroundColor: Colors.neutral[800],
                       }}
                     >
                       <CText size="md" color="neutral" shade={200}>
@@ -503,138 +530,101 @@ const Expense = () => {
 
           <View style={sectionStyle}>
             <CText weight="semibold" size="md" color="neutral" shade={300}>
-              Amount
-            </CText>
-            <TextInput
-              value={amount}
-              onChangeText={setAmount}
-              placeholder="0.00"
-              keyboardType="decimal-pad"
-              placeholderTextColor={Colors.neutral[600]}
-              style={[
-                inputStyle,
-                { fontSize: 24, paddingHorizontal: 12, paddingVertical: 8 },
-              ]}
-            />
-          </View>
-
-          <View
-            style={[
-              sectionStyle,
-              { position: "relative", overflow: "visible" },
-            ]}
-          >
-            <CText weight="semibold" size="md" color="neutral" shade={300}>
               Category
             </CText>
-            <Pressable
-              onPress={() => setIsCategoryMenuOpen((prev) => !prev)}
-              style={[selectStyle, { justifyContent: "space-between" }]}
-            >
-              <CText
-                size="md"
-                color="neutral"
-                shade={200}
-                weight="semibold"
-                numberOfLines={1}
-                style={{ flex: 1 }}
-              >
-                {selectedCategory?.label ?? "Select category"}
-              </CText>
-              <Ionicons
-                name={isCategoryMenuOpen ? "chevron-up" : "chevron-down"}
-                size={18}
-                color={Colors.neutral[400]}
-              />
-            </Pressable>
-            {isCategoryMenuOpen && (
-              <View
-                style={{
-                  borderWidth: 1,
-                  borderColor: Colors.neutral[700],
-                  backgroundColor: Colors.neutral[900],
-                  borderRadius: 12,
-                  overflow: "hidden",
-                  position: "absolute",
-                  left: 0,
-                  right: 0,
-                  top: 82,
-                  zIndex: 10,
-                  elevation: 6,
-                }}
-              >
-                {sharedExpenseCategories.map((category, index) => (
+            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}>
+              {sharedExpenseCategories.map((category) => {
+                const isSelected = selectedCategory?.key === category.key;
+                return (
                   <Pressable
                     key={category.key}
-                    onPress={() => {
-                      setSelectedCategory(category);
-                      setIsCategoryMenuOpen(false);
-                    }}
+                    onPress={() => setSelectedCategory(category)}
                     style={{
+                      width: "48%",
                       paddingHorizontal: 10,
-                      paddingVertical: 8,
-                      borderBottomWidth:
-                        index === sharedExpenseCategories.length - 1 ? 0 : 1,
-                      borderBottomColor: Colors.neutral[800],
-                      backgroundColor:
-                        selectedCategory?.key === category.key
-                          ? Colors.neutral[800]
-                          : Colors.neutral[900],
+                      paddingVertical: 10,
+                      borderRadius: 12,
+                      borderWidth: 1,
+                      borderColor: isSelected
+                        ? Colors.accent[500]
+                        : Colors.neutral[700],
+                      backgroundColor: isSelected
+                        ? Colors.accent[900]
+                        : Colors.neutral[900],
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 8,
                     }}
                   >
+                    <Ionicons
+                      name={isSelected ? "radio-button-on" : "radio-button-off"}
+                      size={18}
+                      color={
+                        isSelected ? Colors.accent[400] : Colors.neutral[500]
+                      }
+                    />
                     <CText
                       size="md"
-                      color={
-                        selectedCategory?.key === category.key
-                          ? "accent"
-                          : "neutral"
-                      }
-                      shade={300}
+                      color={isSelected ? "accent" : "neutral"}
+                      shade={200}
                       weight="semibold"
+                      numberOfLines={1}
+                      style={{ flex: 1 }}
                     >
-                      {category.label}
+                      {category.key}
                     </CText>
                   </Pressable>
-                ))}
-              </View>
-            )}
+                );
+              })}
+            </View>
           </View>
 
           <View style={sectionStyle}>
             <CText weight="semibold" size="md" color="neutral" shade={300}>
-              Notes
+              Remarks
             </CText>
             <TextInput
               value={notes}
               onChangeText={setNotes}
-              placeholder="Add note"
+              placeholder="Add remark"
               placeholderTextColor={Colors.neutral[600]}
               style={inputStyle}
             />
-          </View>
-
-          <View style={sectionStyle}>
-            <CText weight="semibold" size="md" color="neutral" shade={300}>
-              Add Image
-            </CText>
             <Pressable
               style={[
-                selectStyle,
-                { justifyContent: "center", gap: 8, paddingVertical: 12 },
+                {
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 10,
+                  paddingVertical: 12,
+                  paddingHorizontal: 12,
+                  borderRadius: 12,
+                  borderWidth: 1,
+                  borderColor: Colors.neutral[700],
+                  borderStyle: "dashed",
+                  backgroundColor: Colors.neutral[900],
+                },
               ]}
             >
-              <Ionicons
-                name="image-outline"
-                size={18}
-                color={Colors.neutral[400]}
-              />
+              <View
+                style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: 14,
+                  backgroundColor: Colors.neutral[800],
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Ionicons name="add" size={18} color={Colors.neutral[300]} />
+              </View>
               <CText size="md" color="neutral" shade={300} weight="semibold">
-                Upload image
+                Add Receipt
               </CText>
             </Pressable>
           </View>
         </View>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };

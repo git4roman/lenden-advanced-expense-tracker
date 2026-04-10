@@ -40,10 +40,10 @@ const accountItems: AcccountItems[] = [
   {
     title: "Personal Information",
     icon: UserIcon,
-    path: "/(tabs)/(account)/personalinfo",
+    path: "/(stack)/account/personalinfo",
   },
   // { title: "Payment details", icon: CreditCardIcon, path: "/paymentDetails" },
-  { title: "Security", icon: LockIcon, path: "/(tabs)/(account)/security" },
+  { title: "Security", icon: LockIcon, path: "/(stack)/account/security" },
 ];
 
 type SettingItemProps = {
@@ -226,7 +226,9 @@ export default function Account() {
               <CText size="sm" color={Colors.neutral[100]} weight="bold">
                 {infoRows.fullName}
               </CText>
-              <Pressable onPress={() => router.push("/notificationyes")}>
+              <Pressable
+                onPress={() => router.push("/(stack)/account/notification")}
+              >
                 <CText size="sm" color={Colors.neutral[400]}>
                   Member Since {infoRows.memberSince}
                 </CText>
@@ -298,15 +300,13 @@ export default function Account() {
                     leftIcon={BellICon}
                     title="Notification"
                     rightIcon={ChervonRight}
-                    onPress={() =>
-                      router.push("/(tabs)/(account)/notification")
-                    }
+                    onPress={() => router.push("/(stack)/account/notification")}
                   />
                   <DividedPattern
                     leftIcon={SettingIcon}
                     title="Settings"
                     rightIcon={ChervonRight}
-                    onPress={() => router.push("/(tabs)/(account)/settings")}
+                    onPress={() => router.push("/(stack)/account/settings")}
                   />
                 </View>
               </View>
@@ -342,7 +342,7 @@ export default function Account() {
                     leftIcon={InfoIcon}
                     title="About App"
                     rightIcon={ChervonRight}
-                    onPress={() => router.push("/(tabs)/(account)/about")}
+                    onPress={() => router.push("/(stack)/account/about")}
                   />
                   <DividedPattern
                     leftIcon={InfoIcon}
