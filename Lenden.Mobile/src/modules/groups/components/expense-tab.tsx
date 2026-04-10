@@ -208,7 +208,7 @@ const ExpenseTab = ({ groupId, filterKey }: ExpenseTabProps) => {
                 key={`${group.date}-${index}`}
                 onPress={() => {
                   router.push({
-                    pathname: "/(tabs)/(groups)/[groupId]/details",
+                    pathname: "/(stack)/groups/[groupId]/details",
                     params: {
                       groupId: groupId ?? "",
                       date: item.date,

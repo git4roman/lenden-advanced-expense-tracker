@@ -271,7 +271,7 @@ const HomeScreen = () => {
           <BalanceCard />
         </View>
 
-        <View style={{ paddingTop: 16 }}>
+        {/* <View style={{ paddingTop: 16 }}>
           <View
             style={{
               flexDirection: "row",
@@ -329,7 +329,7 @@ const HomeScreen = () => {
               />
             ))}
           </View>
-        </View>
+        </View> */}
       </ScrollView>
     </SafeAreaView>
   );
