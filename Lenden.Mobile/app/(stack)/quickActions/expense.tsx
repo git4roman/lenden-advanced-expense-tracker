@@ -8,6 +8,7 @@ import { router } from "expo-router";
 import { useGetGroupsQuery } from "@/src/shared/store/apiSlices/group-slice.api";
 import { sharedExpenseCategories } from "@/src/modules/groups/components/activity-item";
 import { useCreateExpenseMutation } from "@/src/shared/store/apiSlices/expense-slice.api";
+import { useBottomSheet } from "@/src/shared/hooks/use-base-bottomSheet";
 
 const Expense = () => {
   const [amount, setAmount] = useState("");
@@ -24,6 +25,8 @@ const Expense = () => {
   const [paidAmounts, setPaidAmounts] = useState<Record<string, string>>({});
   const [notes, setNotes] = useState("");
   const [createExpense] = useCreateExpenseMutation();
+
+  const { openSheet, closeSheet } = useBottomSheet();
 
   const roundTo2 = (value: number) => Math.round(value * 100) / 100;
 
@@ -383,6 +386,15 @@ const Expense = () => {
             <CText weight="semibold" size="md" color="neutral" shade={300}>
               Paid By
             </CText>
+            <Pressable
+              onPress={() => {
+                openSheet("addPayers", () => {}, "", 2);
+              }}
+            >
+              <CText weight="semibold" size="md" color="neutral" shade={300}>
+                + Add Payers
+              </CText>
+            </Pressable>
             <View style={{ flexDirection: "row", gap: 6, flexWrap: "wrap" }}>
               {selectedGroup.members.map((member: any) => (
                 <Pressable

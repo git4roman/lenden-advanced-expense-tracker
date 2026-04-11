@@ -2,6 +2,7 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import React, { forwardRef, useMemo } from "react";
 import { StyleSheet, ViewStyle } from "react-native";
 import { Colors } from "../theme/colors";
+
 type BottomSheetComponentProps = {
   children: React.ReactNode;
   snapPoints?: string[];
