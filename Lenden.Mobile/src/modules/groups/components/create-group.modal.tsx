@@ -6,6 +6,7 @@ import { useImagePicker } from "@/src/shared/hooks/use-image-picker";
 import { GroupMember } from "../types/group-member";
 import { useGroupHandler } from "../hooks/use-group-handler";
 import { useGetFriendsQuery } from "@/src/shared/store/apiSlices/friends-slice.api";
+import { useCreateGroupMutation } from "@/src/shared/store/apiSlices/group-slice.api";
 
 type Props = {
   visible: boolean;
@@ -36,6 +37,7 @@ export const CreateGroupModal = ({ visible, onClose, members }: Props) => {
   const [friendEmail, setFriendEmail] = useState("");
 
   const { data: friends, error } = useGetFriendsQuery(undefined);
+  const [createGroup]= useCreateGroupMutation();
   const [search, setSearch] = useState("");
   const suggestions = search.trim()
     ? friends.filter((friend: Friend) => {
@@ -67,6 +69,23 @@ export const CreateGroupModal = ({ visible, onClose, members }: Props) => {
     setFriendEmail("");
     onClose();
   };
+
+//   const handleCreateGroup = async () => {
+//   if (!groupName.trim()) return;
+
+//   const payload = {
+//     name: groupName.trim(),
+//     imageUrl: groupImageUri ?? "",
+//     userIds: selectedMembers, // already an array of IDs
+//   };
+
+//   try {
+//     await createGroup(payload).unwrap();
+//     onClose();
+//   } catch (e) {
+//     console.log("Create group error", e);
+//   }
+// };
 
   return (
     <Modal transparent animationType="fade" visible={visible}>

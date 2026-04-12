@@ -33,13 +33,13 @@ const groupApi = api.injectEndpoints({
       ],
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
-          const { data } = await queryFulfilled;         
+          const { data } = await queryFulfilled;
         } catch (error) {}
       },
     }),
     createGroup: builder.mutation({
       query: (payload) => ({
-        url: "/Group",
+        url: "/groups",
         method: "POST",
         body: payload,
       }),
@@ -52,7 +52,9 @@ const groupApi = api.injectEndpoints({
               groups: data.groups,
             }),
           );
-        } catch (error) {}
+        } catch (error) {
+          console.log("The error from group api is", error);
+        }
       },
     }),
 

@@ -37,8 +37,9 @@ export const useGroupHandler = (onClose: () => void) => {
       setSelectedMembers([]);
       onClose();
 
-      router.replace("/(tabs)/(groups)");
+      router.replace("/(tabs)/groups");
     } catch (error: any) {
+      console.log("the main error", error);
       Toast.show({
         type: "error",
         text1: "Group Creation Failed",
@@ -54,7 +55,7 @@ export const useGroupHandler = (onClose: () => void) => {
         groupImageUri,
       }).unwrap();
       Toast.show({ type: "success", text1: "Group Deletion Successful" });
-      router.replace("/(tabs)/(groups)");
+      router.replace("/(tabs)/groups");
     } catch (error: any) {
       Toast.show({
         type: "error",

@@ -41,12 +41,12 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetComponentProps>(
         backgroundStyle={[
           styles.background,
           backgroundStyle,
-          { backgroundColor: Colors.neutral[500] },
+          { backgroundColor: Colors.primary[500] },
         ]}
         handleIndicatorStyle={[
           styles.handleIndicator,
           handleIndicatorStyle,
-          { backgroundColor:Colors.neutral[300] },
+          { backgroundColor: Colors.neutral[800] },
         ]}
         {...props}
       >

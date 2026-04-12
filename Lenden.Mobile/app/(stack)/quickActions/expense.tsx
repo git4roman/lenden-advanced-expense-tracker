@@ -139,7 +139,7 @@ const Expense = () => {
   });
 
   const sectionStyle = {
-    gap: 4,
+    gap: 8,
     padding: 12,
     // borderRadius: 14,
     // backgroundColor: Colors.neutral[900],
@@ -212,6 +212,7 @@ const Expense = () => {
         flex: 1,
         paddingHorizontal: 14,
         backgroundColor: Colors.neutral[900],
+        gap: 16,
       }}
     >
       <View
@@ -222,7 +223,7 @@ const Expense = () => {
           paddingVertical: 6,
         }}
       >
-        <CText weight="bold" size="md" color="neutral" shade={200}>
+        <CText weight="bold" size="lg" color="neutral" shade={200}>
           Add Expense
         </CText>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
@@ -237,11 +238,11 @@ const Expense = () => {
               backgroundColor: Colors.neutral[800],
             }}
           >
-            <CText size="sm" weight="semibold" color="neutral" shade={300}>
+            <CText size="md" weight="semibold" color="neutral" shade={300}>
               Cancel
             </CText>
           </Pressable>
-          <Pressable
+          {/* <Pressable
             onPress={handleSubmit}
             style={{
               width: 34,
@@ -253,10 +254,10 @@ const Expense = () => {
             }}
           >
             <Ionicons name="checkmark" size={20} color={Colors.neutral[900]} />
-          </Pressable>
+          </Pressable> */}
         </View>
       </View>
-      <View style={{ flex: 1 }}>
+      <View>
         <View
           style={{
             paddingHorizontal: 4,
@@ -296,106 +297,85 @@ const Expense = () => {
               ]}
             />
           </View>
+          <View style={sectionStyle}>
+            {/* <CText weight="semibold" size="md" color="neutral" shade={300}>
+    Group
+  </CText> */}
+            <Pressable
+              onPress={() =>
+                openSheet(
+                  "selectGroup",
+                  (group) => {
+                    setSelectedGroup(group);
+                    setPaidBy(
+                      group.members[0]?.id ? [group.members[0].id] : [],
+                    );
+                    setSplitBetween(group.members.map((m: any) => m.id));
+                    setPaidAmounts({});
+                    setUseEqualPayerSplit(true);
+                  },
+                  selectedGroup,
+                  1,
+                )
+              }
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                paddingHorizontal: 14,
+                paddingVertical: 12,
+                borderRadius: 12,
+                borderWidth: 1,
+                borderColor: Colors.accent[500],
+                backgroundColor: Colors.accent[900],
+              }}
+            >
+              <View
+                style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
+              >
+                <Ionicons
+                  name="people-outline"
+                  size={16}
+                  color={Colors.accent[400]}
+                />
+                <CText size="md" weight="semibold" color="accent" shade={300}>
+                  {selectedGroup?.name ?? "Select Group"}
+                </CText>
+              </View>
+              <View
+                style={{ flexDirection: "row", alignItems: "center", gap: 6 }}
+              >
+                <CText size="xs" color="neutral" shade={500}>
+                  {selectedGroup?.members?.length ?? 0} members
+                </CText>
+                <Ionicons
+                  name="chevron-down"
+                  size={14}
+                  color={Colors.neutral[500]}
+                />
+              </View>
+            </Pressable>
+          </View>
+
           <View
             style={[
               sectionStyle,
-              { position: "relative", overflow: "visible" },
+              { flexDirection: "row", justifyContent: "space-between" },
             ]}
           >
-            <CText weight="semibold" size="md" color="neutral" shade={300}>
-              Group
-            </CText>
-            <Pressable
-              onPress={() => setIsGroupMenuOpen((prev) => !prev)}
-              style={[selectStyle, { justifyContent: "space-between" }]}
-            >
-              <CText
-                size="md"
-                color="neutral"
-                shade={200}
-                weight="semibold"
-                numberOfLines={1}
-                style={{ flex: 1 }}
-              >
-                {selectedGroup?.name ?? "Select group"}
-              </CText>
-              <Ionicons
-                name={isGroupMenuOpen ? "chevron-up" : "chevron-down"}
-                size={18}
-                color={Colors.neutral[400]}
-              />
-            </Pressable>
-            {isGroupMenuOpen && (
-              <View
-                style={{
-                  borderWidth: 1,
-                  borderColor: Colors.neutral[700],
-                  backgroundColor: Colors.neutral[900],
-                  borderRadius: 12,
-                  overflow: "hidden",
-                  position: "absolute",
-                  left: 0,
-                  right: 0,
-                  top: 82,
-                  zIndex: 10,
-                  elevation: 6,
-                }}
-              >
-                {groups.map((group: any) => (
-                  <Pressable
-                    key={group.id}
-                    onPress={() => {
-                      setSelectedGroup(group);
-                      setPaidBy(
-                        group.members[0]?.id ? [group.members[0].id] : [],
-                      );
-                      setSplitBetween(group.members.map((m: any) => m.id));
-                      setPaidAmounts({});
-                      setUseEqualPayerSplit(true);
-                      setIsGroupMenuOpen(false);
-                    }}
-                    style={{
-                      paddingHorizontal: 10,
-                      paddingVertical: 8,
-                      borderBottomWidth:
-                        group.id === groups[groups.length - 1]?.id ? 0 : 1,
-                      borderBottomColor: Colors.neutral[800],
-                      backgroundColor:
-                        selectedGroup?.id === group.id
-                          ? Colors.neutral[800]
-                          : Colors.neutral[900],
-                    }}
-                  >
-                    <CText
-                      size="sm"
-                      color={
-                        selectedGroup?.id === group.id ? "accent" : "neutral"
-                      }
-                      shade={300}
-                      weight="semibold"
-                    >
-                      {group.name}
-                    </CText>
-                  </Pressable>
-                ))}
-              </View>
-            )}
-          </View>
-
-          <View style={sectionStyle}>
             <CText weight="semibold" size="md" color="neutral" shade={300}>
               Paid By
             </CText>
             <Pressable
               onPress={() => {
-                openSheet("addPayers", () => {}, "", 2);
+                openSheet("addPayers", () => {}, "", 1);
               }}
             >
               <CText weight="semibold" size="md" color="neutral" shade={300}>
                 + Add Payers
               </CText>
             </Pressable>
-            <View style={{ flexDirection: "row", gap: 6, flexWrap: "wrap" }}>
+            {/* <View style={{ flexDirection: "row", gap: 6, flexWrap: "wrap" }}>
               {selectedGroup.members.map((member: any) => (
                 <Pressable
                   key={member.id}
@@ -411,8 +391,8 @@ const Expense = () => {
                   </CText>
                 </Pressable>
               ))}
-            </View>
-            <View
+            </View> */}
+            {/* <View
               style={{ flexDirection: "row", gap: 6, alignItems: "center" }}
             >
               <Pressable
@@ -456,7 +436,7 @@ const Expense = () => {
                   {remainingPaid.toFixed(2)}
                 </CText>
               )}
-            </View>
+            </View> */}
 
             {!useEqualPayerSplit && paidBy.length > 0 && (
               <View style={{ gap: 6 }}>
@@ -511,11 +491,25 @@ const Expense = () => {
             )}
           </View>
 
-          <View style={sectionStyle}>
+          <View
+            style={[
+              sectionStyle,
+              { flexDirection: "row", justifyContent: "space-between" },
+            ]}
+          >
             <CText weight="semibold" size="md" color="neutral" shade={300}>
               Split By
             </CText>
-            <View style={{ flexDirection: "row", gap: 6, flexWrap: "wrap" }}>
+            <Pressable
+              onPress={() => {
+                openSheet("addPayers", () => {}, "", 1);
+              }}
+            >
+              <CText weight="semibold" size="md" color="neutral" shade={300}>
+                + Add Splitters
+              </CText>
+            </Pressable>
+            {/* <View style={{ flexDirection: "row", gap: 6, flexWrap: "wrap" }}>
               {selectedGroup.members.map((member: any) => {
                 const isSelected = splitBetween.includes(member.id);
                 return (
@@ -537,7 +531,7 @@ const Expense = () => {
             </View>
             <CText size="sm" color="neutral" shade={500}>
               Equal split: NPR {perPersonAmount} each
-            </CText>
+            </CText> */}
           </View>
 
           <View style={sectionStyle}>
@@ -637,6 +631,18 @@ const Expense = () => {
           </View>
         </View>
       </View>
+      <Pressable
+        style={{
+          backgroundColor: Colors.accent[500],
+          padding: 10,
+          borderRadius: 10,
+          alignItems: "center",
+        }}
+      >
+        <CText weight="bold" size="md">
+          Save
+        </CText>
+      </Pressable>
     </SafeAreaView>
   );
 };
