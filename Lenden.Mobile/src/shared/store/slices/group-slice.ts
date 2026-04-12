@@ -11,14 +11,14 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 //   toUser: MutualBalanceUser;
 //   amount: number;
 // };
-type Member = {
+export type Member = {
   id: string;
   email: string;
   givenName: string;
   familyName: string;
   netBalance?: number;
 };
-type Group = {
+export type Group = {
   id: string;
   name: string;
   imageUrl: string;
@@ -28,11 +28,11 @@ type Group = {
   // mutualBalanceData: MutualBalanceData[];
   transaction: Transaction[];
 };
-type GroupState = {
+export type GroupState = {
   groups: Group[] | null;
 };
 
-type Transaction = {
+export type Transaction = {
   from: string;
   to: string;
   amount: number;

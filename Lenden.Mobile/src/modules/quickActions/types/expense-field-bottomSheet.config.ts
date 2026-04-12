@@ -15,6 +15,8 @@ export const expenseFieldConfig = {
     label: "Add Splitters",
     api: "",
     screen: AddSplittersBottomSheetScreen,
+    snapPoints: ["50%"],
+    enableDynamicSizing: false,
   },
   selectGroup: {
     label: "Select Group",

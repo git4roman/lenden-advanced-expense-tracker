@@ -9,134 +9,70 @@ import { useGetGroupsQuery } from "@/src/shared/store/apiSlices/group-slice.api"
 import { sharedExpenseCategories } from "@/src/modules/groups/components/activity-item";
 import { useCreateExpenseMutation } from "@/src/shared/store/apiSlices/expense-slice.api";
 import { useBottomSheet } from "@/src/shared/hooks/use-base-bottomSheet";
+import { Member } from "@/src/shared/store/slices/group-slice";
+
+export type ExpenseUser = {
+  userId: string;
+  name: string;
+  paidAmount: number;
+  splitAmount: number;
+};
 
 const Expense = () => {
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState<string>("0.00");
+
   const { data: groups, isLoading } = useGetGroupsQuery(undefined);
+  const [createExpense] = useCreateExpenseMutation();
+
   const [selectedGroup, setSelectedGroup] = useState<any>(null);
+  const [splitBetween, setSplitBetween] = useState<number>(0);
+  console.log("SelectedGroup", selectedGroup);
   const [selectedCategory, setSelectedCategory] = useState(
     sharedExpenseCategories[0],
   );
-  const [isGroupMenuOpen, setIsGroupMenuOpen] = useState(false);
-  const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
-  const [paidBy, setPaidBy] = useState<string[]>([]);
-  const [splitBetween, setSplitBetween] = useState<string[]>([]);
   const [useEqualPayerSplit, setUseEqualPayerSplit] = useState(true);
-  const [paidAmounts, setPaidAmounts] = useState<Record<string, string>>({});
   const [notes, setNotes] = useState("");
-  const [createExpense] = useCreateExpenseMutation();
 
-  const { openSheet, closeSheet } = useBottomSheet();
+  const { openSheet } = useBottomSheet();
 
   const roundTo2 = (value: number) => Math.round(value * 100) / 100;
 
   useEffect(() => {
     if (groups?.length) {
       setSelectedGroup(groups[0]);
-      setPaidBy(groups[0].members[0]?.id ? [groups[0].members[0].id] : []);
-      setSplitBetween(groups[0].members.map((m: any) => m.id));
-      setPaidAmounts({});
       setUseEqualPayerSplit(true);
     }
   }, [groups]);
 
-  const perPersonAmount = useMemo(() => {
-    const total = Number(amount || "0");
-    if (!splitBetween.length || Number.isNaN(total)) return "0.00";
-    return (total / splitBetween.length).toFixed(2);
-  }, [amount, splitBetween.length]);
+  const perPersonSplitAmount = useMemo(() => {
+    if (Number.isNaN(amount)) return 0;
+    return Number(amount) / splitBetween;
+  }, [amount]);
 
-  const perPayerAmount = useMemo(() => {
-    const total = Number(amount || "0");
-    if (!paidBy.length || Number.isNaN(total)) return 0;
-    return roundTo2(total / paidBy.length);
-  }, [amount, paidBy.length]);
-
-  const toggleSplitMember = (memberId: string) => {
-    setSplitBetween((prev) => {
-      if (prev.includes(memberId)) {
-        if (prev.length === 1) return prev;
-        return prev.filter((item) => item !== memberId);
-      }
-      return [...prev, memberId];
-    });
-  };
-
-  const togglePayer = (memberId: string) => {
-    setPaidBy((prev) => {
-      if (prev.includes(memberId)) {
-        if (prev.length === 1) return prev;
-        return prev.filter((item) => item !== memberId);
-      }
-      return [...prev, memberId];
-    });
-    setPaidAmounts((prev) => {
-      if (useEqualPayerSplit) return prev;
-      if (prev[memberId] !== undefined) {
-        const { [memberId]: _, ...rest } = prev;
-        return rest;
-      }
-      return { ...prev, [memberId]: "0.00" };
-    });
-  };
-
-  const totalPaid = useMemo(() => {
-    if (!paidBy.length) return 0;
-    if (useEqualPayerSplit) return perPayerAmount * paidBy.length;
-    return paidBy.reduce((sum, id) => sum + Number(paidAmounts[id] || 0), 0);
-  }, [paidBy, useEqualPayerSplit, perPayerAmount, paidAmounts]);
-
-  const remainingPaid = useMemo(() => {
-    const total = Number(amount || "0");
-    if (Number.isNaN(total)) return 0;
-    return total - totalPaid;
-  }, [amount, totalPaid]);
-
-  const users = useMemo(() => {
+  const users: ExpenseUser[] = useMemo(() => {
     if (!selectedGroup?.members) return [];
-    return selectedGroup.members
-      .filter(
-        (member: any) =>
-          paidBy.includes(member.id) || splitBetween.includes(member.id),
-      )
-      .map((member: any) => ({
-        userId: member.id,
-        paidAmount: paidBy.includes(member.id)
-          ? useEqualPayerSplit
-            ? roundTo2(Number(perPayerAmount) || 0)
-            : roundTo2(Number(paidAmounts[member.id] || 0))
-          : 0,
-        splitAmount: splitBetween.includes(member.id)
-          ? roundTo2(Number(perPersonAmount) || 0)
-          : 0,
-      }));
-  }, [
-    selectedGroup,
-    paidBy,
-    splitBetween,
-    perPayerAmount,
-    perPersonAmount,
-    useEqualPayerSplit,
-    paidAmounts,
-  ]);
+
+    return selectedGroup.members.map((member: Member) => ({
+      userId: member.id,
+      name: member.givenName + member.familyName,
+      paidAmount: 0.0,
+      splitAmount: 0.0,
+    }));
+  }, [selectedGroup, splitBetween, perPersonSplitAmount, useEqualPayerSplit]);
+  console.log("User", users);
 
   const formData = {
-    totalAmount: roundTo2(Number(amount || 0)),
+    totalAmount: Number(amount),
     groupPublicId: selectedGroup?.id,
     category: selectedCategory.id,
     description: notes,
     imageUrl: "",
-    users: users,
+    users: users.map(({ userId, paidAmount, splitAmount }) => ({
+      userId,
+      paidAmount,
+      splitAmount,
+    })),
   };
-
-  const chipStyle = (active: boolean) => ({
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: active ? Colors.accent[500] : Colors.neutral[700],
-    backgroundColor: active ? Colors.accent[900] : Colors.neutral[900],
-  });
 
   const sectionStyle = {
     gap: 8,
@@ -153,33 +89,14 @@ const Expense = () => {
     color: Colors.neutral[100],
   } as const;
 
-  const selectStyle = {
-    minWidth: 0,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    borderRadius: 12,
-    backgroundColor: Colors.neutral[800],
-    flexDirection: "row",
-    alignItems: "center",
-  } as const;
-
   const resetForm = () => {
-    setAmount("");
+    setAmount("0.0");
     setSelectedCategory(sharedExpenseCategories[0]);
     setNotes("");
-    if (groups?.length) {
-      setSelectedGroup(groups[0]);
-      setPaidBy(groups[0].members[0]?.id ? [groups[0].members[0].id] : []);
-      setSplitBetween(groups[0].members.map((m: any) => m.id));
-      setPaidAmounts({});
-      setUseEqualPayerSplit(true);
-    } else {
-      setSelectedGroup(null);
-      setPaidBy([]);
-      setSplitBetween([]);
-      setPaidAmounts({});
-      setUseEqualPayerSplit(true);
-    }
+
+    setSelectedGroup(null);
+    setSplitBetween(0);
+    setUseEqualPayerSplit(true);
   };
 
   const handleSubmit = async () => {
@@ -307,11 +224,8 @@ const Expense = () => {
                   "selectGroup",
                   (group) => {
                     setSelectedGroup(group);
-                    setPaidBy(
-                      group.members[0]?.id ? [group.members[0].id] : [],
-                    );
+
                     setSplitBetween(group.members.map((m: any) => m.id));
-                    setPaidAmounts({});
                     setUseEqualPayerSplit(true);
                   },
                   selectedGroup,
@@ -368,7 +282,7 @@ const Expense = () => {
             </CText>
             <Pressable
               onPress={() => {
-                openSheet("addPayers", () => {}, "", 1);
+                openSheet("addPayers", () => {}, { users, amount }, 1);
               }}
             >
               <CText weight="semibold" size="md" color="neutral" shade={300}>
@@ -437,58 +351,6 @@ const Expense = () => {
                 </CText>
               )}
             </View> */}
-
-            {!useEqualPayerSplit && paidBy.length > 0 && (
-              <View style={{ gap: 6 }}>
-                {paidBy.map((payerId) => {
-                  const member = selectedGroup.members.find(
-                    (m: any) => m.id === payerId,
-                  );
-                  if (!member) return null;
-                  return (
-                    <View
-                      key={payerId}
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        gap: 12,
-                        paddingHorizontal: 10,
-                        paddingVertical: 8,
-                        borderRadius: 12,
-                        backgroundColor: Colors.neutral[800],
-                      }}
-                    >
-                      <CText size="md" color="neutral" shade={200}>
-                        {member.givenName}
-                      </CText>
-                      <TextInput
-                        value={paidAmounts[payerId] ?? ""}
-                        onChangeText={(value) =>
-                          setPaidAmounts((prev) => ({
-                            ...prev,
-                            [payerId]: value,
-                          }))
-                        }
-                        placeholder="0.00"
-                        keyboardType="decimal-pad"
-                        placeholderTextColor={Colors.neutral[600]}
-                        style={[
-                          inputStyle,
-                          {
-                            minWidth: 96,
-                            textAlign: "right",
-                            paddingHorizontal: 10,
-                            paddingVertical: 6,
-                            borderRadius: 10,
-                          },
-                        ]}
-                      />
-                    </View>
-                  );
-                })}
-              </View>
-            )}
           </View>
 
           <View
@@ -502,7 +364,7 @@ const Expense = () => {
             </CText>
             <Pressable
               onPress={() => {
-                openSheet("addPayers", () => {}, "", 1);
+                openSheet("addSplitters", () => {}, { users, amount }, 1);
               }}
             >
               <CText weight="semibold" size="md" color="neutral" shade={300}>
