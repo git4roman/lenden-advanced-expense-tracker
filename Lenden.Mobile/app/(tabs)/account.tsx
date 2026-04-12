@@ -10,12 +10,13 @@ import {
   Image,
   RefreshControl,
 } from "react-native";
-import BellICon from "@/assets/icons/bell.png";
 import ChervonRight from "@/assets/icons/chevron-right.png";
 import InfoIcon from "@/assets/icons/info.png";
 import LockIcon from "@/assets/icons/lock.png";
-import SettingIcon from "@/assets/icons/settings.png";
-import StarIcon from "@/assets/icons/star.png";
+// import BellICon from "@/assets/icons/bell.png";
+// import SettingIcon from "@/assets/icons/settings.png";
+// import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+// import StarIcon from "@/assets/icons/star.png";
 import UserIcon from "@/assets/icons/user.png";
 import { CText } from "@/src/shared/ui/components/CText";
 
@@ -25,7 +26,6 @@ import { logout } from "@/src/shared/store/slices/auth-slice";
 import { clearAuth } from "@/src/shared/services/storage/auth-storage";
 import { RootState } from "@/src/shared/store/store";
 import { formatDate } from "@/src/shared/utils/format-date.utils";
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 import { getInitials } from "@/src/shared/utils/get-initials.utils";
 import { onLogout } from "@/src/shared/services/auth/google-auth.service";
 import { useMeQuery } from "@/src/shared/store/apiSlices/user-api-slice";
@@ -274,8 +274,9 @@ export default function Account() {
                   ))}
                 </View>
               </View>
-
-              <View
+              
+                  
+              {/* <View
                 style={{
                   flexDirection: "column",
                   gap: 8,
@@ -309,7 +310,7 @@ export default function Account() {
                     onPress={() => router.push("/(stack)/account/settings")}
                   />
                 </View>
-              </View>
+              </View> */}
 
               <View
                 style={{
@@ -332,12 +333,12 @@ export default function Account() {
                     borderColor: Colors.neutral[700],
                   }}
                 >
-                  <DividedPattern
+                  {/* <DividedPattern
                     leftIcon={StarIcon}
                     title="Rate the App"
                     rightIcon={ChervonRight}
                     onPress={() => setIsRateModalVisible(true)}
-                  />
+                  /> */}
                   <DividedPattern
                     leftIcon={InfoIcon}
                     title="About App"

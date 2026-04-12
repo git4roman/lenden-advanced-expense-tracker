@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { router } from "expo-router";
 import Toast from "react-native-toast-message";
-import { useGoogleMutation, useLoginMutation } from "@/src/shared/store/apiSlices/auth-slice.api";
+import {
+  useGoogleMutation,
+  useLoginMutation,
+} from "@/src/shared/store/apiSlices/auth-slice.api";
 
 export const useGoogleHandler = () => {
   const [google, { isLoading }] = useGoogleMutation();
@@ -20,7 +23,7 @@ export const useGoogleHandler = () => {
     try {
       const response = await google(payload).unwrap();
       Toast.show({ type: "success", text1: "Login Successful" });
-      router.replace("/(tabs)/(home)");
+      router.replace("/(tabs)/home");
     } catch (error: any) {
       console.log("Error from login", error);
       Toast.show({

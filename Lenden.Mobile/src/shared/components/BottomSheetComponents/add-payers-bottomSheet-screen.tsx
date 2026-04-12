@@ -13,6 +13,40 @@ type Member = {
 
 type PaymentMode = "equal" | "unequal";
 
+type User = {
+  userId: string;
+  userName: string;
+  paidAmount: number;
+  splitAmount: number;
+};
+
+const users: User[] = [
+  {
+    userId: "39485hekkdfgd",
+    userName: "roman#1",
+    paidAmount: 200,
+    splitAmount: 300,
+  },
+  {
+    userId: "39485hekkdfgd",
+    userName: "bhrastachar",
+    paidAmount: 200,
+    splitAmount: 300,
+  },
+  {
+    userId: "39485hekkdfgd",
+    userName: "lee ken yu1",
+    paidAmount: 200,
+    splitAmount: 300,
+  },
+  {
+    userId: "39485hekkdfgd",
+    userName: "british",
+    paidAmount: 200,
+    splitAmount: 300,
+  },
+];
+
 const formatAmount = (value: number) => {
   if (!Number.isFinite(value)) return "0";
   const fixed = value.toFixed(2);
@@ -27,7 +61,7 @@ const parseAmount = (value: string) => {
 
 const AddPayersBottomSheetScreen = () => {
   const { currentValue, selectValue, closeSheet } = useBottomSheet();
-  const members: Member[] = currentValue?.members ?? [];
+  const [members, setMember] = useState<User[]>(users);
 
   const [mode, setMode] = useState<PaymentMode>("equal");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -103,7 +137,14 @@ const AddPayersBottomSheetScreen = () => {
 
   const handleAmountChange = (id: string, value: string) => {
     if (mode === "equal") return;
-    setAmounts((prev) => ({ ...prev, [id]: value }));
+
+    setMember((prev) =>
+      prev.map((member) =>
+        member.userId === id
+          ? { ...member, paidAmount: Number(value) }
+          : member,
+      ),
+    );
   };
 
   const handleSave = () => {
@@ -122,19 +163,15 @@ const AddPayersBottomSheetScreen = () => {
   const canSave = selectedIds.length > 0;
 
   return (
-    <ScrollView
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}
-      keyboardShouldPersistTaps="handled"
-    >
+    <View style={{ backgroundColor: Colors.neutral[900] }}>
       <View style={{ gap: 16 }}>
         {!hasMembers && (
           <View
             style={{
-              borderWidth: 1,
-              borderColor: Colors.neutral[700],
-              backgroundColor: Colors.neutral[900],
-              borderRadius: 12,
+              // borderWidth: 1,
+              // borderColor: Colors.neutral[700],
+              // backgroundColor: Colors.neutral[900],
+              // borderRadius: 12,
               padding: 12,
             }}
           >
@@ -144,45 +181,54 @@ const AddPayersBottomSheetScreen = () => {
           </View>
         )}
 
+        <Pressable onPress={() => setMode("unequal")}>
+          <CText size="xs" color="neutral" shade={400}>
+            {mode === "equal" ? "Equal" : "Unequal"} Pay
+          </CText>
+        </Pressable>
         {members.map((member) => {
-          const isSelected = selectedIds.includes(member.id);
-          const amountValue = amounts[member.id] ?? "0";
+          const isSelected = selectedIds.includes(member.userId);
+          // const amountValue = amounts[member.userId] ?? "0";
 
           return (
-            <Pressable
-              key={member.id}
-              onPress={() => toggleMember(member.id)}
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-                paddingVertical: 10,
-                borderBottomWidth: 1,
-                borderBottomColor: Colors.neutral[800],
-                opacity: isSelected ? 1 : 0.5,
-              }}
-            >
-              <CText size="sm" color="neutral" shade={200}>
-                {member.givenName} {member.familyName}
-              </CText>
-
-              <TextInput
-                value={amountValue}
-                onChangeText={(value) => handleAmountChange(member.id, value)}
-                editable={isSelected && mode === "unequal"}
-                keyboardType="decimal-pad"
-                placeholder="0"
-                placeholderTextColor={Colors.neutral[600]}
+            <>
+              <Pressable
+                key={member.userId}
+                // onPress={() => toggleMember(member.userId)}
                 style={{
-                  minWidth: 90,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  paddingVertical: 10,
                   borderBottomWidth: 1,
-                  borderBottomColor: Colors.neutral[500],
-                  paddingVertical: 2,
-                  color: Colors.neutral[100],
-                  textAlign: "right",
+                  borderBottomColor: Colors.neutral[800],
+                  opacity: isSelected ? 1 : 0.5,
                 }}
-              />
-            </Pressable>
+              >
+                <CText size="md" color="neutral" shade={200}>
+                  {member.userName}
+                </CText>
+
+                <TextInput
+                  value={member.paidAmount.toString()}
+                  onChangeText={(value) =>
+                    handleAmountChange(member.userId, value)
+                  }
+                  editable={mode === "unequal"}
+                  keyboardType="decimal-pad"
+                  placeholder="0"
+                  placeholderTextColor={Colors.neutral[600]}
+                  style={{
+                    minWidth: 90,
+                    borderBottomWidth: 1,
+                    borderBottomColor: Colors.neutral[500],
+                    paddingVertical: 2,
+                    color: Colors.neutral[100],
+                    textAlign: "right",
+                  }}
+                />
+              </Pressable>
+            </>
           );
         })}
 
@@ -219,7 +265,7 @@ const AddPayersBottomSheetScreen = () => {
           </Pressable>
         </View>
       </View>
-    </ScrollView>
+    </View>
   );
 };
 

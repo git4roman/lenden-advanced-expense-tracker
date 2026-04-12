@@ -12,19 +12,22 @@ const GeneralBottomSheetScreen = ({ field }: { field: SheetField }) => {
   const config = sheetFieldConfig[field];
   console.log("config", config);
 
-  const {Colors}= useTheme()
+  const { Colors } = useTheme();
 
   return (
-    <ScrollView
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ paddingBottom: 20 }}
-      keyboardShouldPersistTaps="handled"
-      style={{backgroundColor: Colors.neutral[500]}}
-    >
+    <>
       {config && (
-        <View>
-          <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>
-            <CText weight="bold" size="xmd">
+        <View
+          style={{
+            backgroundColor: Colors.neutral[900],
+            flex: 1,
+            paddingHorizontal: 20,
+            paddingVertical: 10,
+            gap: 16,
+          }}
+        >
+          <View style={{ paddingHorizontal: 16 }}>
+            <CText weight="bold" size="xmd" color="neutral" shade={50}>
               {config.label}
             </CText>
           </View>
@@ -32,7 +35,7 @@ const GeneralBottomSheetScreen = ({ field }: { field: SheetField }) => {
           <config.screen />
         </View>
       )}
-    </ScrollView>
+    </>
   );
 };
 
