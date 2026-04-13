@@ -7,7 +7,7 @@ import { SheetFieldConfig } from "@/src/shared/types/field-bottomSheet.type";
 export const expenseFieldConfig = {
   addPayers: {
     screen: AddPayersBottomSheetScreen,
-    snapPoints: ["50%"],
+    snapPoints: ["90%"],
     enableDynamicSizing: false,
   },
   addSplitters: {

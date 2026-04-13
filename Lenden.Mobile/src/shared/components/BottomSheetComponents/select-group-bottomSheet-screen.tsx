@@ -49,17 +49,25 @@ const SelectGroupScreen = () => {
                 paddingVertical: 12,
                 borderRadius: 12,
                 borderWidth: 1,
-                borderColor: isSelected ? Colors.accent[500] : Colors.neutral[700],
-                backgroundColor: isSelected ? Colors.accent[900] : Colors.neutral[800],
+                borderColor: isSelected
+                  ? Colors.accent[500]
+                  : Colors.neutral[700],
+                backgroundColor: isSelected
+                  ? Colors.accent[900]
+                  : Colors.neutral[800],
               }}
             >
-              <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+              <View
+                style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
+              >
                 <View
                   style={{
                     width: 36,
                     height: 36,
                     borderRadius: 18,
-                    backgroundColor: isSelected ? Colors.accent[800] : Colors.neutral[700],
+                    backgroundColor: isSelected
+                      ? Colors.accent[800]
+                      : Colors.neutral[700],
                     alignItems: "center",
                     justifyContent: "center",
                   }}
@@ -67,7 +75,9 @@ const SelectGroupScreen = () => {
                   <Ionicons
                     name="people-outline"
                     size={18}
-                    color={isSelected ? Colors.accent[400] : Colors.neutral[400]}
+                    color={
+                      isSelected ? Colors.accent[400] : Colors.neutral[400]
+                    }
                   />
                 </View>
                 <View style={{ gap: 2 }}>
@@ -86,7 +96,11 @@ const SelectGroupScreen = () => {
               </View>
 
               {isSelected && (
-                <Ionicons name="checkmark-circle" size={20} color={Colors.accent[400]} />
+                <Ionicons
+                  name="checkmark-circle"
+                  size={20}
+                  color={Colors.accent[400]}
+                />
               )}
             </Pressable>
           );
@@ -114,7 +128,9 @@ const SelectGroupScreen = () => {
           }}
           style={{
             flex: 1,
-            backgroundColor: pendingGroup ? Colors.accent[500] : Colors.neutral[700],
+            backgroundColor: pendingGroup
+              ? Colors.accent[500]
+              : Colors.neutral[700],
             padding: 10,
             borderRadius: 10,
             alignItems: "center",

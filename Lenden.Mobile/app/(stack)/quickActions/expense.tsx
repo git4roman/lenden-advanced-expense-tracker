@@ -328,19 +328,32 @@ const Expense = () => {
               Paid By
             </CText>
             <Pressable
+              disabled={!expenseForm.participants.length}
               onPress={() => {
                 openSheet(
                   "addPayers",
                   () => {},
                   {
-                    users: expenseForm.users,
+                    participants: expenseForm.participants.map(
+                      ({ userId, fullName, paidAmount }) => ({
+                        userId,
+                        fullName,
+                        paidAmount,
+                      }),
+                    ),
                     totalAmount: expenseForm.totalAmount,
                   },
-                  1,
+                  0,
                 );
               }}
             >
-              <CText weight="semibold" size="md" color="neutral" shade={300}>
+              <CText
+                weight="semibold"
+                size="md"
+                color="neutral"
+                shade={300}
+                style={{ opacity: !expenseForm.participants.length ? 0.4 : 1 }}
+              >
                 + Add Payers
               </CText>
             </Pressable>
@@ -360,6 +373,7 @@ const Expense = () => {
               Split By
             </CText>
             <Pressable
+              disabled={!expenseForm.participants.length}
               onPress={() => {
                 openSheet(
                   "addSplitters",
@@ -372,7 +386,13 @@ const Expense = () => {
                 );
               }}
             >
-              <CText weight="semibold" size="md" color="neutral" shade={300}>
+              <CText
+                weight="semibold"
+                size="md"
+                color="neutral"
+                shade={300}
+                style={{ opacity: !expenseForm.participants.length ? 0.4 : 1 }}
+              >
                 + Add Splitters
               </CText>
             </Pressable>
