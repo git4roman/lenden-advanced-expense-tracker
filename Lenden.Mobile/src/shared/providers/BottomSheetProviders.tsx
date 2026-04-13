@@ -1,5 +1,6 @@
 import BottomSheet from "@gorhom/bottom-sheet";
 import React, { createContext, useContext, useRef, useState } from "react";
+import { SheetField } from "../types/field-bottomSheet.config";
 
 type BottomSheetContextType = {
   activeField: SheetField | null;
@@ -9,6 +10,8 @@ type BottomSheetContextType = {
   onSelectCallback: ((value: string) => void) | null;
   setOnSelectCallback: (callback: ((value: string) => void) | null) => void;
   bottomSheetRef: React.RefObject<BottomSheet | null>;
+  snapIndex: number;
+  setSnapIndex: (value: number) => void;
 };
 
 const BottomSheetContext = createContext<BottomSheetContextType | undefined>(
@@ -25,6 +28,7 @@ export const BottomSheetProvider = ({
   const [onSelectCallback, setOnSelectCallback] = useState<
     ((value: string) => void) | null
   >(null);
+  const [snapIndex, setSnapIndex] = useState<number>(0);
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   return (
@@ -37,6 +41,8 @@ export const BottomSheetProvider = ({
         onSelectCallback,
         setOnSelectCallback,
         bottomSheetRef,
+        snapIndex,
+        setSnapIndex,
       }}
     >
       {children}

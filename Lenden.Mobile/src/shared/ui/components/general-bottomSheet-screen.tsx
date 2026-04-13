@@ -10,7 +10,8 @@ import BottomSheetComponent from "./BottomSheetComponent";
 const DEFAULT_SNAP_POINTS = ["40%", "50%", "75%", "95%"];
 
 const GeneralBottomSheet = () => {
-  const { bottomSheetRef, closeSheet, activeField } = useBottomSheet();
+  const { bottomSheetRef, closeSheet, activeField, snapIndex } =
+    useBottomSheet();
 
   const config = activeField
     ? (sheetFieldConfig[activeField as SheetField] as SheetFieldConfig)
@@ -24,13 +25,14 @@ const GeneralBottomSheet = () => {
   const Screen = config?.screen;
   const enableDynamicSizing = config?.enableDynamicSizing ?? true;
 
+  console.log("snapIndex", enableDynamicSizing);
   if (!activeField) return null;
 
   return (
     <BottomSheetComponent
       ref={bottomSheetRef}
       snapPoints={snapPoints}
-      index={0}
+      index={snapIndex}
       onChange={(index: number) => index === -1 && closeSheet()}
       enableOverDrag={false}
       enableContentPanningGesture={false}

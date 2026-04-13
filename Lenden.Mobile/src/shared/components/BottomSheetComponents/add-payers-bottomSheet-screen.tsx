@@ -16,7 +16,9 @@ const AddPayersBottomSheetScreen = () => {
 
   const [useEqualPay, setUseEqualPay] = useState(true);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [customAmounts, setCustomAmounts] = useState<Record<string, string>>({});
+  const [customAmounts, setCustomAmounts] = useState<Record<string, string>>(
+    {},
+  );
 
   const equalShare = useMemo(() => {
     const count = selectedIds.size;
@@ -133,7 +135,10 @@ const AddPayersBottomSheetScreen = () => {
                       : (customAmounts[item.userId] ?? "")
                   }
                   onChangeText={(text) =>
-                    setCustomAmounts((prev) => ({ ...prev, [item.userId]: text }))
+                    setCustomAmounts((prev) => ({
+                      ...prev,
+                      [item.userId]: text,
+                    }))
                   }
                   style={{
                     minWidth: 72,
@@ -141,7 +146,9 @@ const AddPayersBottomSheetScreen = () => {
                     fontSize: 18,
                     fontFamily: fonts.medium,
                     fontWeight: "600",
-                    color: isSelected ? Colors.neutral[50] : Colors.neutral[500],
+                    color: isSelected
+                      ? Colors.neutral[50]
+                      : Colors.neutral[500],
                     padding: 0,
                     margin: 0,
                   }}

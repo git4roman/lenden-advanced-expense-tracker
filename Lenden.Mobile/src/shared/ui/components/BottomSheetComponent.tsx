@@ -8,6 +8,7 @@ type BottomSheetComponentProps = {
   snapPoints?: string[];
   index?: number;
   enablePanDownToClose?: boolean;
+  enableDynamicSizing?: boolean;
   backgroundStyle?: ViewStyle;
   handleIndicatorStyle?: ViewStyle;
   onChange?: (index: number) => void;
@@ -21,6 +22,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetComponentProps>(
       snapPoints = ["25%", "50%", "90%"],
       index = -1,
       enablePanDownToClose = true,
+      enableDynamicSizing = true,
       backgroundStyle,
       handleIndicatorStyle,
       onChange,
@@ -36,6 +38,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetComponentProps>(
         index={index}
         snapPoints={points}
         enablePanDownToClose={enablePanDownToClose}
+        enableDynamicSizing={enableDynamicSizing}
         onChange={onChange}
         // backdropComponent={renderBackdrop}
         backgroundStyle={[

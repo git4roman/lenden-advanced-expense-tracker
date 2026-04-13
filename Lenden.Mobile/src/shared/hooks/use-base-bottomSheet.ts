@@ -10,6 +10,8 @@ export const useBottomSheet = <TField extends SheetField>() => {
     onSelectCallback,
     setOnSelectCallback,
     bottomSheetRef,
+    snapIndex,
+    setSnapIndex,
   } = useBottomSheetContext();
 
   const openSheet = (
@@ -18,11 +20,12 @@ export const useBottomSheet = <TField extends SheetField>() => {
     initialValue?: any,
     index: number = 0,
   ) => {
+    setSnapIndex(index);
     setActiveField(field);
     setOnSelectCallback(() => callback ?? null);
     setCurrentValue(initialValue ?? null);
     // bottomSheetRef.current?.expand();
-    bottomSheetRef.current?.snapToIndex(index);
+    // bottomSheetRef.current?.snapToIndex(index);
   };
 
   const selectValue = (value: any) => {
@@ -47,5 +50,6 @@ export const useBottomSheet = <TField extends SheetField>() => {
     setCurrentValue,
     bottomSheetRef,
     onSelectCallback,
+    snapIndex,
   };
 };
