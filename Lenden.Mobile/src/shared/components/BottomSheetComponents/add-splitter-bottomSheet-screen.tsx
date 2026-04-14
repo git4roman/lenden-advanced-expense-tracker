@@ -12,7 +12,10 @@ export type ExpenseSplitter = {
   isParticipant: boolean;
 };
 
-const getEqualSplit = (participants: ExpenseSplitter[], totalAmount: number) => {
+const getEqualSplit = (
+  participants: ExpenseSplitter[],
+  totalAmount: number,
+) => {
   const activeCount = participants.filter((p) => p.isParticipant).length;
   const share = activeCount ? totalAmount / activeCount : 0;
   return participants.map((p) => ({
@@ -26,15 +29,17 @@ const AddSplittersBottomSheetScreen = () => {
   const { Colors } = useTheme();
 
   const totalAmount = currentValue?.totalAmount || 0;
-  const initialParticipants: ExpenseSplitter[] = currentValue?.participants ?? [];
+  const initialParticipants: ExpenseSplitter[] =
+    currentValue?.participants ?? [];
 
   const [useEqualPay, setUseEqualPay] = useState(true);
-  const [expenseParticipants, setExpenseParticipants] = useState<ExpenseSplitter[]>(
-    () => getEqualSplit(initialParticipants, totalAmount),
-  );
+  const [expenseParticipants, setExpenseParticipants] = useState<
+    ExpenseSplitter[]
+  >(() => getEqualSplit(initialParticipants, totalAmount));
 
   const recomputeEqual = useCallback(
-    (participants: ExpenseSplitter[]) => getEqualSplit(participants, totalAmount),
+    (participants: ExpenseSplitter[]) =>
+      getEqualSplit(participants, totalAmount),
     [totalAmount],
   );
 
@@ -65,7 +70,12 @@ const AddSplittersBottomSheetScreen = () => {
   const remaining = totalAmount - assignedTotal;
 
   const handleSave = () => {
-    selectValue({ ...currentValue, participants: expenseParticipants });
+    const payload = expenseParticipants.map(({ userId, splitAmount }) => ({
+      userId,
+      splitAmount,
+    }));
+    console.log("Payload", payload);
+    selectValue(payload);
     closeSheet();
   };
 
@@ -208,7 +218,9 @@ const AddSplittersBottomSheetScreen = () => {
                 keyboardType="decimal-pad"
                 placeholder="0.00"
                 placeholderTextColor={Colors.neutral[500]}
-                value={splitter.splitAmount ? splitter.splitAmount.toString() : ""}
+                value={
+                  splitter.splitAmount ? splitter.splitAmount.toString() : ""
+                }
                 onChangeText={(text) => {
                   const amount = parseFloat(text) || 0;
                   setExpenseParticipants((prev) =>

@@ -17,6 +17,7 @@ import {
   ExpenseCategory,
   ExpenseCategories,
 } from "@/src/shared/constants/expense-category.constant";
+import Toast from "react-native-toast-message";
 
 export type ExpenseUser = {
   userId: string;
@@ -48,6 +49,12 @@ export type ExpenseFormType = {
   selectedCategory: number;
 };
 
+export type UserUpdate = {
+  userId: string;
+  paidAmount?: number;
+  splitAmount?: number;
+};
+
 const Expense = () => {
   const { data: groups, isLoading } = useGetGroupsQuery(undefined);
 
@@ -60,17 +67,7 @@ const Expense = () => {
     users: [],
     participants: [],
     selectedGroup: null,
-    selectedCategory: 0,
-  });
-
-  const [formData, setFormData] = useState({
-    totalAmount: 0,
-    groupPublicId: undefined as string | undefined,
-    category: ExpenseCategories[0]?.id,
-    description: "",
-    imageUrl: "",
-    users: [] as { userId: string; paidAmount: number; splitAmount: number }[],
-    participants: [] as any[],
+    selectedCategory: 1,
   });
 
   useEffect(() => {
@@ -90,16 +87,6 @@ const Expense = () => {
       users,
       selectedGroup: groups[0] ?? null,
     }));
-
-    setFormData((prev) => ({
-      ...prev,
-      groupPublicId: groups[0]?.id,
-      users: users.map(({ userId, paidAmount, splitAmount }) => ({
-        userId,
-        paidAmount,
-        splitAmount,
-      })),
-    }));
   }, [groups]);
 
   const [createExpense, { isLoading: isCreatingExpense }] =
@@ -117,25 +104,60 @@ const Expense = () => {
       users: [],
       participants: [],
       selectedGroup: groups?.[0] ?? null,
-      selectedCategory: 0,
+      selectedCategory: 1,
     });
   };
 
   const handleSubmit = async () => {
     try {
-      console.log("Create Expense payload", JSON.stringify(formData, null, 2));
+      const formData = {
+        totalAmount: expenseForm.totalAmount,
+        groupPublicId: expenseForm.selectedGroup?.id,
+        category: expenseForm.selectedCategory,
+        description: expenseForm.description,
+        imageUrl: expenseForm.imageUrl,
+        users: expenseForm.participants.map(
+          ({ isParticipant, fullName, ...p }) => p,
+        ),
+      };
+
       const response = await createExpense(formData).unwrap();
-      console.log("Create Expense success response", response);
+
+      Toast.show({
+        type: "success",
+        text1: "Expense created",
+      });
+
       router.replace("/(tabs)/home");
       resetForm();
-    } catch (e) {
+    } catch (e: any) {
       console.log("Create Expense error:", e);
+
+      Toast.show({
+        type: "error",
+        text1: "Create failed",
+        text2: e?.data?.title || "Something went wrong",
+      });
     }
   };
 
   const handleCancel = () => {
     resetForm();
     router.replace("/(tabs)/home");
+  };
+
+  const handleParticipantsUpdate = (updatedUsers: UserUpdate[]) => {
+    const updatedUsersMapped = new Map(updatedUsers.map((u) => [u.userId, u]));
+    console.log("Updated users mapped", updatedUsersMapped);
+
+    setExpenseForm((prev) => ({
+      ...prev,
+      participants: prev.participants.map((p) =>
+        updatedUsersMapped.has(p.userId)
+          ? { ...p, ...updatedUsersMapped.get(p.userId) }
+          : p,
+      ),
+    }));
   };
 
   return (
@@ -336,7 +358,7 @@ const Expense = () => {
               onPress={() => {
                 openSheet(
                   "addPayers",
-                  () => {},
+                  handleParticipantsUpdate,
                   {
                     participants: expenseForm.participants.map(
                       ({ userId, fullName, paidAmount, isParticipant }) => ({
@@ -382,7 +404,7 @@ const Expense = () => {
               onPress={() => {
                 openSheet(
                   "addSplitters",
-                  () => {},
+                  handleParticipantsUpdate,
                   {
                     participants: expenseForm.participants.map(
                       ({ userId, fullName, splitAmount, isParticipant }) => ({
@@ -416,7 +438,6 @@ const Expense = () => {
             </CText>
             <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}>
               {expenseForm.categories.map((category: ExpenseCategory) => {
-                console.log("expenseForm", category);
                 const isSelected = expenseForm.selectedCategory === category.id;
                 return (
                   <Pressable
@@ -527,6 +548,7 @@ const Expense = () => {
       </View>
       <Pressable
         onPress={handleSubmit}
+        disabled={isCreatingExpense}
         style={{
           backgroundColor: Colors.accent[500],
           padding: 10,

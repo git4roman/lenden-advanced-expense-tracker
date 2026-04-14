@@ -67,7 +67,12 @@ const AddPayersBottomSheetScreen = () => {
   const remaining = totalAmount - assignedTotal;
 
   const handleSave = () => {
-    selectValue({ ...currentValue, participants: expenseParticipants });
+    const payload = expenseParticipants.map(({ userId, paidAmount }) => ({
+      userId,
+      paidAmount,
+    }));
+    console.log("Payload", payload);
+    selectValue(payload);
     closeSheet();
   };
 
