@@ -1,23 +1,20 @@
-import { MaterialIcons, FontAwesome, FontAwesome6 } from "@expo/vector-icons";
-
-import { ReactNode } from "react";
+import { MaterialIcons } from "@expo/vector-icons";
 
 export type ExpenseCategory = {
   id: number;
   key: string;
   label: string;
   tags: string[];
-  icon: ReactNode;
+  iconName: keyof typeof MaterialIcons.glyphMap;
 };
-export const sharedExpenseCategories =(Colors: any)=> [
+
+export const ExpenseCategories: ExpenseCategory[] = [
   {
     id: 1,
     key: "Accommodation",
     label: "Accommodation",
     tags: ["Rent", "Deposit", "Maintenance", "Room Repairs"],
-    icon: (
-      <MaterialIcons name="apartment" size={22} color={Colors.neutral[300]} />
-    ),
+    iconName: "apartment",
   },
   {
     id: 2,
@@ -32,13 +29,7 @@ export const sharedExpenseCategories =(Colors: any)=> [
       "Cleaning Supplies",
       "Household Items",
     ],
-    icon: (
-      <MaterialIcons
-        name="electric-bolt"
-        size={22}
-        color={Colors.neutral[300]}
-      />
-    ),
+    iconName: "electrical-services",
   },
   {
     id: 3,
@@ -50,24 +41,15 @@ export const sharedExpenseCategories =(Colors: any)=> [
       "Cooking Essentials",
       "Eating Out",
       "Food Delivery",
-      "Tea/Coffee",
     ],
-    icon: (
-      <FontAwesome
-        name="shopping-basket"
-        size={22}
-        color={Colors.neutral[300]}
-      />
-    ),
+    iconName: "local-grocery-store",
   },
   {
     id: 4,
     key: "Travel",
     label: "Transportation & Travel",
     tags: ["Petrol", "Taxi/Pathao", "Bus Fare", "Trips"],
-    icon: (
-      <FontAwesome6 name="train-subway" size={22} color={Colors.neutral[300]} />
-    ),
+    iconName: "directions-bus",
   },
   {
     id: 5,
@@ -79,15 +61,7 @@ export const sharedExpenseCategories =(Colors: any)=> [
       "Mobile Recharge",
       "Gym",
       "Health & Medication",
-      "Clothing",
-      "Miscellaneous",
     ],
-    icon: (
-      <MaterialIcons
-        name="local-grocery-store"
-        size={22}
-        color={Colors.neutral[300]}
-      />
-    ),
+    iconName: "person",
   },
 ];

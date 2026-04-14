@@ -1,12 +1,14 @@
-import { sharedExpenseCategories } from "@/src/shared/constants/expense-category.constant";
+import { ExpenseCategories } from "@/src/shared/constants/expense-category.constant";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
+import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import { Pressable, View } from "react-native";
 
 export const ActivityItem = ({ item }: any) => {
-  const categories = sharedExpenseCategories(Colors);
-  const category = categories.find((cat) => cat.key === item.categoryKey);
+  const category = ExpenseCategories.find(
+    (cat) => cat.key === item.categoryKey,
+  );
   return (
     <View
       style={{
@@ -30,7 +32,11 @@ export const ActivityItem = ({ item }: any) => {
           backgroundColor: Colors.neutral[700],
         }}
       >
-        {category?.icon}
+        <MaterialIcons
+          name={category.iconName}
+          size={22}
+          color={Colors.accent[400]}
+        />
       </View>
 
       <View

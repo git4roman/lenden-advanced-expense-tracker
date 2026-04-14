@@ -12,7 +12,7 @@ export const expenseFieldConfig = {
   },
   addSplitters: {
     screen: AddSplittersBottomSheetScreen,
-    snapPoints: ["50%"],
+    snapPoints: ["90%"],
     enableDynamicSizing: false,
   },
   selectGroup: {

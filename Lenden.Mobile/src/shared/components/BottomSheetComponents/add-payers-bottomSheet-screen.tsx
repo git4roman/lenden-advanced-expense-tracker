@@ -1,51 +1,77 @@
 import { View, Pressable, ScrollView, TextInput } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { CText } from "@/src/shared/ui/components/CText";
 import { useBottomSheet } from "@/src/shared/hooks/use-base-bottomSheet";
 import { useTheme } from "../../providers/ThemeProviders";
 import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "@/src/shared/ui/theme/colors"; // or use your theme hook
 
 export type ExpensePayer = {
   userId: string;
   fullName: string;
   paidAmount: number;
+  isParticipant: boolean;
+};
+
+const getEqualSplit = (participants: ExpensePayer[], totalAmount: number) => {
+  const activeCount = participants.filter((p) => p.isParticipant).length;
+  const share = activeCount ? totalAmount / activeCount : 0;
+  return participants.map((p) => ({
+    ...p,
+    paidAmount: p.isParticipant ? parseFloat(share.toFixed(2)) : 0,
+  }));
 };
 
 const AddPayersBottomSheetScreen = () => {
   const { currentValue, selectValue, closeSheet } = useBottomSheet();
-  const { Colors } = useTheme(); // or directly import if preferred
+  const { Colors } = useTheme();
+
+  const totalAmount = currentValue?.totalAmount || 0;
+  const initialParticipants: ExpensePayer[] = currentValue?.participants ?? [];
 
   const [useEqualPay, setUseEqualPay] = useState(true);
   const [expenseParticipants, setExpenseParticipants] = useState<
     ExpensePayer[]
-  >(currentValue?.participants ?? []);
+  >(() => getEqualSplit(initialParticipants, totalAmount));
 
-  const totalAmount = currentValue?.totalAmount || 0;
+  // Only re-run when toggle changes or a participant is toggled
+  const recomputeEqual = useCallback(
+    (participants: ExpensePayer[]) => getEqualSplit(participants, totalAmount),
+    [totalAmount],
+  );
+
+  const handleToggleMode = (equal: boolean) => {
+    setUseEqualPay(equal);
+    if (equal) {
+      setExpenseParticipants((prev) => recomputeEqual(initialParticipants));
+    } else {
+      setExpenseParticipants((prev) =>
+        prev.map((p) => ({ ...p, paidAmount: 0 })),
+      );
+    }
+  };
+
+  const handleToggleParticipant = (userId: string) => {
+    setExpenseParticipants((prev) => {
+      const updated = prev.map((p) =>
+        p.userId === userId ? { ...p, isParticipant: !p.isParticipant } : p,
+      );
+      // If equal mode, recompute shares immediately after toggling
+      return useEqualPay ? recomputeEqual(updated) : updated;
+    });
+  };
 
   const assignedTotal = expenseParticipants.reduce(
-    (sum, payer) => sum + (payer.paidAmount || 0),
+    (sum, p) => sum + (p.paidAmount || 0),
     0,
   );
   const remaining = totalAmount - assignedTotal;
-
-  // Initialize equal split
-  useEffect(() => {
-    if (!currentValue?.participants?.length) return;
-
-    const share = totalAmount / currentValue.participants.length;
-    setExpenseParticipants(
-      currentValue.participants.map((p: ExpensePayer) => ({
-        ...p,
-        paidAmount: useEqualPay ? share : p.paidAmount || 0,
-      })),
-    );
-  }, [currentValue?.participants, totalAmount, useEqualPay]);
 
   const handleSave = () => {
     selectValue({ ...currentValue, participants: expenseParticipants });
     closeSheet();
   };
+
+  const canSave = useEqualPay || remaining === 0;
 
   return (
     <View
@@ -70,7 +96,7 @@ const AddPayersBottomSheetScreen = () => {
           Add Payers
         </CText>
 
-        {!useEqualPay && (
+        {canSave && (
           <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
             <CText size="ssm" color="neutral" shade={400}>
               Remaining
@@ -78,9 +104,8 @@ const AddPayersBottomSheetScreen = () => {
             <CText
               size="md"
               weight="semibold"
-              color={
-                remaining < 0 ? "danger" : remaining > 0 ? "warning" : "accent"
-              }
+              color={remaining === 0 ? "success" : "warning"}
+              shade={500}
             >
               ${remaining.toFixed(2)}
             </CText>
@@ -98,137 +123,117 @@ const AddPayersBottomSheetScreen = () => {
           padding: 4,
         }}
       >
-        <Pressable
-          onPress={() => setUseEqualPay(true)}
-          style={{
-            flex: 1,
-            paddingVertical: 10,
-            borderRadius: 10,
-            backgroundColor: useEqualPay ? Colors.accent[900] : "transparent",
-            alignItems: "center",
-          }}
-        >
-          <CText
-            size="md"
-            weight={useEqualPay ? "semibold" : "medium"}
-            color={useEqualPay ? "accent" : "neutral"}
-            shade={useEqualPay ? 100 : 200}
+        {[true, false].map((isEqual) => (
+          <Pressable
+            key={String(isEqual)}
+            onPress={() => handleToggleMode(isEqual)}
+            style={{
+              flex: 1,
+              paddingVertical: 10,
+              borderRadius: 10,
+              backgroundColor:
+                useEqualPay === isEqual ? Colors.accent[900] : "transparent",
+              alignItems: "center",
+            }}
           >
-            Equal Split
-          </CText>
-        </Pressable>
-
-        <Pressable
-          onPress={() => setUseEqualPay(false)}
-          style={{
-            flex: 1,
-            paddingVertical: 10,
-            borderRadius: 10,
-            backgroundColor: !useEqualPay ? Colors.accent[900] : "transparent",
-            alignItems: "center",
-          }}
-        >
-          <CText
-            size="md"
-            weight={!useEqualPay ? "semibold" : "medium"}
-            color={!useEqualPay ? "accent" : "neutral"}
-            shade={!useEqualPay ? 100 : 200}
-          >
-            Unequal
-          </CText>
-        </Pressable>
+            <CText
+              size="md"
+              weight={useEqualPay === isEqual ? "semibold" : "medium"}
+              color={useEqualPay === isEqual ? "accent" : "neutral"}
+              shade={useEqualPay === isEqual ? 100 : 200}
+            >
+              {isEqual ? "Equal Pay" : "Unequal Pay"}
+            </CText>
+          </Pressable>
+        ))}
       </View>
 
       {/* Payers List */}
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
         <View style={{ gap: 12 }}>
-          {expenseParticipants.map((payer) => {
-            const isEdited = !useEqualPay;
-
-            return (
+          {expenseParticipants.map((payer) => (
+            <Pressable
+              key={payer.userId}
+              onPress={() => handleToggleParticipant(payer.userId)}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                paddingHorizontal: 14,
+                paddingVertical: 12,
+                borderRadius: 12,
+                borderWidth: 1,
+                borderColor: useEqualPay
+                  ? payer.isParticipant
+                    ? Colors.accent[500]
+                    : Colors.neutral[700]
+                  : Colors.neutral[700],
+                backgroundColor: useEqualPay
+                  ? payer.isParticipant
+                    ? Colors.accent[900]
+                    : Colors.neutral[800]
+                  : Colors.neutral[800],
+              }}
+            >
               <View
-                key={payer.userId}
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  justifyContent: "space-between",
-                  paddingHorizontal: 14,
-                  paddingVertical: 12,
-                  borderRadius: 12,
-                  borderWidth: 1,
-                  borderColor: isEdited
-                    ? Colors.accent[700]
-                    : Colors.neutral[700],
-                  backgroundColor: isEdited
-                    ? Colors.neutral[800]
-                    : Colors.neutral[900],
+                  gap: 12,
+                  flex: 1,
                 }}
               >
                 <View
                   style={{
-                    flexDirection: "row",
+                    width: 40,
+                    height: 40,
+                    borderRadius: 20,
+                    backgroundColor: Colors.neutral[700],
                     alignItems: "center",
-                    gap: 12,
-                    flex: 1,
+                    justifyContent: "center",
                   }}
                 >
-                  <View
-                    style={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: 20,
-                      backgroundColor: Colors.neutral[700],
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Ionicons
-                      name="person"
-                      size={20}
-                      color={Colors.neutral[400]}
-                    />
-                  </View>
-
-                  <CText
-                    size="md"
-                    weight="semibold"
-                    color="neutral"
-                    shade={100}
-                  >
-                    {payer.fullName}
-                  </CText>
+                  <Ionicons
+                    name="person"
+                    size={20}
+                    color={Colors.neutral[400]}
+                  />
                 </View>
 
-                <TextInput
-                  editable={!useEqualPay}
-                  keyboardType="decimal-pad"
-                  placeholder="0.00"
-                  placeholderTextColor={Colors.neutral[500]}
-                  value={payer.paidAmount ? payer.paidAmount.toString() : ""}
-                  onChangeText={(text) => {
-                    const amount = parseFloat(text) || 0;
-                    setExpenseParticipants((prev) =>
-                      prev.map((p) =>
-                        p.userId === payer.userId
-                          ? { ...p, paidAmount: amount }
-                          : p,
-                      ),
-                    );
-                  }}
-                  style={{
-                    minWidth: 80,
-                    textAlign: "right",
-                    fontSize: 18,
-                    fontWeight: "600",
-                    color: useEqualPay
-                      ? Colors.neutral[400]
-                      : Colors.neutral[100],
-                    padding: 0,
-                  }}
-                />
+                <CText size="md" weight="semibold" color="neutral" shade={100}>
+                  {payer.fullName}
+                </CText>
               </View>
-            );
-          })}
+
+              <TextInput
+                editable={!useEqualPay && payer.isParticipant}
+                keyboardType="decimal-pad"
+                placeholder="0.00"
+                placeholderTextColor={Colors.neutral[500]}
+                value={payer.paidAmount ? payer.paidAmount.toString() : ""}
+                onChangeText={(text) => {
+                  const amount = parseFloat(text) || 0;
+                  setExpenseParticipants((prev) =>
+                    prev.map((p) =>
+                      p.userId === payer.userId
+                        ? { ...p, paidAmount: amount }
+                        : p,
+                    ),
+                  );
+                }}
+                style={{
+                  minWidth: 80,
+                  textAlign: "right",
+                  fontSize: 18,
+                  fontWeight: "600",
+                  color: useEqualPay
+                    ? Colors.neutral[400]
+                    : Colors.neutral[100],
+                  padding: 0,
+                }}
+              />
+            </Pressable>
+          ))}
         </View>
       </ScrollView>
 
@@ -250,15 +255,17 @@ const AddPayersBottomSheetScreen = () => {
 
         <Pressable
           onPress={handleSave}
+          disabled={!canSave}
           style={{
             flex: 1,
-            backgroundColor: Colors.accent[500],
+            backgroundColor: canSave ? Colors.accent[500] : Colors.neutral[700],
             paddingVertical: 14,
             borderRadius: 12,
             alignItems: "center",
+            opacity: canSave ? 1 : 0.5,
           }}
         >
-          <CText weight="bold" color="neutral" shade={900}>
+          <CText weight="bold" color="neutral" shade={canSave ? 900 : 500}>
             Save Payers
           </CText>
         </Pressable>

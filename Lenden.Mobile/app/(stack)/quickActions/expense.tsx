@@ -15,7 +15,7 @@ import {
 } from "@/src/shared/store/slices/group-slice";
 import {
   ExpenseCategory,
-  sharedExpenseCategories,
+  ExpenseCategories,
 } from "@/src/shared/constants/expense-category.constant";
 
 export type ExpenseUser = {
@@ -25,12 +25,16 @@ export type ExpenseUser = {
   splitAmount: number;
 };
 
-export type ExpenseFormUserType = {
+export interface ExpenseFormUserType {
   userId: string;
   fullName: string;
   paidAmount: number;
   splitAmount: number;
-};
+}
+
+export interface ExpenseFormParticipantType extends ExpenseFormUserType {
+  isParticipant: boolean;
+}
 
 export type ExpenseFormType = {
   totalAmount: number;
@@ -39,19 +43,18 @@ export type ExpenseFormType = {
   description: string;
   imageUrl: string;
   users: ExpenseFormUserType[];
-  participants: ExpenseFormUserType[] | [];
+  participants: ExpenseFormParticipantType[] | [];
   selectedGroup: Group | null;
   selectedCategory: number;
 };
 
 const Expense = () => {
   const { data: groups, isLoading } = useGetGroupsQuery(undefined);
-  const categories = useMemo(() => sharedExpenseCategories(Colors), []);
 
   const [expenseForm, setExpenseForm] = useState<ExpenseFormType>({
     totalAmount: 0,
     groups: [],
-    categories,
+    categories: ExpenseCategories,
     description: "",
     imageUrl: "",
     users: [],
@@ -63,7 +66,7 @@ const Expense = () => {
   const [formData, setFormData] = useState({
     totalAmount: 0,
     groupPublicId: undefined as string | undefined,
-    category: categories[0]?.id,
+    category: ExpenseCategories[0]?.id,
     description: "",
     imageUrl: "",
     users: [] as { userId: string; paidAmount: number; splitAmount: number }[],
@@ -108,7 +111,7 @@ const Expense = () => {
     setExpenseForm({
       totalAmount: 0,
       groups: groups ?? [],
-      categories,
+      categories: ExpenseCategories,
       description: "",
       imageUrl: "",
       users: [],
@@ -297,6 +300,7 @@ const Expense = () => {
                         fullName: p.fullName,
                         paidAmount: 0,
                         splitAmount: 0,
+                        isParticipant: true,
                       })),
                     }));
                   },
@@ -335,10 +339,11 @@ const Expense = () => {
                   () => {},
                   {
                     participants: expenseForm.participants.map(
-                      ({ userId, fullName, paidAmount }) => ({
+                      ({ userId, fullName, paidAmount, isParticipant }) => ({
                         userId,
                         fullName,
                         paidAmount,
+                        isParticipant: false,
                       }),
                     ),
                     totalAmount: expenseForm.totalAmount,
@@ -379,10 +384,17 @@ const Expense = () => {
                   "addSplitters",
                   () => {},
                   {
-                    users: expenseForm.users,
+                    participants: expenseForm.participants.map(
+                      ({ userId, fullName, splitAmount, isParticipant }) => ({
+                        userId,
+                        fullName,
+                        splitAmount,
+                        isParticipant: false,
+                      }),
+                    ),
                     totalAmount: expenseForm.totalAmount,
                   },
-                  1,
+                  0,
                 );
               }}
             >
@@ -404,6 +416,7 @@ const Expense = () => {
             </CText>
             <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}>
               {expenseForm.categories.map((category: ExpenseCategory) => {
+                console.log("expenseForm", category);
                 const isSelected = expenseForm.selectedCategory === category.id;
                 return (
                   <Pressable
@@ -411,6 +424,7 @@ const Expense = () => {
                     onPress={() =>
                       setExpenseForm((prev) => ({
                         ...prev,
+                        selectedCategory: category.id,
                         category: category.id,
                       }))
                     }
