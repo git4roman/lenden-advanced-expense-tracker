@@ -23,7 +23,7 @@ export const useRegisterHandler = () => {
         lastName,
       }).unwrap();
       Toast.show({ type: "success", text1: "Registeration Successful" });
-      router.replace("/(tabs)/(home)");
+      router.replace("/(tabs)/home");
     } catch (error: any) {
       Toast.show({
         type: "error",

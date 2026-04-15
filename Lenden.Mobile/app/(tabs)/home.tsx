@@ -304,8 +304,11 @@ const HomeScreen = () => {
       }}
     >
       <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: 24 }}
+        contentContainerStyle={{
+          paddingBottom: 24,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -317,6 +320,7 @@ const HomeScreen = () => {
         }
       >
         <Header />
+        {/* <Header />
         <View>
           <BalanceCard />
         </View>
@@ -349,6 +353,12 @@ const HomeScreen = () => {
             }
             icon={<TableDocument size={22} color={Colors.neutral[100]} />}
           />
+        </View> */}
+
+        <View style={{ justifyContent: "center", alignItems: "center" }}>
+          <CText color="primary" size="lg">
+            Under Construction
+          </CText>
         </View>
 
         {/* <View style={{ paddingTop: 16 }}>

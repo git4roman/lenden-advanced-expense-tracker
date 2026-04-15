@@ -47,7 +47,7 @@ const Request = () => {
   const handleCancel = () => {
     if (from === "groupDetails" && groupId) {
       router.replace({
-        pathname: "/(tabs)/(groups)/[groupId]/details",
+        pathname: "/(stack)/groups/[groupId]/details",
         params: {
           groupId,
           date: date ?? "",
@@ -60,7 +60,7 @@ const Request = () => {
       return;
     }
 
-    router.replace("/(tabs)/(home)");
+    router.replace("/(tabs)/home");
   };
 
   const handleSubmit = () => {

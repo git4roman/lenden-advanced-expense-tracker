@@ -17,7 +17,7 @@ export const useLoginHandler = () => {
         deviceInfo: "android",
       }).unwrap();
       Toast.show({ type: "success", text1: "Login Successful" });
-      router.replace("/(tabs)/(home)");
+      router.replace("/(tabs)/home");
     } catch (error: any) {
       console.log("Error from login", error);
       Toast.show({

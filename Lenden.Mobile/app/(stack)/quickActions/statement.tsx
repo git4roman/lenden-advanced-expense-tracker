@@ -53,13 +53,13 @@ const Statement = () => {
   const handleCancel = () => {
     if (from === "groupDetails" && groupId) {
       router.replace({
-        pathname: "/(tabs)/(groups)/[groupId]",
+        pathname: "/(stack)/groups/[groupId]",
         params: { groupId },
       });
       return;
     }
 
-    router.replace("/(tabs)/(home)");
+    router.replace("/(tabs)/home");
   };
 
   const handleGenerate = () => {

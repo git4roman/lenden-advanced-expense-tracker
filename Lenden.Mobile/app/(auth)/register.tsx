@@ -181,7 +181,7 @@ export default function RegisterScreen() {
 
           <Pressable
             onPress={() => {
-              router.replace("/(tabs)/(home)");
+              router.replace("/(tabs)/groups");
             }}
             disabled={isLoading}
             style={{

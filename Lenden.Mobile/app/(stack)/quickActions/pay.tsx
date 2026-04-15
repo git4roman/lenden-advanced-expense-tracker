@@ -1,11 +1,5 @@
 import React, { useMemo, useState } from "react";
-import {
-  Image,
-  Pressable,
-  ScrollView,
-  TextInput,
-  View,
-} from "react-native";
+import { Image, Pressable, ScrollView, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
@@ -42,7 +36,10 @@ const Pay = () => {
   const [evidenceUrl, setEvidenceUrl] = useState("");
   const [notes, setNotes] = useState("");
 
-  const hasEvidence = useMemo(() => evidenceUrl.trim().length > 0, [evidenceUrl]);
+  const hasEvidence = useMemo(
+    () => evidenceUrl.trim().length > 0,
+    [evidenceUrl],
+  );
 
   const chipStyle = (active: boolean) => ({
     paddingHorizontal: 12,
@@ -66,7 +63,7 @@ const Pay = () => {
     resetForm();
     if (from === "groupDetails" && groupId) {
       router.replace({
-        pathname: "/(tabs)/(groups)/[groupId]/details",
+        pathname: "/(stack)/groups/[groupId]/details",
         params: {
           groupId,
           date: date ?? "",
@@ -79,7 +76,7 @@ const Pay = () => {
       return;
     }
 
-    router.replace("/(tabs)/(home)");
+    router.replace("/(tabs)/home");
   };
 
   const handleSubmit = () => {
