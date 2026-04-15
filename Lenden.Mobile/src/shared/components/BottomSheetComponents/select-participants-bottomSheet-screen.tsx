@@ -1,26 +1,34 @@
 import { View, Pressable, ScrollView } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { CText } from "@/src/shared/ui/components/CText";
 import { useBottomSheet } from "@/src/shared/hooks/use-base-bottomSheet";
 import { BottomSheetScrollView, BottomSheetView } from "@gorhom/bottom-sheet";
 import { Ionicons } from "@expo/vector-icons";
 
-type Participant = {
+type Members = {
   userId: string;
   fullName: string;
 };
 
 const SelectParticipantsScreen = () => {
   const { closeSheet, selectValue, currentValue } = useBottomSheet();
+  console.log("Current value", currentValue);
 
-  const allParticipants: Participant[] = currentValue ?? [];
+  const members: Members[] = currentValue.members ?? [];
 
-  const [selected, setSelected] = useState<Participant[]>(allParticipants);
-  console.log("Selected", selected);
+  const [participants, setParticiapnts] = useState<Members[]>(
+    currentValue.participants,
+  );
 
-  const toggleParticipant = (participant: Participant) => {
-    setSelected((prev) => {
+  useEffect(() => {
+    console.log("Selected", participants);
+
+    return () => {};
+  }, [participants]);
+
+  const toggleParticipant = (participant: Members) => {
+    setParticiapnts((prev) => {
       const exists = prev.some((p) => p.userId === participant.userId);
       if (exists) {
         return prev.filter((p) => p.userId !== participant.userId);
@@ -30,7 +38,11 @@ const SelectParticipantsScreen = () => {
   };
 
   const isSelected = (userId: string) =>
-    selected.some((p) => p.userId === userId);
+    participants.some((p) => p.userId === userId);
+
+  const handleSave = () => {
+    if (participants.length > 0) selectValue(participants);
+  };
 
   return (
     <View
@@ -54,17 +66,17 @@ const SelectParticipantsScreen = () => {
           Select Participants
         </CText>
         <CText color="neutral" shade={500} size="sm">
-          {selected.length}/{allParticipants.length} selected
+          {participants.length}/{members.length} selected
         </CText>
       </View>
 
       {/* Select All / Deselect All */}
       <Pressable
         onPress={() => {
-          if (selected.length === allParticipants.length) {
-            setSelected([]);
+          if (participants.length === members.length) {
+            setParticiapnts([]);
           } else {
-            setSelected(allParticipants);
+            setParticiapnts(members);
           }
         }}
         style={{
@@ -81,19 +93,19 @@ const SelectParticipantsScreen = () => {
       >
         <Ionicons
           name={
-            selected.length === allParticipants.length
+            participants.length === members.length
               ? "checkbox"
               : "square-outline"
           }
           size={18}
           color={
-            selected.length === allParticipants.length
+            participants.length === members.length
               ? Colors.accent[400]
               : Colors.neutral[500]
           }
         />
         <CText size="md" weight="semibold" color="neutral" shade={300}>
-          {selected.length === allParticipants.length
+          {participants.length === members.length
             ? "Deselect All"
             : "Select All"}
         </CText>
@@ -103,7 +115,7 @@ const SelectParticipantsScreen = () => {
         contentContainerStyle={{ gap: 16 }}
         showsVerticalScrollIndicator={false}
       >
-        {allParticipants.map((participant) => {
+        {members.map((participant) => {
           const active = isSelected(participant.userId);
           return (
             <Pressable
@@ -187,21 +199,20 @@ const SelectParticipantsScreen = () => {
           <CText shade={300}>Cancel</CText>
         </Pressable>
         <Pressable
-          onPress={() => {
-            if (selected.length > 0) selectValue(selected);
-            closeSheet();
-          }}
+          onPress={handleSave}
           style={{
             flex: 1,
             backgroundColor:
-              selected.length > 0 ? Colors.accent[500] : Colors.neutral[700],
+              participants.length > 0
+                ? Colors.accent[500]
+                : Colors.neutral[700],
             padding: 10,
             borderRadius: 10,
             alignItems: "center",
           }}
         >
           <CText weight="bold">
-            Confirm {selected.length > 0 ? `(${selected.length})` : ""}
+            Confirm {participants.length > 0 ? `(${participants.length})` : ""}
           </CText>
         </Pressable>
       </View>

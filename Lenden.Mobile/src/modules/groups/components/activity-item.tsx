@@ -33,7 +33,7 @@ export const ActivityItem = ({ item }: any) => {
         }}
       >
         <MaterialIcons
-          name={category.iconName}
+          name={category?.iconName ?? "apartment"}
           size={22}
           color={Colors.accent[400]}
         />

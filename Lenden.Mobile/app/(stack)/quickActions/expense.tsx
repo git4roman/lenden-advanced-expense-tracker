@@ -2,7 +2,13 @@ import React, { useEffect, useMemo, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { CText } from "@/src/shared/ui/components/CText";
-import { Pressable, ScrollView, TextInput, View } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  TextInput,
+  View,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useGetGroupsQuery } from "@/src/shared/store/apiSlices/group-slice.api";
@@ -26,6 +32,11 @@ export type ExpenseUser = {
   splitAmount: number;
 };
 
+export type ExpenseMetaData = {
+  isEqualPay: boolean;
+  isEqualSplit: boolean;
+};
+
 export interface ExpenseFormUserType {
   userId: string;
   fullName: string;
@@ -33,9 +44,7 @@ export interface ExpenseFormUserType {
   splitAmount: number;
 }
 
-export interface ExpenseFormParticipantType extends ExpenseFormUserType {
-  isParticipant: boolean;
-}
+export interface ExpenseFormParticipantType extends ExpenseFormUserType {}
 
 export type ExpenseFormType = {
   totalAmount: number;
@@ -47,6 +56,7 @@ export type ExpenseFormType = {
   participants: ExpenseFormParticipantType[] | [];
   selectedGroup: Group | null;
   selectedCategory: number;
+  expenseMetaData: ExpenseMetaData;
 };
 
 export type UserUpdate = {
@@ -68,6 +78,10 @@ const Expense = () => {
     participants: [],
     selectedGroup: null,
     selectedCategory: 1,
+    expenseMetaData: {
+      isEqualPay: true,
+      isEqualSplit: true,
+    },
   });
 
   useEffect(() => {
@@ -77,8 +91,6 @@ const Expense = () => {
       groups[0]?.members?.map((user: Member) => ({
         userId: user.id,
         fullName: user.givenName + " " + user.familyName,
-        paidAmount: 0,
-        splitAmount: 0,
       })) ?? [];
 
     setExpenseForm((prev) => ({
@@ -88,6 +100,10 @@ const Expense = () => {
       selectedGroup: groups[0] ?? null,
     }));
   }, [groups]);
+
+  useEffect(() => {
+    console.log("Participants", JSON.stringify(expenseForm, null, 2));
+  }, [expenseForm.participants]);
 
   const [createExpense, { isLoading: isCreatingExpense }] =
     useCreateExpenseMutation();
@@ -105,6 +121,10 @@ const Expense = () => {
       participants: [],
       selectedGroup: groups?.[0] ?? null,
       selectedCategory: 1,
+      expenseMetaData: {
+        isEqualPay: true,
+        isEqualSplit: true,
+      },
     });
   };
 
@@ -116,9 +136,7 @@ const Expense = () => {
         category: expenseForm.selectedCategory,
         description: expenseForm.description,
         imageUrl: expenseForm.imageUrl,
-        users: expenseForm.participants.map(
-          ({ isParticipant, fullName, ...p }) => p,
-        ),
+        users: expenseForm.participants.map(({ fullName, ...p }) => p),
       };
 
       const response = await createExpense(formData).unwrap();
@@ -129,7 +147,9 @@ const Expense = () => {
       });
 
       router.replace("/(tabs)/home");
-      resetForm();
+      requestAnimationFrame(() => {
+        setTimeout(resetForm, 0);
+      });
     } catch (e: any) {
       console.log("Create Expense error:", e);
 
@@ -146,9 +166,37 @@ const Expense = () => {
     router.replace("/(tabs)/home");
   };
 
+  const handlePayerParticipants = ({
+    isEqualPay,
+    updatedUsers,
+  }: {
+    isEqualPay: boolean;
+    updatedUsers: UserUpdate[];
+  }) => {
+    setExpenseForm((prev) => ({
+      ...prev,
+      expenseMetaData: { ...prev.expenseMetaData, isEqualPay: isEqualPay },
+    }));
+
+    handleParticipantsUpdate(updatedUsers);
+  };
+
+  const handleSplitterParticipants = ({
+    isEqualSplit,
+    updatedUsers,
+  }: {
+    isEqualSplit: boolean;
+    updatedUsers: UserUpdate[];
+  }) => {
+    setExpenseForm((prev) => ({
+      ...prev,
+      expenseMetaData: { ...prev.expenseMetaData, isEqualSplit: isEqualSplit },
+    }));
+    handleParticipantsUpdate(updatedUsers);
+  };
+
   const handleParticipantsUpdate = (updatedUsers: UserUpdate[]) => {
     const updatedUsersMapped = new Map(updatedUsers.map((u) => [u.userId, u]));
-    console.log("Updated users mapped", updatedUsersMapped);
 
     setExpenseForm((prev) => ({
       ...prev,
@@ -169,6 +217,31 @@ const Expense = () => {
         gap: 16,
       }}
     >
+      {isCreatingExpense && (
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.6)",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 999,
+          }}
+        >
+          <ActivityIndicator size="large" color={Colors.accent[500]} />
+          <CText
+            size="md"
+            color="neutral"
+            shade={200}
+            style={{ marginTop: 10 }}
+          >
+            Creating expense...
+          </CText>
+        </View>
+      )}
       <View
         style={{
           flexDirection: "row",
@@ -255,7 +328,7 @@ const Expense = () => {
                     }));
                   },
                   expenseForm.groups,
-                  1,
+                  0,
                 )
               }
               style={{
@@ -322,14 +395,31 @@ const Expense = () => {
                         fullName: p.fullName,
                         paidAmount: 0,
                         splitAmount: 0,
-                        isParticipant: true,
                       })),
                     }));
                   },
-                  expenseForm.selectedGroup?.members.map((item: Member) => ({
-                    userId: item.id,
-                    fullName: item.givenName + item.familyName,
-                  })),
+                  {
+                    members: expenseForm.selectedGroup?.members.map(
+                      ({ id, givenName, familyName }) => ({
+                        userId: id,
+                        fullName: givenName + familyName,
+                      }),
+                    ),
+                    participants:
+                      expenseForm.participants.length === 0
+                        ? (expenseForm.selectedGroup?.members.map(
+                            ({ id, givenName, familyName }) => ({
+                              userId: id,
+                              fullName: givenName + " " + familyName,
+                            }),
+                          ) ?? [])
+                        : expenseForm.participants.map(
+                            ({ userId, fullName }) => ({
+                              userId,
+                              fullName,
+                            }),
+                          ),
+                  },
                   0,
                 );
               }}
@@ -358,17 +448,17 @@ const Expense = () => {
               onPress={() => {
                 openSheet(
                   "addPayers",
-                  handleParticipantsUpdate,
+                  handlePayerParticipants,
                   {
                     participants: expenseForm.participants.map(
-                      ({ userId, fullName, paidAmount, isParticipant }) => ({
+                      ({ userId, fullName, paidAmount }) => ({
                         userId,
                         fullName,
                         paidAmount,
-                        isParticipant: false,
                       }),
                     ),
                     totalAmount: expenseForm.totalAmount,
+                    isEqualPay: expenseForm.expenseMetaData.isEqualPay,
                   },
                   0,
                 );
@@ -404,17 +494,17 @@ const Expense = () => {
               onPress={() => {
                 openSheet(
                   "addSplitters",
-                  handleParticipantsUpdate,
+                  handleSplitterParticipants,
                   {
                     participants: expenseForm.participants.map(
-                      ({ userId, fullName, splitAmount, isParticipant }) => ({
+                      ({ userId, fullName, splitAmount }) => ({
                         userId,
                         fullName,
                         splitAmount,
-                        isParticipant: false,
                       }),
                     ),
                     totalAmount: expenseForm.totalAmount,
+                    isEqualSplit: expenseForm.expenseMetaData.isEqualSplit,
                   },
                   0,
                 );
