@@ -28,7 +28,6 @@ import { logout } from "@/src/shared/store/slices/auth-slice";
 import { LogoutService } from "@/src/shared/services/auth/logout.service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import GeneralBottomSheetScreen from "@/src/shared/ui/components/general-bottomSheet-screen";
-import BottomSheetComponent from "@/src/shared/ui/components/BottomSheet";
 import { useBottomSheet } from "@/src/shared/hooks/use-base-bottomSheet";
 import {
   SheetField,

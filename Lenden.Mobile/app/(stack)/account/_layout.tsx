@@ -1,5 +1,7 @@
 import { Colors } from "@/src/shared/ui/theme/colors";
-import { Stack } from "expo-router";
+import { Feather } from "@expo/vector-icons";
+import { router, Stack } from "expo-router";
+import { Pressable } from "react-native";
 
 export default function AccountLayout() {
   return (
@@ -14,7 +16,16 @@ export default function AccountLayout() {
     >
       <Stack.Screen
         name="personalinfo"
-        options={{ title: "Personal Information" }}
+        options={{
+          title: "Personal Information",
+          headerRight: () => (
+            <Pressable
+              onPress={() => router.push("/(stack)/account/editPersonalInfo")}
+            >
+              <Feather name="edit-2" size={20} color={Colors.neutral[200]} />
+            </Pressable>
+          ),
+        }}
       />
       <Stack.Screen
         name="editPersonalInfo"
@@ -27,4 +38,3 @@ export default function AccountLayout() {
     </Stack>
   );
 }
-

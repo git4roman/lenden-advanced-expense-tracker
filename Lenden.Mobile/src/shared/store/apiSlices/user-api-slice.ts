@@ -28,7 +28,7 @@ const userApi = api.injectEndpoints({
               imgUrl: data.imgUrl,
               username: data.username,
               email: data.email,
-              phone: data.phone,
+              phoneNumber: data.phoneNumber,
               memberSince: data.memberSince,
             }),
           );
@@ -37,42 +37,14 @@ const userApi = api.injectEndpoints({
         }
       },
     }),
-    updateMe: builder.mutation<UserInfoState, UpdateUserPayload>({
-      query: (payload) => ({
-        url: "/users/me",
-        method: "PUT",
-        body: payload,
-      }),
-      invalidatesTags: [{ type: "User", id: "ME" }],
-      async onQueryStarted(arg, { dispatch, queryFulfilled, getState }) {
-        try {
-          const { data } = await queryFulfilled;
-          const state = getState() as RootState;
-          const current = state.userInfo;
-          dispatch(
-            setUserInfo({
-              givenName: data?.givenName ?? arg.givenName ?? current.givenName,
-              familyName:
-                data?.familyName ?? arg.familyName ?? current.familyName,
-              username: data?.username ?? arg.username ?? current.username,
-              email: data?.email ?? arg.email ?? current.email,
-              phone: data?.phone ?? arg.phone ?? current.phone,
-              memberSince: data?.memberSince ?? current.memberSince,
-              imgUrl: data?.imgUrl ?? current.imgUrl,
-            }),
-          );
-        } catch (error) {
-          console.log("Update user error", JSON.stringify(error, null, 2));
-        }
-      },
-    }),
+
     updatePersonalInfo: builder.mutation<
       UserInfoState,
       UpdatePersonalInfoPayload
     >({
       query: ({ id, data }) => ({
-        url: `/users/${id}/edit-personal-info`,
-        method: "PUT",
+        url: `/users/${id}/edit`,
+        method: "POST",
         body: data,
       }),
       invalidatesTags: [{ type: "User", id: "ME" }],
@@ -90,7 +62,7 @@ const userApi = api.injectEndpoints({
                 data?.familyName ?? arg.data.familyName ?? current.familyName,
               username: data?.username ?? arg.data.username ?? current.username,
               email: data?.email ?? arg.data.email ?? current.email,
-              phone: data?.phone ?? arg.data.phone ?? current.phone,
+              phoneNumber: data?.phoneNumber ?? arg.data.phoneNumber ?? current.phoneNumber,
               memberSince: data?.memberSince ?? current.memberSince,
               imgUrl: data?.imgUrl ?? current.imgUrl,
             }),
@@ -108,6 +80,6 @@ const userApi = api.injectEndpoints({
 
 export const {
   useMeQuery,
-  useUpdateMeMutation,
+
   useUpdatePersonalInfoMutation,
 } = userApi;

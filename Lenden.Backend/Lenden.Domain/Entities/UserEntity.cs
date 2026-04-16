@@ -105,9 +105,17 @@ public class UserEntity
         GivenName = firstName;
     }
     
-   public void UpdateUserInfo(string address, string phoneNumber, string imageUrl, DateTime dob )
+    public void UpdateUserInfo(string address, string phoneNumber, string imageUrl, DateTime dob)
     {
-        UserInfo?.UpdateUserInfo(address, phoneNumber, imageUrl, dob);
+        if (UserInfo == null)
+        {
+            UserInfo = new UserInfoEntity(this, address, phoneNumber, imageUrl, dob);
+        }
+        else
+        {
+            UserInfo.UpdateUserInfo(address, phoneNumber, imageUrl, dob);
+        }
+
         UpdatedAt = DateTimeOffset.UtcNow;
     }
 

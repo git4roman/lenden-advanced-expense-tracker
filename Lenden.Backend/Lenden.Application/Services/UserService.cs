@@ -38,11 +38,12 @@ public class UserService: IUserService
         return balance;
     }
 
-    public async Task UpdateUserProfile(UserUpdateRequestDto requestDto)
+    public async Task UpdateUserProfile(UserUpdateRequestDto requestDto, Guid userId)
     {
-        requestDto.User.UpdateName(requestDto.GivenName, requestDto.FamilyName);
-        requestDto.User.UpdateUserInfo(requestDto.Address, requestDto.PhoneNumber,requestDto.ImageUrl, requestDto.DateOfBirth);
-        await _unitOfWork.UserRepository.UpdateUserAsync(requestDto.User);
+        var editableUser = await _unitOfWork.UserRepository.GetUserByPublicIdAsync(userId);
+        editableUser.UpdateName(requestDto.GivenName, requestDto.FamilyName);
+        editableUser.UpdateUserInfo(requestDto.Address, requestDto.PhoneNumber,requestDto.ImageUrl, requestDto.DateOfBirth);
+        await _unitOfWork.UserRepository.UpdateUserAsync(editableUser);
         await _unitOfWork.SaveChangesAsync();
     }
 

@@ -18,56 +18,48 @@ export default function PersonalInfoScreen() {
     },
     { label: "Username", value: userInfo?.username ?? "-" },
     { label: "Email", value: userInfo?.email ?? "-" },
-    { label: "Phone", value: userInfo?.phone ?? "-" },
-    { label: "Member Since", value: userInfo.memberSince
-          ? formatDate(userInfo.memberSince, { month: "long", year: "numeric" })
-          : "-" },
+    { label: "Phone", value: userInfo?.phoneNumber ?? "-" },
+    {
+      label: "Member Since",
+      value: userInfo.memberSince
+        ? formatDate(userInfo.memberSince, { month: "long", year: "numeric" })
+        : "-",
+    },
   ];
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.neutral[950] }}>
-      <Stack.Screen
-        options={{
-          headerRight: () => (
-            <Pressable onPress={() => router.push("/(tabs)/(account)/editPersonalInfo")}>
-              <Feather name="edit-2" size={20} color={Colors.neutral[200]} />
-            </Pressable>
-          ),
+    <ScrollView
+      style={{ flex: 1, backgroundColor: Colors.neutral[950] }}
+      contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 16 }}
+    >
+      <View
+        style={{
+          borderRadius: 12,
+          backgroundColor: Colors.neutral[800],
+          borderWidth: 1,
+          borderColor: Colors.neutral[700],
+          paddingVertical: 8,
         }}
-      />
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 16 }}
       >
-        <View
-          style={{
-            borderRadius: 12,
-            backgroundColor: Colors.neutral[800],
-            borderWidth: 1,
-            borderColor: Colors.neutral[700],
-            paddingVertical: 8,
-          }}
-        >
-          {infoRows.map((item, index) => (
-            <View
-              key={item.label}
-              style={{
-                paddingHorizontal: 16,
-                paddingVertical: 12,
-                borderBottomWidth: index === infoRows.length - 1 ? 0 : 1,
-                borderBottomColor: Colors.neutral[700],
-                gap: 6,
-              }}
-            >
-              <CText size="xs" color={Colors.neutral[400]} weight="semibold">
-                {item.label}
-              </CText>
-              <CText size="sm" color={Colors.neutral[100]} weight="semibold">
-                {item.value}
-              </CText>
-            </View>
-          ))}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+        {infoRows.map((item, index) => (
+          <View
+            key={item.label}
+            style={{
+              paddingHorizontal: 16,
+              paddingVertical: 12,
+              borderBottomWidth: index === infoRows.length - 1 ? 0 : 1,
+              borderBottomColor: Colors.neutral[700],
+              gap: 6,
+            }}
+          >
+            <CText size="xs" color={Colors.neutral[400]} weight="semibold">
+              {item.label}
+            </CText>
+            <CText size="sm" color={Colors.neutral[100]} weight="semibold">
+              {item.value}
+            </CText>
+          </View>
+        ))}
+      </View>
+    </ScrollView>
   );
 }

@@ -3,20 +3,20 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 export type UserInfoState = {
   givenName: string;
   familyName: string;
-  imgUrl:string;
+  imgUrl: string;
   username: string;
   email: string;
-  phone: string;
+  phoneNumber: string;
   memberSince: string;
 };
 
 const initialState: UserInfoState = {
   givenName: "",
   familyName: "",
-  imgUrl:"",
+  imgUrl: "",
   username: "",
   email: "",
-  phone: "",
+  phoneNumber: "",
   memberSince: "",
 };
 

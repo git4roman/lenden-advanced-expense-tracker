@@ -9,7 +9,7 @@ public interface IUserService
     Task<UserResponseDto> GetUserByIdAsync(long userId);
     Task<UserEntity> GetUserByEmailAsync(string email);
     Task<decimal> GetOverallBalance(long userId);
-    Task UpdateUserProfile(UserUpdateRequestDto requestDto);
+    Task UpdateUserProfile(UserUpdateRequestDto requestDto, Guid userId);
     Task DeactivateAccount(UserEntity user);
     Task LogoutAsync(UserEntity user);
 }

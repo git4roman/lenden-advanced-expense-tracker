@@ -47,8 +47,7 @@ namespace Lenden.Web.Controllers.API
             {
                 var currentUser = await _authService.ValidateUserAsync(User);
                 if (currentUser == null) return Unauthorized();
-                dto.User = currentUser;
-                await _userService.UpdateUserProfile(dto);
+                await _userService.UpdateUserProfile(dto,currentUser.Slug);
                 return Ok();
             }
             catch (Exception e)

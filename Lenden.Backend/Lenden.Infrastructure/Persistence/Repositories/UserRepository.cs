@@ -27,13 +27,13 @@ public class UserRepository: IUserRepository
     }
     public async Task<UserEntity?> GetUserByPublicIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var entity = await _dbContext.Users.FirstOrDefaultAsync<UserEntity>(u=> u.Slug == id);
+        var entity = await _dbContext.Users.Include(u=>u.UserInfo).FirstOrDefaultAsync<UserEntity>(u=> u.Slug == id);
         return entity;
     }
 
     public async Task<UserEntity> GetUserByIdAsync(long userId, CancellationToken ct = default)
     {
-        var entity = await _dbContext.Users.FirstOrDefaultAsync<UserEntity>(u=> u.Id == userId);
+        var entity = await _dbContext.Users.Include(u=>u.UserInfo).FirstOrDefaultAsync<UserEntity>(u=> u.Id == userId);
         return entity;
     }
 

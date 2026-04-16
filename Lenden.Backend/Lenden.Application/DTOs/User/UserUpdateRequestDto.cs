@@ -10,5 +10,4 @@ public class UserUpdateRequestDto
     public string? Address { get;  set; }
     public string? ImageUrl { get;  set; }
     public DateTime DateOfBirth { get;  set; }
-    public UserEntity User { get; set; }
 }

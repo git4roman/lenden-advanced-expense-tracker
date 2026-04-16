@@ -1,22 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  Pressable,
-  ScrollView,
-  TextInput,
-  View,
-} from "react-native";
+import { Pressable, ScrollView, TextInput, View } from "react-native";
 import { useSelector } from "react-redux";
 import { router } from "expo-router";
 import { RootState } from "@/src/shared/store/store";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { CText } from "@/src/shared/ui/components/CText";
 import {
+  useMeQuery,
   useUpdatePersonalInfoMutation,
 } from "@/src/shared/store/apiSlices/user-api-slice";
 import { selectCurrentUser } from "@/src/shared/store/slices/auth-slice";
 
 const EditPersonalInfo = () => {
-  const userInfo = useSelector((state: RootState) => state.userInfo);
+  const { data: userInfo } = useMeQuery();
   const currentUser = useSelector(selectCurrentUser);
   const [updatePersonalInfo, { isLoading }] = useUpdatePersonalInfoMutation();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -25,7 +21,7 @@ const EditPersonalInfo = () => {
     familyName: "",
     username: "",
     email: "",
-    phone: "",
+    phoneNumber: "",
   });
 
   useEffect(() => {
@@ -34,7 +30,7 @@ const EditPersonalInfo = () => {
       familyName: userInfo?.familyName ?? "",
       username: userInfo?.username ?? "",
       email: userInfo?.email ?? "",
-      phone: userInfo?.phone ?? "",
+      phoneNumber: userInfo?.phoneNumber ?? "",
     });
   }, [userInfo]);
 
@@ -44,7 +40,7 @@ const EditPersonalInfo = () => {
       form.familyName !== (userInfo?.familyName ?? "") ||
       form.username !== (userInfo?.username ?? "") ||
       form.email !== (userInfo?.email ?? "") ||
-      form.phone !== (userInfo?.phone ?? "")
+      form.phoneNumber !== (userInfo?.phoneNumber ?? "")
     );
   }, [form, userInfo]);
 
@@ -70,7 +66,7 @@ const EditPersonalInfo = () => {
           familyName: form.familyName.trim(),
           username: form.username.trim(),
           email: form.email.trim(),
-          phone: form.phone.trim(),
+          phoneNumber: form.phoneNumber.trim(),
         },
       }).unwrap();
       router.back();
@@ -192,9 +188,9 @@ const EditPersonalInfo = () => {
             Phone
           </CText>
           <TextInput
-            value={form.phone}
+            value={form.phoneNumber}
             onChangeText={(text) =>
-              setForm((prev) => ({ ...prev, phone: text }))
+              setForm((prev) => ({ ...prev, phoneNumber: text }))
             }
             placeholder="Enter phone"
             placeholderTextColor={Colors.neutral[600]}
@@ -237,19 +233,17 @@ const EditPersonalInfo = () => {
 
         <Pressable
           onPress={handleSave}
-          disabled={isLoading || !isDirty}
+          disabled={isLoading}
           style={{
             flex: 1,
             backgroundColor: Colors.accent[500],
             padding: 12,
             borderRadius: 10,
             alignItems: "center",
-            opacity: isLoading || !isDirty ? 0.6 : 1,
+            opacity: isLoading ? 0.6 : 1,
           }}
         >
-          <CText weight="bold">
-            {isLoading ? "Saving..." : "Save"}
-          </CText>
+          <CText weight="bold">{isLoading ? "Saving..." : "Save"}</CText>
         </Pressable>
       </View>
     </ScrollView>
