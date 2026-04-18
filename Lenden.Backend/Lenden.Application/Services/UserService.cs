@@ -1,7 +1,9 @@
 ﻿using Lenden.Application.DTOs;
+using Lenden.Application.DTOs.User;
 using Lenden.Application.Interfaces;
 using Lenden.Application.Interfaces.Services;
 using Lenden.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace Lenden.Application.Services;
 
@@ -65,4 +67,6 @@ public class UserService: IUserService
         await _unitOfWork.SaveChangesAsync();
         
     }
+
+    
 }

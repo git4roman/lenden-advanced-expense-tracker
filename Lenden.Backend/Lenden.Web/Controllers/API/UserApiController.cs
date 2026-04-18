@@ -1,8 +1,8 @@
 using Lenden.Application.DTOs;
+using Lenden.Application.DTOs.Auth;
 using Lenden.Application.Interfaces.Services;
-using Lenden.Application.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lenden.Web.Controllers.API
@@ -16,10 +16,10 @@ namespace Lenden.Web.Controllers.API
         private readonly IUserService _userService;
         public UserApiController(IAuthService authService, IUserService userService)
         {
-            _authService= authService;
+            _authService = authService;
             _userService = userService;
         }
-        
+
         [HttpGet("me")]
         public async Task<IActionResult> GetCurrentUserInfo()
         {
@@ -28,7 +28,7 @@ namespace Lenden.Web.Controllers.API
             var user = await _userService.GetUserByIdAsync(currentUser.Id);
             return Ok(user);
         }
-        
+
         [HttpGet("dashboard-info")]
         public async Task<IActionResult> GetDashboardInfo()
         {
@@ -36,7 +36,7 @@ namespace Lenden.Web.Controllers.API
             if (currentUser == null) return Unauthorized();
             // var user = await _userService.GetUserByIdAsync(currentUser.Id);
             var balance = await _userService.GetOverallBalance(currentUser.Id);
-            
+
             return Ok(balance);
         }
 
@@ -47,7 +47,7 @@ namespace Lenden.Web.Controllers.API
             {
                 var currentUser = await _authService.ValidateUserAsync(User);
                 if (currentUser == null) return Unauthorized();
-                await _userService.UpdateUserProfile(dto,currentUser.Slug);
+                await _userService.UpdateUserProfile(dto, currentUser.Slug);
                 return Ok();
             }
             catch (Exception e)
@@ -61,10 +61,10 @@ namespace Lenden.Web.Controllers.API
         public async Task<IActionResult> Logout()
         {
             var currentUser = await _authService.ValidateUserAsync(User);
-                if (currentUser == null) return Unauthorized();
-                await _userService.LogoutAsync(currentUser);
-                
-                return Ok();
+            if (currentUser == null) return Unauthorized();
+            await _userService.LogoutAsync(currentUser);
+
+            return Ok();
 
 
         }
@@ -84,7 +84,62 @@ namespace Lenden.Web.Controllers.API
                 Console.WriteLine(e);
                 throw;
             }
-            
+
         }
+
+        [HttpPost("reset-passsword")]
+        public async Task<IActionResult> ResetPassword (ResetPasswordRequestDto request)
+        {
+            try
+            {
+                var currentUser = await _authService.ValidateUserAsync(User);
+                if (currentUser == null) return Unauthorized();
+                await _authService.ResetPassword(currentUser, request);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+        }
+
+        [HttpPost("change-passsword")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
+        {
+            try
+            {
+                var currentUser = await _authService.ValidateUserAsync(User);
+                if (currentUser == null) return Unauthorized();
+                await _authService.ChangePassword(currentUser, request);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+        }
+
+        [AllowAnonymous]
+        [HttpPost("forget-passsword")]
+        public async Task<IActionResult> ForgetPassword(ForgetPasswordRequest request)
+        {
+            try
+            {
+                await _authService.ForgetPassword(request);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+        }
+
+
     }
 }

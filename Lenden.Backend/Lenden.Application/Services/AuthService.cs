@@ -1,5 +1,7 @@
 ﻿using System.Security.Claims;
 using Lenden.Application.DTOs;
+using Lenden.Application.DTOs.Auth;
+using Lenden.Application.DTOs.User;
 using Lenden.Application.Interfaces;
 using Lenden.Application.Interfaces.Repositories;
 using Lenden.Application.Interfaces.Services;
@@ -112,9 +114,9 @@ public class AuthService: IAuthService
         return user;
     }
 
-    public async Task ResetPassword(UserEntity user, ChangePasswordRequest request)
+    public async Task ResetPassword(UserEntity user, ResetPasswordRequestDto request)
     {
-        var newPassword = _passwordHasher.HashPassword(user, request.NewPassword);
+        var newPassword = _passwordHasher.HashPassword(user, request.Password);
         user.SetPassword(newPassword);
         await _unitOfWork.UserRepository.UpdateUserAsync(user);
         await _unitOfWork.SaveChangesAsync();
@@ -123,10 +125,23 @@ public class AuthService: IAuthService
     public async Task ForgetPassword(ForgetPasswordRequest request)
     {
         var user = await _unitOfWork.UserRepository.GetUserByEmailAsync(request.Email);
+        if (user is null) throw new UnauthorizedAccessException("User does not exist");
         var newPassword = _passwordHasher.HashPassword(user, request.Password);
         user.SetPassword(newPassword);
         await _unitOfWork.UserRepository.UpdateUserAsync(user);
         await _unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task ChangePassword(UserEntity user, ChangePasswordRequest request)
+    {
+        var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.OldPassword);
+        if (result == PasswordVerificationResult.Failed)
+            throw new Exception("Invalid credentials");
+        var newPassword = _passwordHasher.HashPassword(user, request.NewPassword);
+        user.SetPassword(newPassword);
+        await _unitOfWork.UserRepository.UpdateUserAsync(user);
+        await _unitOfWork.SaveChangesAsync();
+
     }
 
     public async Task<AuthResponseDto?> GoogleHandlerAsync(GoogleLoginDto request)
@@ -160,5 +175,6 @@ public class AuthService: IAuthService
             return session;
         }
     }
+
     
 }

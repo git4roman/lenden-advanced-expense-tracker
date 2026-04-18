@@ -1,5 +1,7 @@
 ﻿using System.Security.Claims;
 using Lenden.Application.DTOs;
+using Lenden.Application.DTOs.Auth;
+using Lenden.Application.DTOs.User;
 using Lenden.Domain.Entities;
 
 namespace Lenden.Application.Interfaces.Services;
@@ -11,9 +13,12 @@ public interface IAuthService
    Task<AuthResponseDto?> RefreshTokenAsync(UserEntity user,RefreshTokenRequest request);
    Task<UserEntity> ValidateUserAsync(ClaimsPrincipal userClaims, CancellationToken ct = default);
 
-   Task ResetPassword(UserEntity user, ChangePasswordRequest request);
+   Task ResetPassword(UserEntity user, ResetPasswordRequestDto request);
    Task ForgetPassword(ForgetPasswordRequest request);
    Task<AuthResponseDto?> GoogleHandlerAsync(GoogleLoginDto request);
+    Task ChangePassword(UserEntity user, ChangePasswordRequest request);
+
+
 
 
 }
