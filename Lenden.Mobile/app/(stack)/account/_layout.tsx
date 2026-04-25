@@ -35,6 +35,7 @@ export default function AccountLayout() {
       <Stack.Screen name="settings" options={{ title: "Settings" }} />
       <Stack.Screen name="notification" options={{ title: "Notification" }} />
       <Stack.Screen name="about" options={{ title: "About App" }} />
+      <Stack.Screen name="esewa" options={{ title: "eSewa" }} />
     </Stack>
   );
 }

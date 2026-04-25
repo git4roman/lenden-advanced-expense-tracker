@@ -4,6 +4,9 @@ import { Colors } from "@/src/shared/ui/theme/colors";
 import { FontAwesome5 } from "@expo/vector-icons";
 import {
   DirectInbox,
+  MoneyRecive,
+  Moneys,
+  MoneySend,
   Profile,
   Send2,
   TableDocument,
@@ -91,12 +94,39 @@ const Header = () => (
     }}
   >
     {/* <View style={{ flex: 1 }} /> */}
-    <CText weight="extrabold" italic size="xlg" color="neutral" shade={100}>
-      LENDEN
-    </CText>
+    <View
+      style={{
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "row",
+        gap: 6,
+        flex: 1,
+      }}
+    >
+      <View
+        style={{
+          width: 38,
+          height: 38,
+          borderRadius: 19,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: Colors.neutral[100],
+        }}
+      >
+        <Profile size={32} color={Colors.accent[500]} />
+      </View>
+      <View style={{ flex: 1, justifyContent: "center" }}>
+        <CText weight="semibold" size="md">
+          Hi,Roman !
+        </CText>
+        <CText italic size="xs">
+          Proud Lenden User
+        </CText>
+      </View>
+    </View>
     <View style={{ flex: 1, alignItems: "flex-end", marginRight: 10 }}>
       <Pressable onPress={() => router.push("/(stack)/home/notification")}>
-        <FontAwesome5 name="bell" size={24} color={Colors.accent[300]} />
+        <FontAwesome5 name="bell" size={24} color={Colors.accent[800]} />
       </Pressable>
     </View>
   </View>
@@ -110,100 +140,72 @@ const BalanceCard = () => (
       height: 180,
       backgroundColor: Colors.accent[500],
       borderRadius: 24,
+      borderColor: Colors.primary[400],
+      borderWidth: 1,
       // borderTopRightRadius: 14,
       padding: 12,
-      justifyContent: "space-between",
+      justifyContent: "center",
       overflow: "hidden",
+      gap: 32,
     }}
   >
     <View
       style={{
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 14,
         flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "flex-end",
+        flex: 1,
       }}
     >
       <View
         style={{
           justifyContent: "center",
-          alignItems: "center",
           flexDirection: "row",
-          gap: 6,
-          flex: 1,
+          alignItems: "center",
+          backgroundColor: Colors.accent[700],
+          paddingVertical: 4,
+          paddingHorizontal: 8,
+          borderRadius: 999,
         }}
       >
-        <View
-          style={{
-            width: 38,
-            height: 38,
-            borderRadius: 19,
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: Colors.neutral[100],
-          }}
+        <CText
+          weight="semibold"
+          size="xs"
+          color="neutral"
+          shade={100}
+          style={{ textAlign: "center" }}
         >
-          <Profile size={32} color={Colors.accent[500]} />
-        </View>
-        <View style={{ flex: 1, justifyContent: "flex-end" }}>
-          <CText weight="semibold" size="md">
-            Hi,Roman !
-          </CText>
-          <CText italic size="xs">
-            Proud Lenden User
-          </CText>
-        </View>
+          Net Balance
+        </CText>
       </View>
-
-      <View style={{ alignItems: "flex-end", gap: 4 }}>
-        <View
-          style={{
-            justifyContent: "flex-end",
-            flexDirection: "row",
-            alignItems: "center",
-            backgroundColor: Colors.accent[700],
-            paddingVertical: 4,
-            paddingHorizontal: 8,
-            borderRadius: 999,
-          }}
-        >
-          <CText
-            weight="semibold"
-            size="xs"
-            color="neutral"
-            shade={100}
-            style={{ textAlign: "center" }}
-          >
-            Net Balance
-          </CText>
-        </View>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-          <CText weight="medium" size="md" style={{ lineHeight: 24 }}>
-            NPR.{" "}
-            <CText weight="semibold" size="xlg" letterSpacing={1}>
-              -398
-              <CText weight="medium" size="ssm" letterSpacing={1}>
-                .52
-              </CText>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+        <CText weight="medium" size="md" style={{ lineHeight: 24 }}>
+          NPR.{" "}
+          <CText weight="semibold" size="xlg" letterSpacing={1}>
+            -398
+            <CText weight="medium" size="ssm" letterSpacing={1}>
+              .52
             </CText>
           </CText>
-          {/* <Eye size="20" color={Colors.accent[900]} /> */}
-        </View>
+        </CText>
+        {/* <Eye size="20" color={Colors.accent[900]} /> */}
       </View>
     </View>
 
     <View
       style={{
         flexDirection: "row",
+        flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        // paddingHorizontal: 16,
-        // borderWidth: 1,
-        gap: 0,
-        // width: "60%",
       }}
     >
+      <IconCover label="Expense" path="/(stack)/quickActions/expense">
+        <Moneys size={28} color={Colors.accent[200]} />
+      </IconCover>
       <IconCover label="Pay" path="/(stack)/quickActions/pay">
-        <Send2 size={28} color={Colors.accent[200]} />
+        <MoneySend size={28} color={Colors.accent[200]} />
       </IconCover>
       <IconCover
         label="Request"
@@ -212,7 +214,7 @@ const BalanceCard = () => (
           params: { from: "home" },
         }}
       >
-        <DirectInbox size={28} color={Colors.accent[200]} />
+        <MoneyRecive size={28} color={Colors.accent[200]} />
       </IconCover>
       <IconCover
         label="Statement"
@@ -297,18 +299,21 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaView
+      edges={["top"]}
       style={{
         flex: 1,
-        backgroundColor: Colors.neutral[900],
-        paddingHorizontal: 24,
+        backgroundColor: Colors.primary[500],
+
+        // paddingHorizontal: 24,
       }}
     >
       <ScrollView
-        contentContainerStyle={{
-          paddingBottom: 24,
-          justifyContent: "center",
-          alignItems: "center",
+        style={{
+          flex: 1,
+          position: "relative",
+          backgroundColor: Colors.neutral[900],
         }}
+        contentContainerStyle={{ paddingHorizontal: 24 }}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -319,17 +324,36 @@ const HomeScreen = () => {
           />
         }
       >
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: -1,
+            backgroundColor: Colors.primary[500],
+            height: 80,
+            // width: "100%",
+            borderBottomLeftRadius: 20,
+            borderBottomRightRadius: 20,
+          }}
+        />
         <Header />
-        {/* <Header />
         <View>
           <BalanceCard />
         </View>
         <View style={{ gap: 10, paddingTop: 12 }}>
           <ActionCard
+            label="Split Your Expenses"
+            description="Split your expenses in a group"
+            onPress={() => router.push("/(stack)/quickActions/expense")}
+            icon={<Moneys size={22} color={Colors.neutral[700]} />}
+          />
+          <ActionCard
             label="Pay Your Friends"
             description="Pay your friends in a group"
             onPress={() => router.push("/(stack)/quickActions/pay")}
-            icon={<Send2 size={22} color={Colors.neutral[100]} />}
+            icon={<MoneySend size={22} color={Colors.neutral[700]} />}
           />
           <ActionCard
             label="Request Money"
@@ -340,7 +364,7 @@ const HomeScreen = () => {
                 params: { from: "home" },
               })
             }
-            icon={<DirectInbox size={22} color={Colors.neutral[100]} />}
+            icon={<MoneyRecive size={22} color={Colors.neutral[700]} />}
           />
           <ActionCard
             label="View Statement"
@@ -351,15 +375,15 @@ const HomeScreen = () => {
                 params: { from: "home" },
               })
             }
-            icon={<TableDocument size={22} color={Colors.neutral[100]} />}
+            icon={<TableDocument size={22} color={Colors.neutral[700]} />}
           />
-        </View> */}
+        </View>
 
-        <View style={{ justifyContent: "center", alignItems: "center" }}>
+        {/* <View style={{ justifyContent: "center", alignItems: "center" }}>
           <CText color="primary" size="lg">
             Under Construction
           </CText>
-        </View>
+        </View> */}
 
         {/* <View style={{ paddingTop: 16 }}>
           <View

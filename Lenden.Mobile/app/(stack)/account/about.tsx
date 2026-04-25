@@ -8,66 +8,64 @@ const appVersion = "1.0.0";
 
 export default function AboutScreen() {
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.neutral[950] }}>
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 16 }}
-      >
-        <View style={{ gap: 10 }}>
-          <View
-            style={{
-              borderRadius: 12,
-              backgroundColor: Colors.neutral[800],
-              borderWidth: 1,
-              borderColor: Colors.neutral[700],
-              paddingHorizontal: 16,
-              paddingVertical: 14,
-              gap: 8,
-            }}
-          >
-            <CText size="md" color={Colors.neutral[100]} weight="bold">
-              {appName}
-            </CText>
-            <CText size="sm" color={Colors.neutral[300]}>
-              Split expenses, track balances, and settle up with friends and
-              groups in one place.
-            </CText>
-          </View>
-
-          <View
-            style={{
-              borderRadius: 12,
-              backgroundColor: Colors.neutral[800],
-              borderWidth: 1,
-              borderColor: Colors.neutral[700],
-              paddingVertical: 4,
-            }}
-          >
-            <InfoRow label="Version" value={appVersion} />
-            <InfoRow label="Build" value="100" isLast />
-          </View>
-
-          <View
-            style={{
-              borderRadius: 12,
-              backgroundColor: Colors.neutral[800],
-              borderWidth: 1,
-              borderColor: Colors.neutral[700],
-              paddingHorizontal: 16,
-              paddingVertical: 14,
-              gap: 6,
-            }}
-          >
-            <CText size="sm" color={Colors.neutral[200]} weight="semibold">
-              Contact
-            </CText>
-            <CText size="xs" color={Colors.neutral[400]}>
-              support@lenden.app
-            </CText>
-          </View>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: Colors.neutral[950] }}
+      contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 16 }}
+    >
+      <View style={{ gap: 10 }}>
+        <View
+          style={{
+            borderRadius: 12,
+            backgroundColor: Colors.neutral[800],
+            borderWidth: 1,
+            borderColor: Colors.neutral[700],
+            paddingHorizontal: 16,
+            paddingVertical: 14,
+            gap: 8,
+          }}
+        >
+          <CText size="md" color={Colors.neutral[100]} weight="bold">
+            {appName}
+          </CText>
+          <CText size="sm" color={Colors.neutral[300]}>
+            Split expenses, track balances, and settle up with friends and
+            groups in one place.
+          </CText>
         </View>
-      </ScrollView>
-    </SafeAreaView>
+
+        <View
+          style={{
+            borderRadius: 12,
+            backgroundColor: Colors.neutral[800],
+            borderWidth: 1,
+            borderColor: Colors.neutral[700],
+            paddingVertical: 4,
+          }}
+        >
+          <InfoRow label="Version" value={appVersion} />
+          <InfoRow label="Build" value="100" isLast />
+        </View>
+
+        <View
+          style={{
+            borderRadius: 12,
+            backgroundColor: Colors.neutral[800],
+            borderWidth: 1,
+            borderColor: Colors.neutral[700],
+            paddingHorizontal: 16,
+            paddingVertical: 14,
+            gap: 6,
+          }}
+        >
+          <CText size="sm" color={Colors.neutral[200]} weight="semibold">
+            Contact
+          </CText>
+          <CText size="xs" color={Colors.neutral[400]}>
+            support@lenden.app
+          </CText>
+        </View>
+      </View>
+    </ScrollView>
   );
 }
 

@@ -61,7 +61,7 @@ export default function _layout() {
           }}
         />
 
-        <Tabs.Screen
+        {/* <Tabs.Screen
           name="quickAction"
           options={{
             title: "",
@@ -95,9 +95,9 @@ export default function _layout() {
               </Pressable>
             ),
           }}
-        />
+        /> */}
 
-        <Tabs.Screen
+        {/* <Tabs.Screen
           name="friends"
           options={{
             headerShown: false,
@@ -106,7 +106,7 @@ export default function _layout() {
               <Profile2User size={TAB_ICON_SIZE} color={color} variant="Bold" />
             ),
           }}
-        />
+        /> */}
 
         <Tabs.Screen
           name="account"
@@ -117,8 +117,6 @@ export default function _layout() {
             ),
           }}
         />
-
-        
       </Tabs>
     </SafeAreaProvider>
   );

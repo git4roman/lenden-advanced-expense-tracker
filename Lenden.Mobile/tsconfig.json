@@ -13,6 +13,9 @@
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
     "**/*.jsx",
-    "**/*.js"
-, "metro.config.cjs"  ]
+    "**/*.js",
+    "metro.config.cjs",
+    "app/(tabs)/quickAction",
+    "app/(tabs)/friends"
+  ]
 }

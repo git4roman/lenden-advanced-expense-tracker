@@ -274,8 +274,7 @@ export default function Account() {
                   ))}
                 </View>
               </View>
-              
-                  
+
               {/* <View
                 style={{
                   flexDirection: "column",
@@ -350,6 +349,12 @@ export default function Account() {
                     title="Logout"
                     rightIcon={ChervonRight}
                     onPress={() => setIsLogoutModalVisible(true)}
+                  />
+                  <DividedPattern
+                    leftIcon={InfoIcon}
+                    title="eSewa"
+                    rightIcon={ChervonRight}
+                    onPress={() => router.push("/(stack)/account/esewa")}
                   />
                 </View>
               </View>

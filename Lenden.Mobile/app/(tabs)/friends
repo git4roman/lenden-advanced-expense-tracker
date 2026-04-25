@@ -171,7 +171,8 @@ const FriendsScreen = () => {
             </View>
           ) : (
             friendList.map((friend) => {
-              const fullName = `${friend.givenName} ${friend.familyName}`.trim();
+              const fullName =
+                `${friend.givenName} ${friend.familyName}`.trim();
               return (
                 <View
                   key={friend.id}
@@ -205,7 +206,12 @@ const FriendsScreen = () => {
                         backgroundColor: Colors.accent[900],
                       }}
                     >
-                      <CText size="ssm" color="accent" shade={400} weight="bold">
+                      <CText
+                        size="ssm"
+                        color="accent"
+                        shade={400}
+                        weight="bold"
+                      >
                         {(fullName || friend.email).charAt(0).toUpperCase()}
                       </CText>
                     </View>
