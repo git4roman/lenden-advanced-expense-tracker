@@ -12,7 +12,7 @@ import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { ArrowRight2 } from "iconsax-react-nativejs";
 import { router } from "expo-router";
-import { CreateGroupModal } from "@/src/modules/groups/components/create-group.modal";
+import { CreateGroupModal } from "@/src/modules/groups/components/create-group/create-group.modal";
 import { getColorFromString } from "@/src/shared/utils/get-random-color.utils";
 import { getInitials } from "@/src/shared/utils/get-initials.utils";
 import { useGetGroupsQuery } from "@/src/shared/store/apiSlices/group-slice.api";

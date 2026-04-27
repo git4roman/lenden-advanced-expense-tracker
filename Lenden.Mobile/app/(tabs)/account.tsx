@@ -356,6 +356,12 @@ export default function Account() {
                     rightIcon={ChervonRight}
                     onPress={() => router.push("/(stack)/account/esewa")}
                   />
+                  <DividedPattern
+                    leftIcon={InfoIcon}
+                    title="contacts"
+                    rightIcon={ChervonRight}
+                    onPress={() => router.push("/(stack)/account/contacts")}
+                  />
                 </View>
               </View>
             </View>

@@ -3,12 +3,12 @@ import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { FontAwesome5 } from "@expo/vector-icons";
 import {
-  DirectInbox,
+  // DirectInbox,
   MoneyRecive,
   Moneys,
   MoneySend,
   Profile,
-  Send2,
+  // Send2,
   TableDocument,
 } from "iconsax-react-nativejs";
 import React, { useCallback, useState } from "react";
@@ -20,7 +20,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ActivityItem } from "../../src/modules/groups/components/activity-item";
+// import { ActivityItem } from "../../src/modules/groups/components/activity-item";
 import { Href, router } from "expo-router";
 import { useTheme } from "@/src/shared/providers/ThemeProviders";
 
@@ -216,7 +216,7 @@ const BalanceCard = () => (
       >
         <MoneyRecive size={28} color={Colors.accent[200]} />
       </IconCover>
-      <IconCover
+      {/* <IconCover
         label="Statement"
         path={{
           pathname: "/quickActions/statement",
@@ -224,7 +224,7 @@ const BalanceCard = () => (
         }}
       >
         <TableDocument size={28} color={Colors.accent[200]} />
-      </IconCover>
+      </IconCover> */}
     </View>
   </ImageBackground>
 );
@@ -366,7 +366,7 @@ const HomeScreen = () => {
             }
             icon={<MoneyRecive size={22} color={Colors.neutral[700]} />}
           />
-          <ActionCard
+          {/* <ActionCard
             label="View Statement"
             description="See your recent statement summary"
             onPress={() =>
@@ -376,7 +376,7 @@ const HomeScreen = () => {
               })
             }
             icon={<TableDocument size={22} color={Colors.neutral[700]} />}
-          />
+          /> */}
         </View>
 
         {/* <View style={{ justifyContent: "center", alignItems: "center" }}>
