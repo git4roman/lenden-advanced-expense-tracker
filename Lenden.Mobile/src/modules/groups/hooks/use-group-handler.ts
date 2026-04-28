@@ -7,34 +7,43 @@ import {
 } from "@/src/shared/store/apiSlices/group-slice.api";
 import { GroupMember } from "../types/group-member";
 
+type SelectedGroupUser = {
+  id: string;
+  fullName: string;
+  phone: string;
+  email: string;
+};
+
+export type CreateGroupPayloadType = {
+  name: string;
+  imgUrl: string;
+  users: SelectedGroupUser[];
+};
+
 export const useGroupHandler = (onClose: () => void) => {
   const [groupName, setGroupName] = useState("My Group");
   const [groupImageUri, setGroupImageUri] = useState("");
+  const [selectedUsers, setSelectedUsers] = useState<SelectedGroupUser[]>([]);
+
   const [createGroup, { isLoading: isCreateGroupLoading }] =
     useCreateGroupMutation();
   const [deleteGroup, { isLoading: isDeleteGroupLoading }] =
     useDeleteGroupMutation();
-  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
-  const [suggestedMembers, setSuggestedMembers] = useState<GroupMember[]>([]);
 
   const handleCreateGroup = async () => {
     try {
-      console.log("Create Group", {
-        groupName,
-        groupImageUri,
-        members: selectedMembers,
-      });
+      console.log("Create Group", JSON.stringify(selectedUsers, null, 3));
 
-      const response = await createGroup({
-        name: groupName,
-        imageUrl: groupImageUri,
-        userIds: selectedMembers,
-      }).unwrap();
+      // const response = await createGroup({
+      //   name: groupName,
+      //   imageUrl: groupImageUri,
+      //   users: selectedUsers,
+      // }).unwrap();
 
       Toast.show({ type: "success", text1: "Group Creation Successful" });
       setGroupName("");
       setGroupImageUri("");
-      setSelectedMembers([]);
+      setSelectedUsers([]);
       onClose();
 
       router.replace("/(tabs)/groups");
@@ -54,6 +63,7 @@ export const useGroupHandler = (onClose: () => void) => {
         groupName,
         groupImageUri,
       }).unwrap();
+
       Toast.show({ type: "success", text1: "Group Deletion Successful" });
       router.replace("/(tabs)/groups");
     } catch (error: any) {
@@ -70,10 +80,9 @@ export const useGroupHandler = (onClose: () => void) => {
     setGroupName,
     groupImageUri,
     setGroupImageUri,
-    selectedMembers,
-    setSelectedMembers,
-    suggestedMembers,
-    setSuggestedMembers,
+    selectedMembers: selectedUsers,
+    setSelectedMembers: setSelectedUsers,
+
     handleCreateGroup,
     handleDeleteGroup,
     isCreateGroupLoading,

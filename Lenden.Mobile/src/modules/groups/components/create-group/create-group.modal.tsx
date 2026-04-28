@@ -19,6 +19,7 @@ import { useGetFriendsQuery } from "@/src/shared/store/apiSlices/friends-slice.a
 import { SafeAreaView } from "react-native-safe-area-context";
 import StepGroupInfo from "./step-1";
 import StepAddMembers from "./step-2";
+import { router } from "expo-router";
 
 const { width } = Dimensions.get("window");
 
@@ -28,18 +29,12 @@ type Props = {
   members: GroupMember[];
 };
 
-type Friend = {
+type SelectedGroupUser = {
   id: string;
-  givenName: string;
-  familyName: string;
+  fullName: string;
+  phone: string;
   email: string;
 };
-
-// ─── Step 1: Group Info ───────────────────────────────────────────────────────
-
-// ─── Step 2: Add Members ──────────────────────────────────────────────────────
-
-// ─── Main Modal ───────────────────────────────────────────────────────────────
 
 export const CreateGroupModal = ({ visible, onClose, members }: Props) => {
   const [step, setStep] = useState<1 | 2>(1);
@@ -52,8 +47,6 @@ export const CreateGroupModal = ({ visible, onClose, members }: Props) => {
     setGroupName,
     groupImageUri,
     setGroupImageUri,
-    suggestedMembers,
-    setSuggestedMembers,
   } = useGroupHandler(onClose);
 
   const handleCancel = () => {
@@ -61,13 +54,13 @@ export const CreateGroupModal = ({ visible, onClose, members }: Props) => {
     setGroupName("");
     setGroupImageUri("");
     setSelectedMembers([]);
-    setSuggestedMembers([]);
     onClose();
   };
 
-  const handleCreate = (memberIds: string[]) => {
-    setSelectedMembers(memberIds);
-    handleCreateGroup();
+  const onCreateGroup = async () => {
+    await handleCreateGroup();
+    setStep(1);
+    router.replace("/(tabs)/groups");
   };
 
   return (
@@ -90,7 +83,9 @@ export const CreateGroupModal = ({ visible, onClose, members }: Props) => {
         ) : (
           <StepAddMembers
             onBack={() => setStep(1)}
-            onCreateGroup={handleCreate}
+            selectedMembers={selectedMembers}
+            setSelectedMembers={setSelectedMembers}
+            onCreateGroup={onCreateGroup}
           />
         )}
       </SafeAreaView>

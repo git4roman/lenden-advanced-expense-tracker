@@ -16,15 +16,21 @@ type CleanContact = {
   name: string;
   phones: string[];
   emails: string[];
-  organization?: string;
   jobTitle?: string;
 };
 
-type SelectedParticipant = {
+type SelectedGroupUser = {
   id: string;
   fullName: string;
   phone: string;
   email: string;
+};
+
+type Props = {
+  onBack: () => void;
+  onCreateGroup: () => void;
+  selectedMembers: SelectedGroupUser[];
+  setSelectedMembers: React.Dispatch<React.SetStateAction<SelectedGroupUser[]>>;
 };
 
 const normalizePhone = (num?: string): string => {
@@ -83,12 +89,10 @@ const getAvatarColor = (name: string): string => {
 const StepAddMembers = ({
   onBack,
   onCreateGroup,
-}: {
-  onBack: () => void;
-  onCreateGroup: (memberIds: string[]) => void;
-}) => {
+  selectedMembers,
+  setSelectedMembers,
+}: Props) => {
   const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState<SelectedParticipant[]>([]);
   const [contacts, setContacts] = useState<CleanContact[]>([]);
   const [phonePickerContact, setPhonePickerContact] =
     useState<CleanContact | null>(null);
@@ -117,7 +121,6 @@ const StepAddMembers = ({
           name: c.name || "No Name",
           phones,
           emails,
-          organization: c.organization,
           jobTitle: c.jobTitle,
         });
       } else {
@@ -147,16 +150,19 @@ const StepAddMembers = ({
     );
   }, [contacts, search]);
 
-  const isSelected = (id: string) => selected.some((s) => s.id === id);
+  const isSelected = (id: string) => selectedMembers.some((s) => s.id === id);
 
   const handleContactPress = (contact: CleanContact) => {
     if (isSelected(contact.id)) {
-      setSelected((prev) => prev.filter((s) => s.id !== contact.id));
+      setSelectedMembers((prev) => prev.filter((s) => s.id !== contact.id));
       return;
     }
 
+    const exists = selectedMembers.some((s) => s.id === contact.id);
+    if (exists) return;
+
     if (contact.phones.length <= 1) {
-      setSelected((prev) => [
+      setSelectedMembers((prev) => [
         ...prev,
         {
           id: contact.id,
@@ -173,25 +179,24 @@ const StepAddMembers = ({
   };
 
   const handlePhonePick = (contact: CleanContact, phone: string) => {
-    setSelected((prev) => [
-      ...prev,
-      {
-        id: contact.id,
-        fullName: contact.name,
-        phone,
-        email: contact.emails[0] || "",
-      },
-    ]);
+    setSelectedMembers((prev) => {
+      if (prev.some((p) => p.id === contact.id)) return prev;
+
+      return [
+        ...prev,
+        {
+          id: contact.id,
+          fullName: contact.name,
+          phone,
+          email: contact.emails[0] || "",
+        },
+      ];
+    });
     setPhonePickerContact(null);
   };
 
   const handleUnselect = (id: string) => {
-    setSelected((prev) => prev.filter((s) => s.id !== id));
-  };
-
-  const handleCreateGroup = () => {
-    const memberIds = selected.map((s) => s.id);
-    onCreateGroup(memberIds);
+    setSelectedMembers((prev) => prev.filter((s) => s.id !== id));
   };
 
   // Reusable Avatar Component
@@ -232,7 +237,7 @@ const StepAddMembers = ({
             Add Members
           </CText>
           <CText size="ssm" color="neutral" shade={500}>
-            Step 2 of 2 — {selected.length} selected
+            Step 2 of 2 — {selectedMembers.length} selected
           </CText>
         </View>
       </View>
@@ -267,7 +272,7 @@ const StepAddMembers = ({
         keyboardShouldPersistTaps="handled"
       >
         {/* Selected Members - Horizontal Circular Chips */}
-        {selected.length > 0 && (
+        {selectedMembers.length > 0 && (
           <View
             style={{
               paddingVertical: 12,
@@ -291,7 +296,7 @@ const StepAddMembers = ({
               showsHorizontalScrollIndicator={false}
               style={{ paddingVertical: 4 }}
             >
-              {selected.map((participant) => (
+              {selectedMembers.map((participant) => (
                 <View
                   key={participant.id}
                   style={{
@@ -448,7 +453,7 @@ const StepAddMembers = ({
         }}
       >
         <Pressable
-          onPress={handleCreateGroup}
+          onPress={onCreateGroup}
           style={{
             backgroundColor: Colors.accent[500],
             padding: 14,
@@ -458,7 +463,7 @@ const StepAddMembers = ({
         >
           <CText weight="bold">
             Create Group
-            {selected.length > 0 ? ` (${selected.length})` : ""}
+            {selectedMembers.length > 0 ? ` (${selectedMembers.length})` : ""}
           </CText>
         </Pressable>
 
