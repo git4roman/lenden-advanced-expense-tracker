@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using Lenden.Application.DTOs;
 using Lenden.Application.DTOs.Auth;
-using Lenden.Application.DTOs.User;
 using Lenden.Application.Interfaces;
 using Lenden.Application.Interfaces.Repositories;
 using Lenden.Application.Interfaces.Services;
@@ -132,7 +131,7 @@ public class AuthService: IAuthService
         await _unitOfWork.SaveChangesAsync();
     }
 
-    public async Task ChangePassword(UserEntity user, ChangePasswordRequest request)
+    public async Task ChangePassword(UserEntity user, ChangePasswordRequestDto request)
     {
         var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.OldPassword);
         if (result == PasswordVerificationResult.Failed)

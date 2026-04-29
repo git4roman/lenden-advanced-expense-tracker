@@ -13,6 +13,8 @@ public interface IUserRepository
     
     Task<List<UserIdandPublicIdDto>> GetUsersIdsInBulkWithPublicIdAsync(List<Guid> publicIds, CancellationToken ct = default);
     Task<List<UserEntity>> GetUsersInBulkWithPublicIdAsync(List<Guid> publicIds, CancellationToken ct = default);
+    Task<List<UserEntity>> GetUsersInBulkWithPhoneNumberAsync(List<String> phoneNumbers, CancellationToken ct = default);
     Task UpdateUserAsync(UserEntity user);
+    Task AddUsersInBulkAsync(List<UserEntity> users, CancellationToken ct = default);
 
 }

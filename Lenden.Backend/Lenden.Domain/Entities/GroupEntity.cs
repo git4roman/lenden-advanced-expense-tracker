@@ -34,7 +34,7 @@ public class GroupEntity
 
         var role = isCreator ? UserGroupRole.Admin : UserGroupRole.Member;
         var newMember = new UserGroupEntity(
-            userId: user.Id,
+            user: user,
             group: group,
             role: role,
             invitedByUserId
@@ -42,7 +42,7 @@ public class GroupEntity
         _members.Add(newMember);
     }
     
-    public void AddMembersBulk(GroupEntity group,IEnumerable<UserEntity> users, long invitedByUserId)
+    public void AddMembersBulk(IEnumerable<UserEntity> users, long invitedByUserId)
     {
         var existingUserIds = _members
             .Where(m => m.Status == GroupMembershipStatus.Active)
@@ -55,8 +55,8 @@ public class GroupEntity
                 continue;
             
             _members.Add(new UserGroupEntity(
-                userId: user.Id,
-                group: group,
+                user: user,
+                group: this,
                 role: UserGroupRole.Member,
                 invitedByUserId
             ));

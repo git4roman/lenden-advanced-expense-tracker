@@ -1,4 +1,5 @@
 using Lenden.Application.DTOs;
+using Lenden.Application.DTOs.Auth;
 using Lenden.Application.Interfaces.Services;
 using Lenden.Application.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -108,7 +109,7 @@ namespace Lenden.Web.Controllers.API
         }
 
         [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPassword(ChangePasswordRequest request)
+        public async Task<IActionResult> ResetPassword(ResetPasswordRequestDto request)
         {
             try
             {
@@ -119,6 +120,21 @@ namespace Lenden.Web.Controllers.API
             catch (Exception e)
             {
                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordRequestDto request)
+        {
+            try
+            {
+                var currentUser = await _authService.ValidateUserAsync(User);
+                await _authService.ChangePassword(currentUser, request);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
             }
         }
 

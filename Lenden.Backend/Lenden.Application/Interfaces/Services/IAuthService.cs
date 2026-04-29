@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using Lenden.Application.DTOs;
 using Lenden.Application.DTOs.Auth;
-using Lenden.Application.DTOs.User;
 using Lenden.Domain.Entities;
 
 namespace Lenden.Application.Interfaces.Services;
@@ -16,7 +15,7 @@ public interface IAuthService
    Task ResetPassword(UserEntity user, ResetPasswordRequestDto request);
    Task ForgetPassword(ForgetPasswordRequest request);
    Task<AuthResponseDto?> GoogleHandlerAsync(GoogleLoginDto request);
-    Task ChangePassword(UserEntity user, ChangePasswordRequest request);
+    Task ChangePassword(UserEntity user, ChangePasswordRequestDto request);
 
 
 

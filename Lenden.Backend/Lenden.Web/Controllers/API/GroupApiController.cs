@@ -83,7 +83,7 @@ public class GroupApiController : ControllerBase
     {
         var currentUser = await _authService.ValidateUserAsync(User, ct);
         
-        await _groupService.CreateGroupAsync(currentUser.Slug,request);
+        await _groupService.CreateGroupAsync(currentUser,request);
         return Ok();
     }
 

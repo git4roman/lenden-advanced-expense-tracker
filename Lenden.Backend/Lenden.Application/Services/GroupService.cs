@@ -4,6 +4,7 @@ using Lenden.Application.Interfaces;
 using Lenden.Application.Interfaces.Services;
 using Lenden.Application.Managers;
 using Lenden.Domain.Entities;
+using Lenden.Domain.ValueObjects;
 
 namespace Lenden.Application.Services;
 
@@ -16,31 +17,47 @@ public class GroupService : IGroupService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task CreateGroupAsync(Guid creatorId,CreateGroupRequest request, CancellationToken ct = default)
+    public async Task CreateGroupAsync(UserEntity creator, CreateGroupRequest request, CancellationToken ct = default)
     {
-        var creator = await _unitOfWork.UserRepository.GetUserByPublicIdAsync(creatorId, ct);
-        if (creator is null)
-            throw new Exception("Creator not found");
-
+        // 1. Create group and add creator
         var group = new GroupEntity(request.Name, request.ImageUrl, creator.Id);
-
-        group.AddMember(group,creator,creator.Id, true);
-        try
-        {
-            var publicIds = request.UserIds
-                .Distinct()
-                .ToList();
-
-            var users = await _unitOfWork.UserRepository.GetUsersInBulkWithPublicIdAsync(publicIds, ct);
-            group.AddMembersBulk(group,users,creator.Id);
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
+        group.AddMember(group, creator, creator.Id, isCreator: true);
         await _unitOfWork.GroupRepository.AddAsync(group, ct);
         await _unitOfWork.SaveChangesAsync(ct);
-        // return;
+
+        // 2. Deduplicate
+        var requestedUsers = request.RequestedUsers
+            .GroupBy(x => x.PhoneNumber)
+            .Select(g => g.First())
+            .ToList();
+
+        var phoneNumbers = requestedUsers.Select(x => x.PhoneNumber).ToList();
+
+        // 3. Fetch existing users
+        var existingUsers = await _unitOfWork.UserRepository
+            .GetUsersInBulkWithPhoneNumberAsync(phoneNumbers, ct);
+
+        var existingPhones = existingUsers
+            .Select(x => x.UserInfo.PhoneNumber)
+            .ToHashSet();
+
+        // 4. Create missing users
+        var newUsers = requestedUsers
+            .Where(u => !existingPhones.Contains(u.PhoneNumber))
+            .Select(u =>
+            {
+                var (firstName, lastName) = SplitFullName(u.FullName);
+                return new UserEntity(Email.Create(u.Email), firstName, lastName, u.PhoneNumber);
+            })
+            .ToList();
+
+        if (newUsers.Count > 0)
+            await _unitOfWork.UserRepository.AddUsersInBulkAsync(newUsers, ct);
+
+        // 5. Merge and add to group — single SaveChanges resolves all IDs
+        var allUsers = existingUsers.Concat(newUsers).ToList();
+        group.AddMembersBulk(allUsers, creator.Id);
+        await _unitOfWork.SaveChangesAsync(ct);
     }
 
     public async Task UpdateGroupAsync(Guid groupId, UpdateGroupRequest request, CancellationToken ct = default)
@@ -62,7 +79,7 @@ public class GroupService : IGroupService
         if (users is null)
             throw new Exception("Users not found");
 
-        group.AddMembersBulk(group,users, invitedByUserId);
+        group.AddMembersBulk(users, invitedByUserId);
         await _unitOfWork.SaveChangesAsync(ct);
     }
 
@@ -169,6 +186,15 @@ public class GroupService : IGroupService
         return transactions;
         
 
+    }
+    
+    private static (string First, string Last) SplitFullName(string fullName)
+    {
+        var parts = fullName.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        return (
+            parts.FirstOrDefault() ?? string.Empty,
+            parts.Length > 1 ? string.Join(" ", parts.Skip(1)) : string.Empty
+        );
     }
     
     public class Transaction

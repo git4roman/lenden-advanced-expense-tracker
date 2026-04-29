@@ -106,7 +106,7 @@ namespace Lenden.Web.Controllers.API
         }
 
         [HttpPost("change-passsword")]
-        public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
+        public async Task<IActionResult> ChangePassword(ChangePasswordRequestDto request)
         {
             try
             {

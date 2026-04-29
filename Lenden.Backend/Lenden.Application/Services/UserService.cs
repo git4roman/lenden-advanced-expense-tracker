@@ -1,5 +1,4 @@
 ﻿using Lenden.Application.DTOs;
-using Lenden.Application.DTOs.User;
 using Lenden.Application.Interfaces;
 using Lenden.Application.Interfaces.Services;
 using Lenden.Domain.Entities;

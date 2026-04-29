@@ -21,9 +21,9 @@ public class UserGroupEntity
     public long? InvitedByUserId { get; private set; }
     public UserEntity InvitedByUser { get; private set; }
 
-    public UserGroupEntity(long userId, GroupEntity group, UserGroupRole? role , long? invitedByUserId = null)
+    public UserGroupEntity(UserEntity user, GroupEntity group, UserGroupRole? role , long? invitedByUserId = null)
     {
-        UserId = userId;
+        User = user;
         Group = group;
         Role = role ?? UserGroupRole.Member;
         InvitedByUserId = invitedByUserId;

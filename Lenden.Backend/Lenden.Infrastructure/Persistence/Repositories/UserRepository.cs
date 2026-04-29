@@ -52,6 +52,13 @@ public class UserRepository: IUserRepository
             .ToListAsync();
     }
 
+    public async Task<List<UserEntity>> GetUsersInBulkWithPhoneNumberAsync(List<string> phoneNumbers, CancellationToken ct = default)
+    {
+        return await _dbContext.Users
+            .Where(u => phoneNumbers.Contains(u.UserInfo.PhoneNumber))
+            .ToListAsync();
+    }
+
     public async Task<UserEntity?> GetUserWithInfoByIdAsync(long userId, CancellationToken cancellationToken = default)
     {
         var user = await _dbContext.Users.Include(u=>u.UserInfo).FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
@@ -62,5 +69,13 @@ public class UserRepository: IUserRepository
     {
         _dbContext.Users.Update(user);
         return Task.CompletedTask;
+    }
+
+    public async Task AddUsersInBulkAsync(List<UserEntity> users, CancellationToken ct = default)
+    {
+        if (users == null || users.Count == 0)
+            return;
+
+        await _dbContext.Users.AddRangeAsync(users, ct);
     }
 }

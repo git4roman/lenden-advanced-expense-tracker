@@ -10,7 +10,7 @@ public class UserEntity
         _sessions = new List<AuthSessionEntity>();
         _authProviders = new List<AuthProviderEntity>();
     }
-    public UserEntity(Email email, string givenName, string familyName, string passwordHash=null)
+    public UserEntity(Email email, string givenName, string familyName,string phoneNumber, string passwordHash=null)
     {
         Email = email;
         PasswordHash = passwordHash;
@@ -24,7 +24,7 @@ public class UserEntity
         FamilyName = familyName;
         Role = UserRole.Customer;
         Username = GenerateUsername( givenName, familyName);
-
+        CreateUserInfo("",phoneNumber,"",DateTime.MinValue);
     }
     
     private static string GenerateUsername(string givenName, string familyName)
