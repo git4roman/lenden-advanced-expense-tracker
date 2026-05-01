@@ -54,7 +54,7 @@ public class UserRepository: IUserRepository
 
     public async Task<List<UserEntity>> GetUsersInBulkWithPhoneNumberAsync(List<string> phoneNumbers, CancellationToken ct = default)
     {
-        return await _dbContext.Users
+        return await _dbContext.Users.Include(u=>u.UserInfo)
             .Where(u => phoneNumbers.Contains(u.UserInfo.PhoneNumber))
             .ToListAsync();
     }

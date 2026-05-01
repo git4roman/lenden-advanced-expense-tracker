@@ -1,4 +1,5 @@
 ﻿using Lenden.Application.DTOs;
+using Lenden.Application.DTOs.Group;
 using Lenden.Application.Services;
 using Lenden.Domain.Entities;
 
@@ -6,7 +7,7 @@ namespace Lenden.Application.Interfaces.Services;
 
 public interface IGroupService
 {
-    Task CreateGroupAsync(UserEntity Creator, CreateGroupRequest request, CancellationToken ct = default);
+    Task CreateGroupAsync(UserEntity Creator, CreateGroupRequestDto request, CancellationToken ct = default);
 
     Task UpdateGroupAsync(Guid groupId, UpdateGroupRequest request, CancellationToken ct = default);
 

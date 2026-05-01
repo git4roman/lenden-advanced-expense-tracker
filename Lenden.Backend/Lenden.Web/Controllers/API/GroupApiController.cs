@@ -1,4 +1,5 @@
 using Lenden.Application.DTOs;
+using Lenden.Application.DTOs.Group;
 using Lenden.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -79,7 +80,7 @@ public class GroupApiController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateGroup(CreateGroupRequest request, CancellationToken ct = default)
+    public async Task<IActionResult> CreateGroup(CreateGroupRequestDto request, CancellationToken ct = default)
     {
         var currentUser = await _authService.ValidateUserAsync(User, ct);
         
@@ -98,10 +99,17 @@ public class GroupApiController : ControllerBase
     [HttpPost("{groupId:guid}/members")]
     public async Task<IActionResult> AddMember(Guid groupId, AddMemberRequestDto requestDto,CancellationToken ct = default)
     {
-        var currentUser = await _authService.ValidateUserAsync(User, ct);
-        // await _groupManager.EnsureGroupAdminAsync(groupId, User, ct);
-        await _groupService.AddMemberAsync(groupId, requestDto, currentUser.Id);
-        return NoContent();
+        try
+        {
+            var currentUser = await _authService.ValidateUserAsync(User, ct);
+            // await _groupManager.EnsureGroupAdminAsync(groupId, User, ct);
+            await _groupService.AddMemberAsync(groupId, requestDto, currentUser.Id);
+            return NoContent();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new { message = e.Message });
+        }
     }
 
     [HttpPost("{groupId:guid}/leave")]

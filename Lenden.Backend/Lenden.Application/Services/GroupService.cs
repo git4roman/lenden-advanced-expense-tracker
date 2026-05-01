@@ -1,5 +1,6 @@
 ﻿using System.Transactions;
 using Lenden.Application.DTOs;
+using Lenden.Application.DTOs.Group;
 using Lenden.Application.Interfaces;
 using Lenden.Application.Interfaces.Services;
 using Lenden.Application.Managers;
@@ -17,7 +18,7 @@ public class GroupService : IGroupService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task CreateGroupAsync(UserEntity creator, CreateGroupRequest request, CancellationToken ct = default)
+    public async Task CreateGroupAsync(UserEntity creator, CreateGroupRequestDto request, CancellationToken ct = default)
     {
         // 1. Create group and add creator
         var group = new GroupEntity(request.Name, request.ImageUrl, creator.Id);
@@ -75,11 +76,37 @@ public class GroupService : IGroupService
     {
       var group= await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId, ct);
       if(group is null) throw new Exception("Group not found");
-        var users = await _unitOfWork.UserRepository.GetUsersInBulkWithPublicIdAsync(requestDto.UserIds, ct);
-        if (users is null)
-            throw new Exception("Users not found");
+      
+      var requestedUsers = requestDto.RequestedUsers
+          .GroupBy(x => x.PhoneNumber)
+          .Select(g => g.First())
+          .ToList();
+      
+        var phoneNumbers = requestedUsers.Select(x => x.PhoneNumber).ToList();
+      
+        var existingUsers = await _unitOfWork.UserRepository
+            .GetUsersInBulkWithPhoneNumberAsync(phoneNumbers, ct);
 
-        group.AddMembersBulk(users, invitedByUserId);
+        var existingPhones = existingUsers
+            .Select(x => x.UserInfo.PhoneNumber)
+            .ToHashSet();
+        
+        var newUsers = requestedUsers
+            .Where(u => !existingPhones.Contains(u.PhoneNumber))
+            .Select(u =>
+            {
+                var (firstName, lastName) = SplitFullName(u.FullName);
+                return new UserEntity(Email.Create(u.Email), firstName, lastName, u.PhoneNumber);
+            })
+            .ToList();
+
+        if (newUsers.Count > 0)
+            await _unitOfWork.UserRepository.AddUsersInBulkAsync(newUsers, ct);
+        
+        var allUsers = existingUsers.Concat(newUsers).ToList();
+        
+        
+        group.AddMembersBulk(allUsers, invitedByUserId);
         await _unitOfWork.SaveChangesAsync(ct);
     }
 
