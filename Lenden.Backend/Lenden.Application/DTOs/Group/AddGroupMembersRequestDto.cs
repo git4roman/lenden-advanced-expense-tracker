@@ -1,4 +1,5 @@
 ﻿namespace Lenden.Application.DTOs.Group;
 
-public record AddGroupMembersRequestDto();
-public record AddGroupMembersResponseDto();
+public record AddGroupMemberRequestDto(List<RequestedUser> RequestedUsers);
+
+public record AddGroupMembersResponseDto(string Message);

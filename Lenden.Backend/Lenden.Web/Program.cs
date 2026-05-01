@@ -43,6 +43,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseGlobalExceptionHandler();
 app.UseCors("AllowAll");
 app.UseRouting();
 app.UseAuthentication();

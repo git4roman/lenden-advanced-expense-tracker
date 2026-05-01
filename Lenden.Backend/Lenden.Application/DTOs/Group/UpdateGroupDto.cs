@@ -1,4 +1,5 @@
 ﻿namespace Lenden.Application.DTOs.Group;
 
-public record UpdateGroupRequestDto();
-public record UpdateGroupResponseDto();
+public record UpdateGroupRequestDto(string Name, string? ImageUrl);
+
+public record UpdateGroupResponseDto(string Message);

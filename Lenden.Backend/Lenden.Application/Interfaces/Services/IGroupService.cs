@@ -7,11 +7,11 @@ namespace Lenden.Application.Interfaces.Services;
 
 public interface IGroupService
 {
-    Task CreateGroupAsync(UserEntity Creator, CreateGroupRequestDto request, CancellationToken ct = default);
+    Task CreateGroupAsync(UserEntity creator, CreateGroupRequestDto request, CancellationToken ct = default);
 
-    Task UpdateGroupAsync(Guid groupId, UpdateGroupRequest request, CancellationToken ct = default);
+    Task UpdateGroupAsync(Guid groupId, UpdateGroupRequestDto requestDto, CancellationToken ct = default);
 
-    Task AddMemberAsync(Guid groupId, AddMemberRequestDto requestDto, long invitedByUserId, CancellationToken ct = default);
+    Task AddMemberAsync(Guid groupId, AddGroupMemberRequestDto requestDto, long invitedByUserId, CancellationToken ct = default);
 
     Task LeaveGroupAsync(Guid groupId, long userId, CancellationToken ct = default);
     

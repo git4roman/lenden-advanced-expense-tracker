@@ -6,6 +6,7 @@ using Lenden.Application.Interfaces.Services;
 using Lenden.Application.Managers;
 using Lenden.Domain.Entities;
 using Lenden.Domain.ValueObjects;
+using Lenden.Web.Models.Exceptions;
 
 namespace Lenden.Application.Services;
 
@@ -61,18 +62,18 @@ public class GroupService : IGroupService
         await _unitOfWork.SaveChangesAsync(ct);
     }
 
-    public async Task UpdateGroupAsync(Guid groupId, UpdateGroupRequest request, CancellationToken ct = default)
+    public async Task UpdateGroupAsync(Guid groupId, UpdateGroupRequestDto requestDto, CancellationToken ct = default)
     {
         var group = await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId, ct);
         if (group is null)
-            throw new Exception("Group not found");
+            throw new NotFoundException("Group not found");
 
-        group.UpdateInfo(request.Name, request.ImageUrl);
+        group.UpdateInfo(requestDto.Name, requestDto.ImageUrl);
 
         await _unitOfWork.SaveChangesAsync(ct);
     }
 
-    public async Task AddMemberAsync(Guid groupId, AddMemberRequestDto requestDto,long invitedByUserId, CancellationToken ct = default)
+    public async Task AddMemberAsync(Guid groupId, AddGroupMemberRequestDto requestDto,long invitedByUserId, CancellationToken ct = default)
     {
       var group= await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId, ct);
       if(group is null) throw new Exception("Group not found");
@@ -113,9 +114,9 @@ public class GroupService : IGroupService
     public async Task LeaveGroupAsync(Guid groupId, long userId, CancellationToken ct = default)
     {
         var group= await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId, ct);
-        if(group is null) throw new Exception("Group not found");
+        if(group is null) throw new NotFoundException("Group not found");
         var user = await _unitOfWork.UserRepository.GetUserByIdAsync(userId, ct);
-        if(user is null) throw new Exception("User not found");
+        if(user is null) throw new NotFoundException("User not found");
         group.RemoveMember(user.Id);
         await _unitOfWork.SaveChangesAsync(ct);
     }
@@ -123,15 +124,15 @@ public class GroupService : IGroupService
     public async Task RemoveMemberAsync(Guid groupId, Guid memberId, long userId, CancellationToken ct = default)
     {
         var group= await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId, ct);
-        if(group is null) throw new Exception("Group not found");
+        if(group is null) throw new NotFoundException("Group not found");
         var member = await _unitOfWork.UserRepository.GetUserByPublicIdAsync(memberId, ct);
-        if(member is null) throw new Exception("Member not found");
+        if(member is null) throw new NotFoundException("Member not found");
         if(group.CreatedBy == userId)
         {
             group.RemoveMember(member.Id);
             await _unitOfWork.SaveChangesAsync(ct);
         }
-        else throw new Exception("You are not the creator of this group");
+        else throw new ForbiddenException("You are not the creator of this group");
     }
 
     public async Task DeleteGroupAsync(Guid groupId,long userId, CancellationToken ct = default)

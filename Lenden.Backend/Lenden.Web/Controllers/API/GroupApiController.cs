@@ -83,33 +83,25 @@ public class GroupApiController : ControllerBase
     public async Task<IActionResult> CreateGroup(CreateGroupRequestDto request, CancellationToken ct = default)
     {
         var currentUser = await _authService.ValidateUserAsync(User, ct);
-        
-        await _groupService.CreateGroupAsync(currentUser,request);
-        return Ok();
+
+        await _groupService.CreateGroupAsync(currentUser, request);
+        return Ok(new CreateGroupResponseDto("Group created successfully"));
     }
 
     [HttpPut("{groupId:guid}")]
-    public async Task<IActionResult> UpdateGroup(Guid groupId, UpdateGroupRequest request,CancellationToken ct = default)
+    public async Task<IActionResult> UpdateGroup(Guid groupId, UpdateGroupRequestDto requestDto,CancellationToken ct = default)
     {
         await _authService.ValidateUserAsync(User, ct);
-        await _groupService.UpdateGroupAsync(groupId, request);
-        return NoContent();
+        await _groupService.UpdateGroupAsync(groupId, requestDto);
+        return Ok( new UpdateGroupResponseDto("Group updated successfully"));
     }
 
     [HttpPost("{groupId:guid}/members")]
-    public async Task<IActionResult> AddMember(Guid groupId, AddMemberRequestDto requestDto,CancellationToken ct = default)
+    public async Task<IActionResult> AddMember(Guid groupId, AddGroupMemberRequestDto requestDto,CancellationToken ct = default)
     {
-        try
-        {
-            var currentUser = await _authService.ValidateUserAsync(User, ct);
-            // await _groupManager.EnsureGroupAdminAsync(groupId, User, ct);
-            await _groupService.AddMemberAsync(groupId, requestDto, currentUser.Id);
-            return NoContent();
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, new { message = e.Message });
-        }
+        var currentUser = await _authService.ValidateUserAsync(User, ct);
+        await _groupService.AddMemberAsync(groupId, requestDto, currentUser.Id);
+        return Ok(new AddGroupMembersResponseDto("Added Members successfully"));
     }
 
     [HttpPost("{groupId:guid}/leave")]
