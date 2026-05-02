@@ -202,10 +202,17 @@ public class GroupService : IGroupService
         return result;
     }
 
-    public async Task<List<TransactionResponseDto>> GetBalance(Guid groupId, CancellationToken ct = default)
+    public async Task<List<TransactionResponseDto>> GetGroupBalance(Guid groupId, CancellationToken ct = default)
     {
         var group = await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId);
         if (group is null) throw new Exception("Group not found");
+        
+        var transactions = GetBalance(group, ct);
+        return transactions;
+    }
+
+    public List<TransactionResponseDto> GetBalance(GroupEntity group, CancellationToken ct)
+    {
         var memberships = group.Members.AsQueryable();
         
         var transactions = new List<TransactionResponseDto>();
@@ -240,8 +247,6 @@ public class GroupService : IGroupService
         }
 
         return transactions;
-        
-
     }
     
     private static (string First, string Last) SplitFullName(string fullName)

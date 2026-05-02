@@ -12,7 +12,7 @@ public class GroupEntity
         CreatedBy = createdBy;
         CreatedAt = DateTimeOffset.UtcNow;
         UpdatedAt = DateTimeOffset.UtcNow;
-        _members = new List<UserGroupEntity>();
+        
         Status = GroupStatus.Active;
     }
     public long Id { get; private set; } 
@@ -24,9 +24,12 @@ public class GroupEntity
     public DateTimeOffset UpdatedAt { get; private set; }
     public GroupStatus Status { get; private set; }
 
-    private readonly List<UserGroupEntity> _members; 
+    private readonly List<UserGroupEntity> _members= new List<UserGroupEntity>(); 
     public IReadOnlyCollection<UserGroupEntity> Members => _members.AsReadOnly();
 
+    private readonly List<SettlementEntity> _settlements = new List<SettlementEntity>();
+
+    public IReadOnlyCollection<SettlementEntity> Settlements => _settlements.AsReadOnly();
     public void AddMember(GroupEntity group,UserEntity user, long invitedByUserId, bool isCreator = false)
     {
         if (_members.Any(ug => ug.UserId == user.Id && ug.Status == GroupMembershipStatus.Active))
@@ -102,7 +105,9 @@ public class GroupEntity
 
     public SettlementEntity MakeSettlement(UserEntity creditor, UserEntity debtor, decimal amount)
     {
-       return SettlementEntity.MakeSettlement(this,creditor, debtor,amount);
+        var settlement = SettlementEntity.MakeSettlement(this, creditor, debtor, amount);
+        _settlements.Add(settlement);
+        return settlement;
     }
    
 

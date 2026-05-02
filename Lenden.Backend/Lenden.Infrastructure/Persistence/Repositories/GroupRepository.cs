@@ -41,7 +41,7 @@ public class GroupRepository : IGroupRepository
         return await _context.Groups
             .Where(g => g.Status == GroupStatus.Active)
             .Include(g => g.Members)
-            .ThenInclude(m => m.User)
+            .ThenInclude(m => m.User).Include(g=>g.Settlements)
             .ToListAsync(ct);
     }
 

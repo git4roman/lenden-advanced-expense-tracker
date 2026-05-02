@@ -91,7 +91,7 @@ public class GroupApiController : ControllerBase
     public async Task<IActionResult> GetGroupBalance([FromRoute]Guid groupId, CancellationToken ct = default)
     {
         
-        var transcations = await _groupService.GetBalance(groupId, ct);
+        var transcations = await _groupService.GetGroupBalance(groupId, ct);
         return Ok(transcations);
     }
     

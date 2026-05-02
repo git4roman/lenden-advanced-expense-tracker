@@ -3,6 +3,7 @@ using System;
 using Lenden.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lenden.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260502133549_Settlement")]
+    partial class Settlement
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -526,7 +529,7 @@ namespace Lenden.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("Lenden.Domain.Entities.GroupEntity", "Group")
-                        .WithMany("Settlements")
+                        .WithMany()
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -591,8 +594,6 @@ namespace Lenden.Infrastructure.Migrations
             modelBuilder.Entity("Lenden.Domain.Entities.GroupEntity", b =>
                 {
                     b.Navigation("Members");
-
-                    b.Navigation("Settlements");
                 });
 
             modelBuilder.Entity("Lenden.Domain.Entities.UserEntity", b =>

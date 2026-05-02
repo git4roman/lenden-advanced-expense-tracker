@@ -18,27 +18,57 @@ public class SettlementService: ISettlementService
     }
     public async Task<MakeSettlementResponseDto> MakeSettlement(MakeSettlementRequestDto request)
     {
-       var transactions= await _groupService.GetBalance(request.GroupId);
-       var settlementTransaction = transactions.Where(t=> (t.FromUserId == request.RequestedBy)|| (t.ToUserId== request.RequestedBy)).SingleOrDefault();
-       if(settlementTransaction is null) throw new NotFoundException("Settlement transaction not found");
-       
-       var group = await _unitOfWork.GroupRepository.GetByPublicIdAsync(request.GroupId);
-       if(group is null) throw new NotFoundException("Group does not exist");
-       
-       var creditor = group.Members.Where(p => p.User.Slug == request.RequestedBy).SingleOrDefault();
-       if(creditor is null) throw new NotFoundException("Creditor not found");
-       
-       var debtor = group.Members.Where(p => p.User.Slug == request.DebtorId).SingleOrDefault();
-       if(debtor is null) throw new NotFoundException("Debtor not found");
-       
-       creditor.UpdateNetBalance(settlementTransaction.Amount);
-       debtor.UpdateNetBalance(-settlementTransaction.Amount);
-       
-       var settlementEntity = group.MakeSettlement(creditor.User, debtor.User, settlementTransaction.Amount);
-       settlementEntity.UpdateStatus(SettlementStatusEnums.Completed);
-       _unitOfWork.SaveChangesAsync();
-       var response = new MakeSettlementResponseDto(settlementEntity.Slug,creditor.User.Slug, debtor.User.Slug,settlementTransaction.Amount);
-       return response;
+        var group = await _unitOfWork.GroupRepository.GetByPublicIdAsync(request.GroupId);
+        if (group is null)
+            throw new NotFoundException("Group does not exist");
+        var transactions =  _groupService.GetBalance(group);
+
+        var settlementTransaction = transactions
+            .FirstOrDefault(t =>
+                t.ToUserId == request.RequestedBy &&
+                t.FromUserId == request.DebtorId);
+        
+        
+
+        if (settlementTransaction is null)
+            throw new NotFoundException("Settlement transaction not found");
+
+        
+
+        var creditor = group.Members
+            .SingleOrDefault(p => p.User.Slug == request.RequestedBy);
+
+        if (creditor is null)
+            throw new NotFoundException("Creditor not found");
+
+        var debtor = group.Members
+            .SingleOrDefault(p => p.User.Slug == request.DebtorId);
+
+        if (debtor is null)
+            throw new NotFoundException("Debtor not found");
+
+        var amount = settlementTransaction.Amount;
+
+        
+        creditor.UpdateNetBalance(amount);
+        debtor.UpdateNetBalance(-amount);
+
+        var settlementEntity = group.MakeSettlement(
+            creditor.User,
+            debtor.User,
+            Math.Abs(amount)
+        );
+
+        settlementEntity.UpdateStatus(SettlementStatusEnums.Completed);
+        
+        await _unitOfWork.SaveChangesAsync();
+
+        return new MakeSettlementResponseDto(
+            settlementEntity.Slug,
+            creditor.User.Slug,
+            debtor.User.Slug,
+            Math.Abs(amount)
+        );
     }
 
     public async Task<SettleSettlementResponseDto> SettleSettlement(SettleSettlementRequestDto request)
@@ -53,12 +83,13 @@ public class SettlementService: ISettlementService
 
     public async Task<RequestSettlementResponseDto> RequestSettlement(RequestSettlementRequestDto request)
     {
-        var transactions= await _groupService.GetBalance(request.GroupId);
+        var group = await _unitOfWork.GroupRepository.GetByPublicIdAsync(request.GroupId);
+        if(group is null) throw new NotFoundException("Group does not exist");
+        var transactions=  _groupService.GetBalance(group);
         var settlementTransaction = transactions.Where(t=> (t.FromUserId == request.RequestedBy)|| (t.ToUserId== request.RequestedBy)).SingleOrDefault();
         if(settlementTransaction is null) throw new NotFoundException("Settlement transaction not found");
        
-        var group = await _unitOfWork.GroupRepository.GetByPublicIdAsync(request.GroupId);
-        if(group is null) throw new NotFoundException("Group does not exist");
+        
         var debtor = group.Members.Where(p => p.User.Slug == request.RequestedBy).SingleOrDefault();
         if(debtor is null) throw new NotFoundException("Creditor not found");
        
@@ -70,7 +101,7 @@ public class SettlementService: ISettlementService
        
         var settlementEntity = group.MakeSettlement(creditor.User, debtor.User, settlementTransaction.Amount);
         settlementEntity.UpdateStatus(SettlementStatusEnums.Pending);
-        _unitOfWork.SaveChangesAsync();
+       await _unitOfWork.SaveChangesAsync();
         var response = new RequestSettlementResponseDto(settlementEntity.Slug,debtor.User.Slug, creditor.User.Slug,settlementTransaction.Amount);
         return response;
         
