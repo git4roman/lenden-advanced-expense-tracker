@@ -130,6 +130,7 @@ const ConfirmModal = ({
 
 const GroupScreen = () => {
   const { groupId } = useLocalSearchParams();
+
   const groupIdParam = Array.isArray(groupId) ? groupId[0] : groupId;
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
@@ -508,7 +509,7 @@ const GroupScreen = () => {
                 }}
               >
                 {icon}
-                <CText color={textColor} shade={textShade} weight="semibold">
+                <CText color={textColor} shade={800} weight="semibold">
                   {label}
                 </CText>
               </Pressable>

@@ -1,0 +1,24 @@
+﻿using Lenden.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Lenden.Infrastructure.Persistence.Configurations;
+
+public class SettlementEntityConfiguration: IEntityTypeConfiguration<SettlementEntity>
+{
+    public void Configure(EntityTypeBuilder<SettlementEntity> builder)
+    {
+        builder.ToTable("settlements");
+        builder.HasKey(x => x.Id);
+        builder.Property(x=>x.Slug).HasColumnName("slug");
+        builder.Property(x=>x.CreditorId).HasColumnName("creditor_id").IsRequired();
+        builder.Property(x=>x.DebtorId).HasColumnName("debtor_id").IsRequired();
+        builder.Property(x=>x.GroupId).HasColumnName("group_id").IsRequired();
+        builder.Property(x=>x.Amount).HasColumnName("amount").IsRequired();
+        
+        builder.HasOne(x=>x.Creditor).WithMany().HasForeignKey(x=>x.CreditorId);
+        builder.HasOne(x=>x.Debtor).WithMany().HasForeignKey(x=>x.DebtorId);
+        builder.HasOne(x=>x.Group).WithMany().HasForeignKey(u=>u.GroupId);
+        
+    }
+}

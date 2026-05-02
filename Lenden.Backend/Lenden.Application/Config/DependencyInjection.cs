@@ -23,6 +23,7 @@
             services.AddScoped<FirebaseService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IPasswordHasher<UserEntity>, PasswordHasher<UserEntity>>();
+            services.AddScoped<ISettlementService, SettlementService>();
             return services;
         }
     }

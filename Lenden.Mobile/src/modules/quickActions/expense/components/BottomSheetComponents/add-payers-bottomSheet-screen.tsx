@@ -1,117 +1,109 @@
 import { View, Pressable, ScrollView, TextInput } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CText } from "@/src/shared/ui/components/CText";
 import { useBottomSheet } from "@/src/shared/hooks/use-base-bottomSheet";
-import { useTheme } from "../../providers/ThemeProviders";
+import { useTheme } from "../../../../../shared/providers/ThemeProviders";
 import { Ionicons } from "@expo/vector-icons";
 
-export type ExpenseSplitter = {
+export type ExpensePayer = {
   userId: string;
   fullName: string;
-  splitAmount: number;
+  paidAmount: number;
 };
 
-const AddSplittersBottomSheetScreen = () => {
+const AddPayersBottomSheetScreen = () => {
   const { currentValue, selectValue, closeSheet } = useBottomSheet();
   const { Colors } = useTheme();
 
   const totalAmount = currentValue?.totalAmount || 0;
 
-  const [splitters, setSplitters] = useState<ExpenseSplitter[]>(
-    currentValue?.participants || [],
+  const [payers, setPayers] = useState<ExpensePayer[]>(
+    currentValue?.participants,
+  );
+  console.log("Particiap", payers);
+  const [useEqualPay, setUseEqualPay] = useState<boolean>(
+    currentValue?.isEqualPay ?? true,
   );
 
-  const [useEqualSplit, setUseEqualSplit] = useState<boolean>(
-    currentValue?.isEqualSplit ?? true,
-  );
+  const recomputeEqual = (list: ExpensePayer[]): ExpensePayer[] => {
+    const selected = list.filter((p) => p.paidAmount > 0);
 
-  const recomputeEqual = (list: ExpenseSplitter[]) => {
-    const selected = list.filter((p) => p.splitAmount > 0);
     const share = selected.length ? totalAmount / selected.length : 0;
 
     return list.map((p) => ({
       ...p,
-      splitAmount: p.splitAmount > 0 ? parseFloat(share.toFixed(2)) : 0,
+      paidAmount: p.paidAmount > 0 ? parseFloat(share.toFixed(2)) : 0,
     }));
   };
 
-  // TOGGLE PARTICIPANT (same as payer logic)
+  // Equal pay — toggle selection + recompute shares
   const handleToggleParticipant = (userId: string) => {
-    setSplitters((prev) => {
+    setPayers((prev) => {
       const updated = prev.map((p) =>
         p.userId === userId
           ? {
               ...p,
-              splitAmount: p.splitAmount > 0 ? 0 : 1,
+              paidAmount: p.paidAmount > 0 ? 0 : 1,
             }
           : p,
       );
 
-      return useEqualSplit ? recomputeEqual(updated) : updated;
+      return recomputeEqual(updated);
     });
   };
 
-  // UNEQUAL MODE INPUT
+  // Unequal pay — just update the amount, all members always included
   const handleAmountChange = (userId: string, text: string) => {
     const amount = parseFloat(text) || 0;
-
-    setSplitters((prev) =>
-      prev.map((p) =>
-        p.userId === userId ? { ...p, splitAmount: amount } : p,
-      ),
+    setPayers((prev) =>
+      prev.map((p) => (p.userId === userId ? { ...p, paidAmount: amount } : p)),
     );
   };
 
-  // MODE SWITCH (same pattern as payer reference)
   const handleToggleMode = () => {
-    setUseEqualSplit((prev) => {
+    setUseEqualPay((prev) => {
       const next = !prev;
-
-      setSplitters((prevList) => {
+      setPayers((prevPayers) => {
         if (next) {
-          const allSelected = prevList.map((p) => ({
+          // Switching to equal — reset selection and recompute
+          const allSelected = prevPayers.map((p) => ({
             ...p,
-            splitAmount: p.splitAmount > 0 ? p.splitAmount : 1,
+            isSelected: true,
           }));
-
           return recomputeEqual(allSelected);
+        } else {
+          // Switching to unequal — clear amounts, mark all selected
+          return prevPayers.map((p) => ({
+            ...p,
+            isSelected: true,
+            paidAmount: 0,
+          }));
         }
-
-        return prevList.map((p) => ({
-          ...p,
-          splitAmount: 0,
-        }));
       });
-
       return next;
     });
   };
 
-  const selected = splitters.filter((p) => p.splitAmount > 0);
-
-  const assignedTotal = splitters.reduce(
-    (sum, p) => sum + p.splitAmount,
-    0,
-  );
-
+  const selectedPayers = payers.filter((p) => p.paidAmount > 0);
+  const assignedTotal = payers.reduce((sum, p) => sum + p.paidAmount, 0);
   const remaining = totalAmount - assignedTotal;
 
-  const canSave = useEqualSplit
-    ? selected.length > 0
-    : remaining === 0 && splitters.length > 0;
+  const canSave = useEqualPay
+    ? selectedPayers.length > 0
+    : remaining === 0 && payers.length > 0;
 
   const handleSave = () => {
-    const payload = splitters.map(({ userId, splitAmount }) => ({
-      userId,
-      splitAmount,
-    }));
+    const payerUser = useEqualPay
+      ? selectedPayers.map(({ userId, paidAmount }) => ({ userId, paidAmount }))
+      : payers.map(({ userId, paidAmount }) => ({ userId, paidAmount }));
+    console.log("Payer User", payerUser);
 
-    selectValue({
-      isEqualSplit: useEqualSplit,
-      updatedUsers: payload,
-    });
-
-    closeSheet();
+    const payload = {
+      isEqualPay: useEqualPay,
+      updatedUsers: payerUser,
+    };
+    console.log("Payload", payload);
+    selectValue(payload);
   };
 
   return (
@@ -126,16 +118,21 @@ const AddSplittersBottomSheetScreen = () => {
       }}
     >
       {/* Header */}
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         <CText color="neutral" shade={300} size="lg" weight="bold">
-          Add Splitters
+          Add Payers
         </CText>
 
-        <View style={{ flexDirection: "row", gap: 6 }}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
           <CText size="ssm" color="neutral" shade={400}>
             Remaining
           </CText>
-
           <CText
             size="md"
             weight="semibold"
@@ -147,7 +144,7 @@ const AddSplittersBottomSheetScreen = () => {
         </View>
       </View>
 
-      {/* Toggle */}
+      {/* Equal / Unequal Toggle */}
       <View
         style={{
           flexDirection: "row",
@@ -157,66 +154,73 @@ const AddSplittersBottomSheetScreen = () => {
           padding: 4,
         }}
       >
-        {[true, false].map((mode) => (
+        {[true, false].map((isEqual) => (
           <Pressable
-            key={String(mode)}
+            key={String(isEqual)}
             onPress={handleToggleMode}
             style={{
               flex: 1,
               paddingVertical: 10,
               borderRadius: 10,
               backgroundColor:
-                useEqualSplit === mode
-                  ? Colors.accent[900]
-                  : "transparent",
+                useEqualPay === isEqual ? Colors.accent[900] : "transparent",
               alignItems: "center",
             }}
           >
             <CText
               size="md"
-              weight={useEqualSplit === mode ? "semibold" : "medium"}
-              color={useEqualSplit === mode ? "accent" : "neutral"}
-              shade={useEqualSplit === mode ? 100 : 200}
+              weight={useEqualPay === isEqual ? "semibold" : "medium"}
+              color={useEqualPay === isEqual ? "accent" : "neutral"}
+              shade={useEqualPay === isEqual ? 100 : 200}
             >
-              {mode ? "Equal Split" : "Unequal Split"}
+              {isEqual ? "Equal Pay" : "Unequal Pay"}
             </CText>
           </Pressable>
         ))}
       </View>
 
-      {/* List */}
+      {/* Payers List */}
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
         <View style={{ gap: 12 }}>
-          {splitters.map((p) => {
-            const isSelected = p.splitAmount > 0;
-
+          {payers.map((payer) => {
+            const isSelected = payer.paidAmount > 0;
             return (
               <Pressable
-                key={p.userId}
+                key={payer.userId}
+                // Only toggleable in equal pay mode
                 onPress={
-                  useEqualSplit
-                    ? () => handleToggleParticipant(p.userId)
+                  useEqualPay
+                    ? () => handleToggleParticipant(payer.userId)
                     : undefined
                 }
                 style={{
                   flexDirection: "row",
+                  alignItems: "center",
                   justifyContent: "space-between",
-                  padding: 12,
+                  paddingHorizontal: 14,
+                  paddingVertical: 12,
                   borderRadius: 12,
                   borderWidth: 1,
-                  borderColor: useEqualSplit
+                  borderColor: useEqualPay
                     ? isSelected
                       ? Colors.accent[500]
                       : Colors.neutral[700]
                     : Colors.neutral[700],
-                  backgroundColor: useEqualSplit
+                  backgroundColor: useEqualPay
                     ? isSelected
                       ? Colors.accent[900]
                       : Colors.neutral[800]
                     : Colors.neutral[800],
                 }}
               >
-                <View style={{ flexDirection: "row", gap: 12, flex: 1 }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 12,
+                    flex: 1,
+                  }}
+                >
                   <View
                     style={{
                       width: 40,
@@ -227,29 +231,38 @@ const AddSplittersBottomSheetScreen = () => {
                       justifyContent: "center",
                     }}
                   >
-                    <Ionicons name="person" size={20} color={Colors.neutral[400]} />
+                    <Ionicons
+                      name="person"
+                      size={20}
+                      color={Colors.neutral[400]}
+                    />
                   </View>
 
-                  <CText size="md" weight="semibold" color="neutral" shade={100}>
-                    {p.fullName}
+                  <CText
+                    size="md"
+                    weight="semibold"
+                    color="neutral"
+                    shade={100}
+                  >
+                    {payer.fullName}
                   </CText>
                 </View>
 
                 <TextInput
-                  editable={!useEqualSplit}
+                  editable={!useEqualPay}
                   keyboardType="decimal-pad"
                   placeholder="0.00"
                   placeholderTextColor={Colors.neutral[500]}
-                  value={p.splitAmount ? String(p.splitAmount) : ""}
+                  value={payer.paidAmount ? payer.paidAmount.toString() : ""}
                   onChangeText={(text) =>
-                    handleAmountChange(p.userId, text)
+                    handleAmountChange(payer.userId, text)
                   }
                   style={{
                     minWidth: 80,
                     textAlign: "right",
                     fontSize: 18,
                     fontWeight: "600",
-                    color: useEqualSplit
+                    color: useEqualPay
                       ? Colors.neutral[400]
                       : Colors.neutral[100],
                     padding: 0,
@@ -261,7 +274,7 @@ const AddSplittersBottomSheetScreen = () => {
         </View>
       </ScrollView>
 
-      {/* Footer */}
+      {/* Bottom Buttons */}
       <View style={{ flexDirection: "row", gap: 10 }}>
         <Pressable
           onPress={closeSheet}
@@ -282,9 +295,7 @@ const AddSplittersBottomSheetScreen = () => {
           disabled={!canSave}
           style={{
             flex: 1,
-            backgroundColor: canSave
-              ? Colors.accent[500]
-              : Colors.neutral[700],
+            backgroundColor: canSave ? Colors.accent[500] : Colors.neutral[700],
             paddingVertical: 14,
             borderRadius: 12,
             alignItems: "center",
@@ -292,7 +303,7 @@ const AddSplittersBottomSheetScreen = () => {
           }}
         >
           <CText weight="bold" color="neutral" shade={canSave ? 900 : 500}>
-            Save Splitters
+            Save Payers
           </CText>
         </Pressable>
       </View>
@@ -300,4 +311,4 @@ const AddSplittersBottomSheetScreen = () => {
   );
 };
 
-export default AddSplittersBottomSheetScreen;
+export default AddPayersBottomSheetScreen;

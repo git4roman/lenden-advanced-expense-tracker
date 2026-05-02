@@ -38,7 +38,7 @@ public class AuthService: IAuthService
         var (accessToken,expiresAt) = await _tokenService.DispatchAccessToken(user);
         var refreshToken = await _tokenService.DispatchRefreshToken(user);
         
-        var session = new AuthResponseDto(accessToken, refreshToken, expiresAt, user.Slug);
+        var session = new AuthResponseDto(accessToken, refreshToken, expiresAt);
         user.AddAuthSession(refreshToken, dto.deviceInfo, dto.ipAddress, expiresAt);
         await _unitOfWork.SaveChangesAsync();
         
@@ -58,7 +58,7 @@ public class AuthService: IAuthService
         var (accessToken,expiresAt) = await _tokenService.DispatchAccessToken(entity);
         var refreshToken = await _tokenService.DispatchRefreshToken(entity);
         
-        var session = new AuthResponseDto(accessToken, refreshToken, expiresAt, entity.Slug);
+        var session = new AuthResponseDto(accessToken, refreshToken, expiresAt);
         entity.AddAuthSession(refreshToken, dto.deviceInfo, dto.ipAddress, expiresAt);
         
         await _unitOfWork.SaveChangesAsync();
@@ -91,7 +91,7 @@ public class AuthService: IAuthService
         
         await _unitOfWork.SaveChangesAsync();
         
-        return new AuthResponseDto(accessToken, refreshToken,expiresAt, request.User.Slug);
+        return new AuthResponseDto(accessToken, refreshToken,expiresAt);
     }
 
     
@@ -167,7 +167,7 @@ public class AuthService: IAuthService
             var (accessToken,expiresAt) = await _tokenService.DispatchAccessToken(existingUser);
             var refreshToken = await _tokenService.DispatchRefreshToken(existingUser);
         
-            var session = new AuthResponseDto(accessToken, refreshToken, expiresAt, existingUser.Slug);
+            var session = new AuthResponseDto(accessToken, refreshToken, expiresAt);
             existingUser.AddAuthSession(refreshToken, request.DeviceInfo, request.IpAddress, expiresAt);
             await _unitOfWork.SaveChangesAsync();
         

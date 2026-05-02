@@ -37,6 +37,19 @@ const userApi = api.injectEndpoints({
         }
       },
     }),
+    dashboard: builder.query<UserInfoState, void>({
+      query: () => ({
+        url: "/dashboard-info",
+        method: "GET",
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+        } catch (error) {
+          console.log("Error From Auth Login", error);
+        }
+      },
+    }),
 
     updatePersonalInfo: builder.mutation<
       UserInfoState,
@@ -62,7 +75,10 @@ const userApi = api.injectEndpoints({
                 data?.familyName ?? arg.data.familyName ?? current.familyName,
               username: data?.username ?? arg.data.username ?? current.username,
               email: data?.email ?? arg.data.email ?? current.email,
-              phoneNumber: data?.phoneNumber ?? arg.data.phoneNumber ?? current.phoneNumber,
+              phoneNumber:
+                data?.phoneNumber ??
+                arg.data.phoneNumber ??
+                current.phoneNumber,
               memberSince: data?.memberSince ?? current.memberSince,
               imgUrl: data?.imgUrl ?? current.imgUrl,
             }),
@@ -78,8 +94,5 @@ const userApi = api.injectEndpoints({
   }),
 });
 
-export const {
-  useMeQuery,
-
-  useUpdatePersonalInfoMutation,
-} = userApi;
+export const { useMeQuery, useDashboardQuery, useUpdatePersonalInfoMutation } =
+  userApi;

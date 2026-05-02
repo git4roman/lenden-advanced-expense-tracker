@@ -18,6 +18,8 @@ public class AppDbContext: DbContext
     public DbSet<ExpenseParticipantEntity> ExpenseParticipants { get; set; }
     public DbSet<AuthSessionEntity> AuthSessions { get; set; }
     public DbSet<FriendshipEntity> Friends { get; set; }
+    
+    public DbSet<SettlementEntity> Settlements { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -29,5 +31,6 @@ public class AppDbContext: DbContext
         modelBuilder.ApplyConfiguration(new ExpenseEntityConfiguration());
         modelBuilder.ApplyConfiguration(new ExpenseParticipantEntityConfiguration());
         modelBuilder.ApplyConfiguration(new FriendshipEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new SettlementEntityConfiguration());
     }
 }

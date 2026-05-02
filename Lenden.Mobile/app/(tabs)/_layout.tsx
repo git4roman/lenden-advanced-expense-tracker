@@ -12,56 +12,100 @@ import {
   Profile2User,
 } from "iconsax-react-nativejs";
 import { RootState, store } from "@/src/shared/store/store";
-import { loadAuth } from "@/src/shared/services/storage/auth-storage";
 import { useSelector } from "react-redux";
+import { useGetGroupsQuery } from "@/src/shared/store/apiSlices/group-slice.api";
+import {
+  useDashboardQuery,
+  useMeQuery,
+} from "@/src/shared/store/apiSlices/user-api-slice";
+import Toast from "react-native-toast-message";
+import { LogoutService } from "@/src/shared/services/auth/logout.service";
 
-export default function _layout() {
+function AppBootstrap({ children }: { children: React.ReactNode }) {
+  const token = useSelector((state: RootState) => state.auth.accessToken);
+
+  const { isLoading, isError, error, data } = useMeQuery(undefined, {
+    skip: !token,
+  });
+
+  const { data: dashboard } = useDashboardQuery();
+  const { data: groups } = useGetGroupsQuery(undefined, { skip: !token });
+
+  useEffect(() => {
+    if (!isError || !error) return;
+
+    const status = (error as any)?.status;
+
+    if (status === 401) {
+      Toast.show({
+        type: "error",
+        text1: "Session Expired",
+        text2: "Please log in again.",
+      });
+      LogoutService();
+    } else {
+      // 500 or other — don't logout, just warn
+      Toast.show({
+        type: "error",
+        text1: "Server Error",
+        text2: "Something went wrong. Please try again later.",
+      });
+    }
+  }, [isError]);
+  if (token && isLoading) return null;
+
+  return <>{children}</>;
+}
+export default function TabsLayout() {
   const TAB_ICON_SIZE = 18;
-  // const token = store.getState().auth.token;
-  // console.log(token)
 
   return (
-    <SafeAreaProvider>
-      <StatusBar style="light" />
-      <Tabs
-        screenOptions={{
-          tabBarActiveTintColor: Colors.accent[500],
-          tabBarInactiveTintColor: Colors.neutral[300],
-          tabBarStyle: {
-            backgroundColor: Colors.neutral[900],
-            height: 64,
-          },
-          tabBarLabelStyle: { fontSize: 14, marginTop: -4 },
-          headerShown: false,
-        }}
-      >
-        <Tabs.Screen
-          name="home"
-          options={{
+    <AppBootstrap>
+      <SafeAreaProvider>
+        <StatusBar style="light" />
+        <Tabs
+          screenOptions={{
+            tabBarActiveTintColor: Colors.accent[500],
+            tabBarInactiveTintColor: Colors.neutral[300],
+            tabBarStyle: {
+              backgroundColor: Colors.neutral[900],
+              height: 64,
+            },
+            tabBarLabelStyle: { fontSize: 14, marginTop: -4 },
             headerShown: false,
-            title: "Home",
-            tabBarIcon: ({ color }) => (
-              <Home2 size={TAB_ICON_SIZE - 2} color={color} variant="TwoTone" />
-            ),
           }}
-        />
-        <Tabs.Screen
-          name="groups"
-          options={{
-            headerShown: false,
-            title: "Groups",
-            popToTopOnBlur: true,
-            tabBarIcon: ({ color }) => (
-              <FontAwesome5
-                name="users"
-                size={TAB_ICON_SIZE - 2}
-                color={color}
-              />
-            ),
-          }}
-        />
+        >
+          <Tabs.Screen
+            name="home"
+            options={{
+              headerShown: false,
+              title: "Home",
+              tabBarIcon: ({ color }) => (
+                <Home2
+                  size={TAB_ICON_SIZE - 2}
+                  color={color}
+                  variant="TwoTone"
+                />
+              ),
+            }}
+          />
+          <Tabs.Screen
+            name="groups"
+            options={{
+              headerShown: false,
+              title: "Groups",
+              popToTopOnBlur: true,
+              tabBarIcon: ({ color }) => (
+                <FontAwesome5
+                  name="users"
+                  size={TAB_ICON_SIZE - 2}
+                  color={color}
+                />
+              ),
+            }}
+          />
 
-        {/* <Tabs.Screen
+          {/* <Tabs.Screen
           name="quickAction"
           options={{
             title: "",
@@ -97,7 +141,7 @@ export default function _layout() {
           }}
         /> */}
 
-        {/* <Tabs.Screen
+          {/* <Tabs.Screen
           name="friends"
           options={{
             headerShown: false,
@@ -108,16 +152,21 @@ export default function _layout() {
           }}
         /> */}
 
-        <Tabs.Screen
-          name="account"
-          options={{
-            title: "Account",
-            tabBarIcon: ({ color }) => (
-              <Profile size={TAB_ICON_SIZE + 1} color={color} variant="Bold" />
-            ),
-          }}
-        />
-      </Tabs>
-    </SafeAreaProvider>
+          <Tabs.Screen
+            name="account"
+            options={{
+              title: "Account",
+              tabBarIcon: ({ color }) => (
+                <Profile
+                  size={TAB_ICON_SIZE + 1}
+                  color={color}
+                  variant="Bold"
+                />
+              ),
+            }}
+          />
+        </Tabs>
+      </SafeAreaProvider>
+    </AppBootstrap>
   );
 }

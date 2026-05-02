@@ -138,14 +138,14 @@ public class GroupService : IGroupService
     public async Task DeleteGroupAsync(Guid groupId,long userId, CancellationToken ct = default)
     {
         var group= await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId, ct);
-        if (group is null) throw new Exception("Group not found");
+        if (group is null) throw new NotFoundException("Group not found");
         if(group.CreatedBy == userId)
         {
             // _unitOfWork.GroupRepository.Remove(group);
             group.DisableGroup();
             await _unitOfWork.SaveChangesAsync(ct);
         }
-        else throw new Exception("You are not the creator of this group");
+        else throw new ForbiddenException("You are not the creator of this group");
         
     }
 
@@ -163,26 +163,52 @@ public class GroupService : IGroupService
     //     return user;
     // }
 
-    public async Task<GroupEntity?> GetGroupByPublicIdAsync(Guid groupId, CancellationToken ct = default)
+    public async Task<GroupResponseDto?> GetGroupByPublicIdAsync(Guid groupId, CancellationToken ct = default)
     {
         var group = await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId, ct);
         if (group is null)
-            throw new Exception("Group not found.");
-        return group;
+            throw new NotFoundException("Group not found.");
+        var result = new GroupResponseDto
+        {
+            Id = group.Slug,
+            Name = group.Name,
+            ImageUrl = group.ImageUrl,
+            Members = group.Members.Select(m => new GroupMemberDto
+            {
+                Id = m.User.Slug,
+                Email = m.User.Email.Value,
+                GivenName = m.User.GivenName,
+                FamilyName = m.User.FamilyName,
+                NetBalance = m.NetBalance,
+                ImgUrl = m.User?.UserInfo?.ImageUrl ?? "",
+            }).ToList()
+        };
+
+        return result;
     }
 
-    public async Task<IEnumerable<GroupEntity?>> GetGroupsByUserIdAsync(Guid userId,CancellationToken ct = default)
+    public async Task<IEnumerable<GroupsResponseDto?>> GetGroupsByUserIdAsync(Guid userId,CancellationToken ct = default)
     {
-        return await _unitOfWork.GroupRepository.GetByUserPublicIdAsync(userId);
+         var groups=await _unitOfWork.GroupRepository.GetByUserPublicIdAsync(userId);
+        var result = groups.Select(g => new GroupsResponseDto
+        {
+            Id = g.Slug,
+            Name = g.Name,
+            ImageUrl = g.ImageUrl,
+            MemberImgUrls = g.Members.Select(m=>m.User?.UserInfo?.ImageUrl ?? "").ToList(),
+            MemberCount = g.Members.Count,
+            CreatedAt = g.CreatedAt
+        });
+        return result;
     }
 
-    public async Task<List<Transaction>> GetBalance(Guid groupId, CancellationToken ct = default)
+    public async Task<List<TransactionResponseDto>> GetBalance(Guid groupId, CancellationToken ct = default)
     {
         var group = await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId);
         if (group is null) throw new Exception("Group not found");
         var memberships = group.Members.AsQueryable();
         
-        var transactions = new List<Transaction>();
+        var transactions = new List<TransactionResponseDto>();
 
         // Split into creditors and debtors
         var creditors = memberships.Where(p => p.NetBalance > 0).OrderByDescending(p => p.NetBalance).ToList();
@@ -197,10 +223,12 @@ public class GroupService : IGroupService
 
             decimal amount = Math.Min(-debtor.NetBalance, creditor.NetBalance);
 
-            transactions.Add(new Transaction
+            transactions.Add(new TransactionResponseDto
             {
                 From = debtor.User.GivenName,
+                FromUserId = debtor.User.Slug,
                 To = creditor.User.GivenName,
+                ToUserId = creditor.User.Slug,
                 Amount = amount
             });
 
@@ -224,11 +252,9 @@ public class GroupService : IGroupService
             parts.Length > 1 ? string.Join(" ", parts.Skip(1)) : string.Empty
         );
     }
+
+
+   
     
-    public class Transaction
-    {
-        public string From { get; set; }
-        public string To { get; set; }
-        public decimal Amount { get; set; }
-    }
+    
 }

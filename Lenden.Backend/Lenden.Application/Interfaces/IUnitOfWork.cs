@@ -11,6 +11,7 @@ public interface IUnitOfWork
     IUserGroupRepository UserGroupRepository { get; }
     IExpenseRepository ExpenseRepository { get; }
     IFriendshipRepository FriendshipRepository { get; }
+    ISettlementRepository SettlementRepository { get; }
     
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default); 

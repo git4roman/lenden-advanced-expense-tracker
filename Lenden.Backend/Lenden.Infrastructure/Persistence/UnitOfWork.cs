@@ -12,7 +12,7 @@ public class UnitOfWork : IUnitOfWork
 {
     private readonly AppDbContext _context;
 
-    public UnitOfWork(AppDbContext context, IUserRepository userRepository, IAuthRepository authRepository, IGroupRepository groupRepository, IUserGroupRepository userGroupRepository, IExpenseRepository expenseRepository, IFriendshipRepository friendshipRepository)
+    public UnitOfWork(AppDbContext context, IUserRepository userRepository, IAuthRepository authRepository, IGroupRepository groupRepository, IUserGroupRepository userGroupRepository, IExpenseRepository expenseRepository, IFriendshipRepository friendshipRepository,ISettlementRepository settlementRepository)
     {
         _context = context;
         UserRepository = userRepository;
@@ -21,6 +21,7 @@ public class UnitOfWork : IUnitOfWork
         UserGroupRepository = userGroupRepository;
         ExpenseRepository = expenseRepository;
         FriendshipRepository=friendshipRepository;
+        SettlementRepository = settlementRepository;
     }
 
     public IUserRepository UserRepository { get; private set; }
@@ -28,6 +29,7 @@ public class UnitOfWork : IUnitOfWork
     public IGroupRepository GroupRepository { get; private set; }
     public IUserGroupRepository UserGroupRepository { get; private set; }
     public IExpenseRepository ExpenseRepository { get; private set; }
+    public ISettlementRepository SettlementRepository { get; private set; }
     
     public IFriendshipRepository FriendshipRepository { get; private set; }
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

@@ -99,6 +99,11 @@ public class GroupEntity
         var balance = paidAmount - splitAmount;
         
     }
+
+    public SettlementEntity MakeSettlement(UserEntity creditor, UserEntity debtor, decimal amount)
+    {
+       return SettlementEntity.MakeSettlement(this,creditor, debtor,amount);
+    }
    
 
 }

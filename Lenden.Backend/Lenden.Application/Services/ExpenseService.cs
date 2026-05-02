@@ -3,6 +3,7 @@ using Lenden.Application.Interfaces.Services;
 using Lenden.Domain.Entities;
 using Lenden.Application.DTOs;
 using Lenden.Application.Interfaces.Validators;
+using Lenden.Web.Models.Exceptions;
 
 namespace Lenden.Application.Services;
 
@@ -25,13 +26,13 @@ public class ExpenseService : IExpenseService
         try
         {
             var group = await _unitOfWork.GroupRepository.GetByPublicIdAsync(request.GroupPublicId, ct);
-            if (group is null) throw new Exception("Group not found");
+            if (group is null) throw new NotFoundException("Group not found");
             
             decimal totalPaid = request.Users.Sum(u => u.paidAmount);
             decimal totalSplit = request.Users.Sum(u => u.splitAmount);
             if (totalPaid != request.TotalAmount || totalSplit != request.TotalAmount)
             {
-                throw new Exception("Total paid or split amount does not match the total amount");
+                throw new BadRequestException("Total paid or split amount does not match the total amount");
             }
 
             // var userBalances = group.UserBalances;
@@ -85,10 +86,11 @@ public class ExpenseService : IExpenseService
 
     public async Task DeleteExpenseAsync(long userId, DeleteExpenseRequest request, CancellationToken ct = default)
     {
-        var group = await _groupService.GetGroupByPublicIdAsync(request.GroupPublicId, ct);
-        if (group is null) throw new Exception("Group not found");
+        var group = await _unitOfWork.GroupRepository.GetByPublicIdAsync(request.GroupPublicId, ct);
+
+        if (group is null) throw new NotFoundException("Group not found");
         var expense = await _unitOfWork.ExpenseRepository.GetByPublicIdAsync(request.ExpensePublicId, ct);
-        if(expense is null) throw new Exception("Expense not found");
+        if(expense is null) throw new NotFoundException("Expense not found");
 
         var groupMembers = group.Members;
         var expenseParticipants=expense.Participants;
@@ -119,8 +121,8 @@ public class ExpenseService : IExpenseService
     if (totalPaid != request.TotalAmount || totalSplit != request.TotalAmount)
         throw new Exception("Paid and split amounts must each equal the total amount.");
 
-    var group = await _groupService.GetGroupByPublicIdAsync(request.GroupPublicId, ct)
-                ?? throw new Exception("Group not found.");
+    var group = await _unitOfWork.GroupRepository.GetByPublicIdAsync(request.GroupPublicId, ct);
+
 
     var expense = await _unitOfWork.ExpenseRepository.GetByPublicIdAsync(request.ExpensePublicId, ct)
         ?? throw new Exception("Expense not found.");

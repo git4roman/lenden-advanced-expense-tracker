@@ -18,6 +18,7 @@ export type Member = {
   familyName: string;
   netBalance?: number;
 };
+
 export type Group = {
   id: string;
   name: string;
@@ -28,6 +29,7 @@ export type Group = {
   // mutualBalanceData: MutualBalanceData[];
   transaction: Transaction[];
 };
+
 export type GroupState = {
   groups: Group[] | null;
 };

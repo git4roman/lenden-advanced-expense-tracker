@@ -1,9 +1,10 @@
 import { api } from "@/src/shared/store/apiSlices/apiClient";
-import { setUserGroups, setGroupBalance } from "../slices/group-slice";
+import { setUserGroups, setGroupBalance, Group } from "../slices/group-slice";
+// import { Group } from "./Group";
 
 const groupApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getGroups: builder.query({
+    getGroups: builder.query<Group[], void>({
       query: () => ({
         url: "/groups",
         method: "GET",
@@ -12,14 +13,13 @@ const groupApi = api.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          console.log("Group APi ", data);
           dispatch(
             setUserGroups({
-              groups: data.groups ?? data,
+              groups: data,
             }),
           );
         } catch (error) {
-          console.log("Group APi Error", JSON.stringify(error, null, 2));
+          // console.log("Group APi Error", JSON.stringify(error, null, 2));
         }
       },
     }),
@@ -37,6 +37,7 @@ const groupApi = api.injectEndpoints({
         } catch (error) {}
       },
     }),
+
     createGroup: builder.mutation({
       query: (payload) => ({
         url: "/groups",
