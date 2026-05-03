@@ -50,8 +50,8 @@ public class SettlementService: ISettlementService
         var amount = settlementTransaction.Amount;
 
         
-        creditor.UpdateNetBalance(amount);
-        debtor.UpdateNetBalance(-amount);
+        creditor.UpdateNetBalance(-amount);
+        debtor.UpdateNetBalance(amount);
 
         var settlementEntity = group.MakeSettlement(
             creditor.User,
@@ -62,13 +62,14 @@ public class SettlementService: ISettlementService
         settlementEntity.UpdateStatus(SettlementStatusEnums.Completed);
         
         await _unitOfWork.SaveChangesAsync();
-
-        return new MakeSettlementResponseDto(
+        var response = new MakeSettlementResponseDto(
             settlementEntity.Slug,
             creditor.User.Slug,
             debtor.User.Slug,
             Math.Abs(amount)
         );
+
+        return response;
     }
 
     public async Task<SettleSettlementResponseDto> SettleSettlement(SettleSettlementRequestDto request)
@@ -106,6 +107,30 @@ public class SettlementService: ISettlementService
         return response;
         
     }
-    
-    
+
+    public async Task<List<GetSettlementsResponseDto>> GetSettlementsByUserSlug(Guid slug)
+    {
+        var group = await _unitOfWork.GroupRepository.GetByUserPublicIdAsync(slug);
+        if (group == null || !group.Any())
+            throw new NotFoundException("Group not found");
+        
+        var settlements = group
+            .Where(g => g != null)
+            .SelectMany(g => g!.Settlements)
+            .ToList();
+        
+        var response = settlements
+            .Select(s => new GetSettlementsResponseDto
+            {
+                SettlementId = s.Slug,
+                GroupId = s.Group.Slug,
+                CreditorId = s.Creditor.Slug,
+                DebtorId = s.Debtor.Slug,
+                Amount = s.Amount,
+                Status = s.Status.Name,
+                CreatedAt = s.CreatedAt
+            })
+            .ToList();
+        return response;
+    }
 }

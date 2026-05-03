@@ -12,11 +12,13 @@ public class SettlementEntity
     public long DebtorId { get; set; }
     public decimal Amount { get; set; }
     
-    public GroupEntity Group { get; private set; }
-    public UserEntity Creditor { get; private set; }
-    public UserEntity Debtor { get; private set; }
+    public virtual GroupEntity Group { get; private set; }
+    public virtual UserEntity Creditor { get; private set; }
+    public virtual UserEntity Debtor { get; private set; }
     
     public SettlementStatusEnums Status { get; private set; }
+    
+    public DateTimeOffset CreatedAt { get; private set; }
     
 
     private SettlementEntity()
@@ -31,6 +33,7 @@ public class SettlementEntity
         Creditor = creditor;
         Debtor = debtor;
         Amount = amount;
+        CreatedAt = DateTimeOffset.UtcNow;
     }
 
     internal static SettlementEntity MakeSettlement(GroupEntity group, UserEntity creditor, UserEntity debtor, decimal amount)

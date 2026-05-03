@@ -7,4 +7,8 @@ public interface ISettlementService
     Task<MakeSettlementResponseDto> MakeSettlement(MakeSettlementRequestDto request);
     Task<SettleSettlementResponseDto> SettleSettlement(SettleSettlementRequestDto request);
     Task<RequestSettlementResponseDto> RequestSettlement(RequestSettlementRequestDto request);
+    
+    Task<List<GetSettlementsResponseDto>> GetSettlementsByUserSlug(Guid slug);
+    
+    
 }

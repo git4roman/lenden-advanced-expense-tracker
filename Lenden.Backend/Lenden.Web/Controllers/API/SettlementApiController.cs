@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lenden.Web.Controllers.API;
-[Route("api/v1/settlement")]
+[Route("api/v1/settlements")]
 [ApiController]
 [Authorize]
 public class SettlementApiController: ControllerBase
@@ -21,7 +21,7 @@ public class SettlementApiController: ControllerBase
         _settlementService = settlementService;
     }
 
-    [HttpPost("{groupId:Guid}")]
+    [HttpPost("{groupId:Guid}/settle")]
     public async Task<IActionResult> MakeSettlement(Guid groupId,MakeSettlementRequestDto request,CancellationToken ct=default)
     {
         var currentUser = await _authService.ValidateUserAsync(User, ct);
@@ -37,12 +37,22 @@ public class SettlementApiController: ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("{groupId:Guid}/settle")]
-    public async Task<IActionResult> Settle(Guid groupId, SettleSettlementRequestDto request,
+    [HttpPost("{groupId:Guid}/confirm")]
+    public async Task<IActionResult> ConfirmSettlement(Guid groupId, SettleSettlementRequestDto request,
         CancellationToken ct = default)
     {   
         var currentUser = await _authService.ValidateUserAsync(User, ct);
         var result = await _settlementService.SettleSettlement(request);
         return Ok(result);
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetSettlements(CancellationToken ct = default)
+    {
+        var currentUser = await _authService.ValidateUserAsync(User, ct);
+        var response = _settlementService.GetSettlementsByUserSlug(currentUser.Slug);
+        return Ok(response);
+    }
+
+
 }

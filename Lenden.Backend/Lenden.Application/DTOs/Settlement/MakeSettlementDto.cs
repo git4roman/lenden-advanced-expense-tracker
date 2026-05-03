@@ -7,10 +7,9 @@ public class MakeSettlementRequestDto
     public Guid DebtorId {get; set;}
 }
 
-public class MakeSettlementResponseDto
-(
-     Guid SettlementId ,
-     Guid RequestedBy ,
-     Guid DebtorId ,
-     decimal Amount 
+public record MakeSettlementResponseDto(
+    Guid SettlementId,
+    Guid RequestedBy,
+    Guid DebtorId,
+    decimal Amount
 );

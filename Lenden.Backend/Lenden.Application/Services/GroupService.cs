@@ -213,37 +213,51 @@ public class GroupService : IGroupService
 
     public List<TransactionResponseDto> GetBalance(GroupEntity group, CancellationToken ct)
     {
-        var memberships = group.Members.AsQueryable();
-        
+        // Work with a snapshot, not the real entities
+        var balances = group.Members.ToDictionary(
+            m => m.User.Slug,
+            m => new { Member = m, Balance = m.NetBalance } // snapshot the balance
+        );
+
+        var creditors = balances.Values
+            .Where(p => p.Balance > 0)
+            .OrderByDescending(p => p.Balance)
+            .Select(p => new { p.Member, Balance = p.Balance })
+            .ToList();
+
+        // Use mutable wrapper instead of touching the entity
+        var workingBalances = balances.Values
+            .Select(p => new WorkingBalance(p.Member, p.Balance))
+            .ToList();
+
+        var debtors = workingBalances.Where(p => p.Balance < 0).OrderBy(d => d.Balance).ToList();
+        var creditorsList = workingBalances.Where(p => p.Balance > 0).OrderByDescending(p => p.Balance).ToList();
+
         var transactions = new List<TransactionResponseDto>();
-
-        // Split into creditors and debtors
-        var creditors = memberships.Where(p => p.NetBalance > 0).OrderByDescending(p => p.NetBalance).ToList();
-        var debtors = memberships.Where(p => p.NetBalance < 0).OrderBy(d => d.NetBalance).ToList();
-
         int i = 0, j = 0;
 
-        while (i < debtors.Count && j < creditors.Count)
+        while (i < debtors.Count && j < creditorsList.Count)
         {
             var debtor = debtors[i];
-            var creditor = creditors[j];
+            var creditor = creditorsList[j];
 
-            decimal amount = Math.Min(-debtor.NetBalance, creditor.NetBalance);
+            decimal amount = Math.Min(-debtor.Balance, creditor.Balance);
 
             transactions.Add(new TransactionResponseDto
             {
-                From = debtor.User.GivenName,
-                FromUserId = debtor.User.Slug,
-                To = creditor.User.GivenName,
-                ToUserId = creditor.User.Slug,
+                From = debtor.Member.User.GivenName,
+                FromUserId = debtor.Member.User.Slug,
+                To = creditor.Member.User.GivenName,
+                ToUserId = creditor.Member.User.Slug,
                 Amount = amount
             });
 
-            debtor.UpdateNetBalance(amount);
-            creditor.UpdateNetBalance(-amount);
+            // Mutate the COPY, not the entity
+            debtor.Balance += amount;
+            creditor.Balance -= amount;
 
-            if (debtor.NetBalance == 0) i++;
-            if (creditor.NetBalance == 0) j++;
+            if (debtor.Balance == 0) i++;
+            if (creditor.Balance == 0) j++;
         }
 
         return transactions;
@@ -256,6 +270,12 @@ public class GroupService : IGroupService
             parts.FirstOrDefault() ?? string.Empty,
             parts.Length > 1 ? string.Join(" ", parts.Skip(1)) : string.Empty
         );
+    }
+    
+    private class WorkingBalance(UserGroupEntity member, decimal balance)
+    {
+        public UserGroupEntity Member { get; } = member;
+        public decimal Balance { get; set; } = balance;
     }
 
 
