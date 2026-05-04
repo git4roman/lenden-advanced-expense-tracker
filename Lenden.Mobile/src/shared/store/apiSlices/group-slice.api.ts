@@ -1,10 +1,14 @@
 import { api } from "@/src/shared/store/apiSlices/apiClient";
 import { setUserGroups, setGroupBalance, Group } from "../slices/group-slice";
+import {
+  GroupBalanceResponse,
+  GroupSummaryResponse,
+} from "@/src/modules/groups/types/group-slice.type";
 // import { Group } from "./Group";
 
 const groupApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getGroups: builder.query<Group[], void>({
+    getGroups: builder.query<GroupSummaryResponse[], void>({
       query: () => ({
         url: "/groups",
         method: "GET",
@@ -13,11 +17,7 @@ const groupApi = api.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          dispatch(
-            setUserGroups({
-              groups: data,
-            }),
-          );
+          dispatch(setUserGroups(data));
         } catch (error) {
           // console.log("Group APi Error", JSON.stringify(error, null, 2));
         }
@@ -59,8 +59,8 @@ const groupApi = api.injectEndpoints({
       },
     }),
 
-    getGroupBalance: builder.query({
-      query: (groupId: string) => ({
+    getGroupBalance: builder.query<GroupBalanceResponse[], string>({
+      query: (groupId) => ({
         url: `/groups/${groupId}/balance`,
         method: "GET",
       }),
@@ -81,24 +81,6 @@ const groupApi = api.injectEndpoints({
       },
     }),
 
-    deleteGroup: builder.mutation({
-      query: (payload) => ({
-        url: "/Group",
-        method: "DELETE",
-        body: payload,
-      }),
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-          dispatch(
-            setUserGroups({
-              groups: data.groups,
-            }),
-          );
-        } catch (error) {}
-      },
-      invalidatesTags: [{ type: "Group", id: "LIST" }],
-    }),
     deleteGroupById: builder.mutation({
       query: (groupId: string) => ({
         url: `/groups/${groupId}`,

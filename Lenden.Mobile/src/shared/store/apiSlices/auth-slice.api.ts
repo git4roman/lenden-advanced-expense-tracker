@@ -1,10 +1,18 @@
 import { setAuthCredentials } from "@/src/shared/store/slices/auth-slice";
 import { api } from "@/src/shared/store/apiSlices/apiClient";
 import { saveAuth } from "../../services/storage/auth-storage";
+import {
+  GoogleRequest,
+  GoogleResponse,
+  LoginRequest,
+  LoginResponse,
+  RegisterRequest,
+  RegisterResponse,
+} from "@/src/modules/auth/types/auth-slice.type";
 
 const authApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    login: builder.mutation({
+    login: builder.mutation<LoginResponse, LoginRequest>({
       query: (payload) => ({
         url: "/auth/login",
         method: "POST",
@@ -17,16 +25,16 @@ const authApi = api.injectEndpoints({
             setAuthCredentials({
               accessToken: data.accessToken,
               refreshToken: data.refreshToken,
-              expiresAt: data.expiresAt,
+              expiresAt: data.expiresAt.toISOString(),
             }),
           );
-          await saveAuth(data.accessToken, null);
+          await saveAuth(data.accessToken, null, data.expiresAt.toISOString());
         } catch (error) {
           console.log("Error From Auth Login", error);
         }
       },
     }),
-    google: builder.mutation({
+    google: builder.mutation<GoogleResponse, GoogleRequest>({
       query: (payload) => ({
         url: "/auth/google",
         method: "POST",
@@ -39,17 +47,17 @@ const authApi = api.injectEndpoints({
             setAuthCredentials({
               accessToken: data.accessToken,
               refreshToken: data.refreshToken,
-              expiresAt: data.expiresAt,
+              expiresAt: data.expiresAt.toISOString(),
             }),
           );
-          await saveAuth(data.accessToken, null);
+          await saveAuth(data.accessToken, null, data.expiresAt.toISOString());
         } catch (error) {
           console.log("Error From Auth Login", error);
         }
       },
     }),
 
-    register: builder.mutation({
+    register: builder.mutation<RegisterResponse, RegisterRequest>({
       query: (payload) => ({
         url: "/Auth/register",
         method: "POST",
@@ -62,9 +70,10 @@ const authApi = api.injectEndpoints({
             setAuthCredentials({
               accessToken: data.accessToken,
               refreshToken: data.refreshToken,
-              expiresAt: data.expiresAt,
+              expiresAt: data.expiresAt.toISOString(),
             }),
           );
+          await saveAuth(data.accessToken, null, data.expiresAt.toISOString());
         } catch (error) {}
       },
     }),

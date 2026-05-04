@@ -1,3 +1,7 @@
+import {
+  GroupBalanceResponse,
+  GroupSummaryResponse,
+} from "@/src/modules/groups/types/group-slice.type";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // type MutualBalanceUser = {
@@ -40,21 +44,19 @@ export type Transaction = {
   amount: number;
 };
 
-const initialState: GroupState = {
-  groups: null,
-};
+const initialState: GroupSummaryResponse[] = [];
 
 type SetGroupBalancePayload = {
   groupId: string;
-  transactions: Transaction[];
+  transactions: GroupBalanceResponse[];
 };
 
 const groupSlice = createSlice({
   name: "group",
   initialState,
   reducers: {
-    setUserGroups: (state, action: PayloadAction<GroupState>) => {
-      state.groups = action.payload.groups ?? null;
+    setUserGroups: (state, action: PayloadAction<GroupSummaryResponse[]>) => {
+      return action.payload;
     },
     setGroupBalance: (state, action: PayloadAction<SetGroupBalancePayload>) => {
       const { groupId, transactions } = action.payload;
