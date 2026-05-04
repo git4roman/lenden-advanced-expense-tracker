@@ -31,9 +31,12 @@ public class GroupRepository : IGroupRepository
                 m.User.Slug == publicId &&
                 m.Status == GroupMembershipStatus.Active))
             .Include(g => g.Members.Where(m => m.Status == GroupMembershipStatus.Active))
-            .ThenInclude(m => m.User).ThenInclude(u=>u.UserInfo)
+            .ThenInclude(m => m.User)
+            .ThenInclude(u => u.UserInfo)
             .Include(g => g.Settlements)
-            
+            .ThenInclude(s => s.Creditor)
+            .Include(g => g.Settlements)
+            .ThenInclude(s => s.Debtor)
             .ToListAsync(ct);
         return groups;
     }

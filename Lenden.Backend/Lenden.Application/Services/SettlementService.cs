@@ -97,13 +97,23 @@ public class SettlementService: ISettlementService
         var creditor = group.Members.Where(p => p.User.Slug == request.CreditorId).SingleOrDefault();
         if(creditor is null) throw new NotFoundException("Debtor not found");
        
-        creditor.UpdateNetBalance(settlementTransaction.Amount);
-        debtor.UpdateNetBalance(-settlementTransaction.Amount);
+        creditor.UpdateNetBalance(-settlementTransaction.Amount);
+        debtor.UpdateNetBalance(settlementTransaction.Amount);
        
         var settlementEntity = group.MakeSettlement(creditor.User, debtor.User, settlementTransaction.Amount);
+        
         settlementEntity.UpdateStatus(SettlementStatusEnums.Pending);
+        
        await _unitOfWork.SaveChangesAsync();
-        var response = new RequestSettlementResponseDto(settlementEntity.Slug,debtor.User.Slug, creditor.User.Slug,settlementTransaction.Amount);
+       
+       var response = new RequestSettlementResponseDto
+       {
+           SettlementId = settlementEntity.Slug,
+           RequestedBy = debtor.User.Slug,
+           CreditorId = creditor.User.Slug,
+           Amount = settlementTransaction.Amount,
+           Status = settlementEntity.Status.Name
+       };
         return response;
         
     }

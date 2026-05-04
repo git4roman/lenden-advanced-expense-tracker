@@ -7,9 +7,11 @@ public class RequestSettlementRequestDto
     public Guid CreditorId {get; set;}
 }
 
-public class RequestSettlementResponseDto(
-    Guid SettlementId ,
-    Guid RequestedBy ,
-    Guid CreditorId ,
-    decimal Amount 
-);
+public class RequestSettlementResponseDto
+{
+    public Guid SettlementId { get; set; }
+    public Guid RequestedBy { get; set; }
+    public Guid CreditorId { get; set; }
+    public decimal Amount { get; set; }
+    public string Status { get; set; }
+}

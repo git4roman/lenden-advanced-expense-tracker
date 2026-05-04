@@ -59,9 +59,12 @@ export const CreateGroupModal = ({ visible, onClose, members }: Props) => {
 
   const onCreateGroup = async () => {
     await handleCreateGroup();
-    setStep(1);
     router.replace("/(tabs)/groups");
   };
+
+  useEffect(() => {
+    setStep(1);
+  }, []);
 
   return (
     <Modal

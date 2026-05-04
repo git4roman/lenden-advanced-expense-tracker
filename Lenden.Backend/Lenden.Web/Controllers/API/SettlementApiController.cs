@@ -50,7 +50,7 @@ public class SettlementApiController: ControllerBase
     public async Task<IActionResult> GetSettlements(CancellationToken ct = default)
     {
         var currentUser = await _authService.ValidateUserAsync(User, ct);
-        var response = _settlementService.GetSettlementsByUserSlug(currentUser.Slug);
+        var response =await _settlementService.GetSettlementsByUserSlug(currentUser.Slug);
         return Ok(response);
     }
 

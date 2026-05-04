@@ -12,16 +12,16 @@ public class SettlementEntity
     public long DebtorId { get; set; }
     public decimal Amount { get; set; }
     
-    public virtual GroupEntity Group { get; private set; }
-    public virtual UserEntity Creditor { get; private set; }
-    public virtual UserEntity Debtor { get; private set; }
+    public  GroupEntity Group { get; private set; }
+    public  UserEntity Creditor { get; private set; }
+    public  UserEntity Debtor { get; private set; }
     
     public SettlementStatusEnums Status { get; private set; }
     
     public DateTimeOffset CreatedAt { get; private set; }
     
 
-    private SettlementEntity()
+    protected SettlementEntity()
     {
         
     }
