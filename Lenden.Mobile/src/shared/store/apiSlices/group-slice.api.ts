@@ -2,6 +2,7 @@ import { api } from "@/src/shared/store/apiSlices/apiClient";
 import { setUserGroups, setGroupBalance, Group } from "../slices/group-slice";
 import {
   GroupBalanceResponse,
+  GroupDetailedResponse,
   GroupSummaryResponse,
 } from "@/src/modules/groups/types/group-slice.type";
 // import { Group } from "./Group";
@@ -19,13 +20,13 @@ const groupApi = api.injectEndpoints({
           const { data } = await queryFulfilled;
           dispatch(setUserGroups(data));
         } catch (error) {
-          // console.log("Group APi Error", JSON.stringify(error, null, 2));
+          console.log("Group APi Error", JSON.stringify(error, null, 2));
         }
       },
     }),
-    getGroup: builder.query({
+    getGroup: builder.query<GroupDetailedResponse, string>({
       query: (payload) => ({
-        url: `/Groups/${payload}`,
+        url: `/groups/${payload}`,
         method: "GET",
       }),
       providesTags: (result, error, groupId) => [

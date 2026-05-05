@@ -52,3 +52,6 @@ google-services.json
 
 package-lock.json
 yarn.lock
+
+
+src/data
