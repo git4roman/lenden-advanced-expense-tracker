@@ -17,15 +17,17 @@ import { getColorFromString } from "@/src/shared/utils/get-random-color.utils";
 import { getInitials } from "@/src/shared/utils/get-initials.utils";
 import { useGetGroupsQuery } from "@/src/shared/store/apiSlices/group-slice.api";
 import { Group } from "@/src/modules/groups/types/group-member";
+import { useSelector } from "react-redux";
+import { RootState } from "@/src/shared/store/store";
+import { GroupSummaryResponse } from "@/src/modules/groups/types/group-slice.type";
 
 const GroupScreen = () => {
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
-  const {
-    data: groups,
-    refetch,
-    isFetching,
-    error,
-  } = useGetGroupsQuery(undefined);
+  const { data, refetch, isFetching, error } = useGetGroupsQuery(undefined);
+
+  const groups: GroupSummaryResponse[] = useSelector(
+    (state: RootState) => state.group,
+  );
   console.log("The Group Data", groups);
   const onRefresh = useCallback(() => {
     refetch();
@@ -73,7 +75,7 @@ const GroupScreen = () => {
             </CText>
           </View>
         ) : (
-          groups.map((group: Group, index: number) => (
+          groups.map((group: GroupSummaryResponse, index: number) => (
             <React.Fragment key={group.id}>
               <Pressable
                 style={{
@@ -149,9 +151,9 @@ const GroupScreen = () => {
                     <View
                       style={{ flexDirection: "row", alignItems: "center" }}
                     >
-                      {group.members.slice(0, 3).map((member, i) => (
+                      {group.memberImgUrls.slice(0, 3).map((url, i) => (
                         <View
-                          key={member.id}
+                          key={i}
                           style={{
                             width: 20,
                             height: 20,
@@ -160,22 +162,18 @@ const GroupScreen = () => {
                             borderColor: Colors.accent[800],
                             overflow: "hidden",
                             marginLeft: i === 0 ? 0 : -6,
-                            backgroundColor: getColorFromString(
-                              member.givenName,
-                            ),
-                            justifyContent: "center",
-                            alignItems: "center",
+                            backgroundColor: Colors.neutral[200],
                           }}
                         >
-                          <CText size="xs" color="neutral" shade={50}>
-                            {getInitials(
-                              `${member.givenName} ${member.familyName}`,
-                            )}
-                          </CText>
+                          <Image
+                            source={{ uri: url }}
+                            style={{ width: "100%", height: "100%" }}
+                            resizeMode="cover"
+                          />
                         </View>
                       ))}
 
-                      {group.members.length > 3 && (
+                      {group.memberImgUrls.length > 3 && (
                         <View
                           style={{
                             width: 20,
@@ -187,7 +185,6 @@ const GroupScreen = () => {
                             marginLeft: -6,
                             borderWidth: 2,
                             borderColor: Colors.accent[800],
-                            overflow: "hidden",
                           }}
                         >
                           <CText
@@ -196,7 +193,7 @@ const GroupScreen = () => {
                             color="neutral"
                             shade={50}
                           >
-                            +{group.members.length - 3}
+                            +{group.memberImgUrls.length - 3}
                           </CText>
                         </View>
                       )}

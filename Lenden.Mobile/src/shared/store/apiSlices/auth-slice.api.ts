@@ -28,7 +28,7 @@ const authApi = api.injectEndpoints({
               expiresAt: data.expiresAt.toISOString(),
             }),
           );
-          await saveAuth(data.accessToken, null, data.expiresAt.toISOString());
+          // await saveAuth(data.accessToken, null, data.expiresAt.toISOString());
         } catch (error) {
           console.log("Error From Auth Login", error);
         }
@@ -50,7 +50,7 @@ const authApi = api.injectEndpoints({
               expiresAt: data.expiresAt.toISOString(),
             }),
           );
-          await saveAuth(data.accessToken, null, data.expiresAt.toISOString());
+          // await saveAuth(data.accessToken, null, data.expiresAt.toISOString());
         } catch (error) {
           console.log("Error From Auth Login", error);
         }
@@ -73,7 +73,7 @@ const authApi = api.injectEndpoints({
               expiresAt: data.expiresAt.toISOString(),
             }),
           );
-          await saveAuth(data.accessToken, null, data.expiresAt.toISOString());
+          // await saveAuth(data.accessToken, null, data.expiresAt.toISOString());
         } catch (error) {}
       },
     }),
