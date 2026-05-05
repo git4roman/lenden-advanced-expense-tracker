@@ -1,11 +1,11 @@
-import { View, Pressable } from "react-native";
-import React, { useState } from "react";
-import { Colors } from "@/src/shared/ui/theme/colors";
-import { CText } from "@/src/shared/ui/components/CText";
 import { useBottomSheet } from "@/src/shared/hooks/use-base-bottomSheet";
-import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { Ionicons } from "@expo/vector-icons";
 import { useGetGroupsQuery } from "@/src/shared/store/apiSlices/group-slice.api";
+import { CText } from "@/src/shared/ui/components/CText";
+import { Colors } from "@/src/shared/ui/theme/colors";
+import { Ionicons } from "@expo/vector-icons";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import React, { useState } from "react";
+import { Pressable, View } from "react-native";
 
 const SelectGroupScreen = () => {
   const { closeSheet, selectValue, currentValue } = useBottomSheet();
@@ -90,7 +90,7 @@ const SelectGroupScreen = () => {
                     {group.name}
                   </CText>
                   <CText size="xs" color="neutral" shade={500}>
-                    {group.members?.length ?? 0} members
+                    {group.memberCount ?? 0} members
                   </CText>
                 </View>
               </View>

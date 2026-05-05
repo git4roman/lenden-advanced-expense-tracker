@@ -1,16 +1,15 @@
-import { useState } from "react";
-import { router } from "expo-router";
-import Toast from "react-native-toast-message";
 import {
   useCreateGroupMutation,
-  useDeleteGroupMutation,
+  useDeleteGroupByIdMutation,
 } from "@/src/shared/store/apiSlices/group-slice.api";
-import { GroupMember } from "../types/group-member";
+import { router } from "expo-router";
+import { useState } from "react";
+import Toast from "react-native-toast-message";
 
 type SelectedGroupUser = {
   id: string;
   fullName: string;
-  phone: string;
+  phoneNumber: string;
   email: string;
 };
 
@@ -28,17 +27,18 @@ export const useGroupHandler = (onClose: () => void) => {
   const [createGroup, { isLoading: isCreateGroupLoading }] =
     useCreateGroupMutation();
   const [deleteGroup, { isLoading: isDeleteGroupLoading }] =
-    useDeleteGroupMutation();
+    useDeleteGroupByIdMutation();
 
   const handleCreateGroup = async () => {
     try {
-      console.log("Create Group", JSON.stringify(selectedUsers, null, 3));
+      const payload = {
+        name: groupName,
+        imageUrl: groupImageUri,
+        requestedUsers: selectedUsers.map(({ id, ...users }) => users),
+      };
+      console.log("Create Group Payload", JSON.stringify(payload, null, 3));
 
-      // const response = await createGroup({
-      //   name: groupName,
-      //   imageUrl: groupImageUri,
-      //   users: selectedUsers,
-      // }).unwrap();
+      const response = await createGroup(payload).unwrap();
 
       Toast.show({ type: "success", text1: "Group Creation Successful" });
       setGroupName("");
@@ -57,12 +57,9 @@ export const useGroupHandler = (onClose: () => void) => {
     }
   };
 
-  const handleDeleteGroup = async () => {
+  const handleDeleteGroup = async (groupId: string) => {
     try {
-      const response = await deleteGroup({
-        groupName,
-        groupImageUri,
-      }).unwrap();
+      const response = await deleteGroup(groupId).unwrap();
 
       Toast.show({ type: "success", text1: "Group Deletion Successful" });
       router.replace("/(tabs)/groups");

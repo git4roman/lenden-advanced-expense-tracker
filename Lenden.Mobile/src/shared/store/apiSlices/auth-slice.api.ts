@@ -25,7 +25,7 @@ const authApi = api.injectEndpoints({
             setAuthCredentials({
               accessToken: data.accessToken,
               refreshToken: data.refreshToken,
-              expiresAt: data.expiresAt.toISOString(),
+              expiresAt: data.expiresAt,
             }),
           );
           // await saveAuth(data.accessToken, null, data.expiresAt.toISOString());
@@ -47,7 +47,7 @@ const authApi = api.injectEndpoints({
             setAuthCredentials({
               accessToken: data.accessToken,
               refreshToken: data.refreshToken,
-              expiresAt: data.expiresAt.toISOString(),
+              expiresAt: data.expiresAt,
             }),
           );
           // await saveAuth(data.accessToken, null, data.expiresAt.toISOString());
@@ -70,7 +70,7 @@ const authApi = api.injectEndpoints({
             setAuthCredentials({
               accessToken: data.accessToken,
               refreshToken: data.refreshToken,
-              expiresAt: data.expiresAt.toISOString(),
+              expiresAt: data.expiresAt,
             }),
           );
           // await saveAuth(data.accessToken, null, data.expiresAt.toISOString());

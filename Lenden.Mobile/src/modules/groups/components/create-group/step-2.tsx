@@ -1,15 +1,15 @@
-import { useEffect, useState, useMemo } from "react";
-import {
-  View,
-  Pressable,
-  TextInput,
-  ScrollView,
-  TouchableOpacity,
-  Modal,
-} from "react-native";
-import * as Contacts from "expo-contacts";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
+import * as Contacts from "expo-contacts";
+import { useEffect, useMemo, useState } from "react";
+import {
+  Modal,
+  Pressable,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 type CleanContact = {
   id: string;
@@ -22,7 +22,7 @@ type CleanContact = {
 type SelectedGroupUser = {
   id: string;
   fullName: string;
-  phone: string;
+  phoneNumber: string;
   email: string;
 };
 
@@ -167,7 +167,7 @@ const StepAddMembers = ({
         {
           id: contact.id,
           fullName: contact.name,
-          phone: contact.phones[0] || "",
+          phoneNumber: contact.phones[0] || "",
           email: contact.emails[0] || "",
         },
       ]);
@@ -178,7 +178,7 @@ const StepAddMembers = ({
     setPhonePickerContact(contact);
   };
 
-  const handlePhonePick = (contact: CleanContact, phone: string) => {
+  const handlePhonePick = (contact: CleanContact, phoneNumber: string) => {
     setSelectedMembers((prev) => {
       if (prev.some((p) => p.id === contact.id)) return prev;
 
@@ -187,7 +187,7 @@ const StepAddMembers = ({
         {
           id: contact.id,
           fullName: contact.name,
-          phone,
+          phoneNumber,
           email: contact.emails[0] || "",
         },
       ];

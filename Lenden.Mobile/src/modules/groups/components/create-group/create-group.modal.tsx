@@ -1,25 +1,12 @@
-import {
-  View,
-  Pressable,
-  Modal,
-  Image,
-  TextInput,
-  ScrollView,
-  TouchableOpacity,
-  Animated,
-  Dimensions,
-} from "react-native";
-import { useEffect, useState, useRef } from "react";
-import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
-import { useImagePicker } from "@/src/shared/hooks/use-image-picker";
-import { GroupMember } from "../../types/group-member";
-import { useGroupHandler } from "../../hooks/use-group-handler";
-import { useGetFriendsQuery } from "@/src/shared/store/apiSlices/friends-slice.api";
+import { router } from "expo-router";
+import { useEffect, useState } from "react";
+import { Dimensions, Modal } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useGroupHandler } from "../../hooks/use-group-handler";
+import { GroupMember } from "../../types/group-member";
 import StepGroupInfo from "./step-1";
 import StepAddMembers from "./step-2";
-import { router } from "expo-router";
 
 const { width } = Dimensions.get("window");
 
@@ -30,7 +17,6 @@ type Props = {
 };
 
 type SelectedGroupUser = {
-  id: string;
   fullName: string;
   phone: string;
   email: string;

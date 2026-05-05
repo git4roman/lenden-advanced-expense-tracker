@@ -1,18 +1,18 @@
-import { Href, useRouter } from "expo-router";
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  ImageSourcePropType,
-  Modal,
-  Pressable,
-  ScrollView,
-  View,
-  Image,
-  RefreshControl,
-} from "react-native";
 import ChervonRight from "@/assets/icons/chevron-right.png";
 import InfoIcon from "@/assets/icons/info.png";
 import LockIcon from "@/assets/icons/lock.png";
+import { Href, useRouter } from "expo-router";
+import { useState } from "react";
+import {
+  Image,
+  ImageSourcePropType,
+  Modal,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  View,
+} from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 // import BellICon from "@/assets/icons/bell.png";
 // import SettingIcon from "@/assets/icons/settings.png";
 // import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
@@ -20,15 +20,15 @@ import LockIcon from "@/assets/icons/lock.png";
 import UserIcon from "@/assets/icons/user.png";
 import { CText } from "@/src/shared/ui/components/CText";
 
-import { Colors } from "@/src/shared/ui/theme/colors";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { logout } from "@/src/shared/store/slices/auth-slice";
+import { onLogout } from "@/src/shared/services/auth/google-auth.service";
 import { clearAuth } from "@/src/shared/services/storage/auth-storage";
+import { useMeQuery } from "@/src/shared/store/apiSlices/user-api-slice";
+import { logout } from "@/src/shared/store/slices/auth-slice";
 import { RootState } from "@/src/shared/store/store";
+import { Colors } from "@/src/shared/ui/theme/colors";
 import { formatDate } from "@/src/shared/utils/format-date.utils";
 import { getInitials } from "@/src/shared/utils/get-initials.utils";
-import { onLogout } from "@/src/shared/services/auth/google-auth.service";
-import { useMeQuery } from "@/src/shared/store/apiSlices/user-api-slice";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type AcccountItems = {
   title: string;
@@ -126,6 +126,7 @@ export default function Account() {
   });
 
   const userInfo = useSelector((state: RootState) => state.userInfo);
+  console.log("User Info", JSON.stringify(userInfo, null, 2));
 
   const infoRows = {
     fullName: `${userInfo.givenName} ${userInfo.familyName}` || "-",
@@ -217,11 +218,21 @@ export default function Account() {
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "center",
+                  overflow: "hidden",
                 }}
               >
-                <CText size="sm" color="accent" shade={300} weight="bold">
-                  {getInitials(infoRows.fullName)}
-                </CText>
+                {userInfo?.imageUrl ? (
+                  <Image
+                    source={{ uri: userInfo.imageUrl }}
+                    width={60}
+                    height={60}
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <CText size="sm" color="accent" shade={300} weight="bold">
+                    {getInitials(infoRows.fullName)}
+                  </CText>
+                )}
               </View>
               <CText size="sm" color={Colors.neutral[100]} weight="bold">
                 {infoRows.fullName}
@@ -349,18 +360,6 @@ export default function Account() {
                     title="Logout"
                     rightIcon={ChervonRight}
                     onPress={() => setIsLogoutModalVisible(true)}
-                  />
-                  <DividedPattern
-                    leftIcon={InfoIcon}
-                    title="eSewa"
-                    rightIcon={ChervonRight}
-                    onPress={() => router.push("/(stack)/account/esewa")}
-                  />
-                  <DividedPattern
-                    leftIcon={InfoIcon}
-                    title="contacts"
-                    rightIcon={ChervonRight}
-                    onPress={() => router.push("/(stack)/account/contacts")}
                   />
                 </View>
               </View>

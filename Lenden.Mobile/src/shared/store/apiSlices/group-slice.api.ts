@@ -1,10 +1,10 @@
-import { api } from "@/src/shared/store/apiSlices/apiClient";
-import { setUserGroups, setGroupBalance, Group } from "../slices/group-slice";
 import {
   GroupBalanceResponse,
   GroupDetailedResponse,
   GroupSummaryResponse,
 } from "@/src/modules/groups/types/group-slice.type";
+import { api } from "@/src/shared/store/apiSlices/apiClient";
+import { setGroupBalance, setUserGroups } from "../slices/group-slice";
 // import { Group } from "./Group";
 
 const groupApi = api.injectEndpoints({
@@ -18,7 +18,9 @@ const groupApi = api.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
+          // console.log("Fetched Data", JSON.stringify(data, null, 2));
           dispatch(setUserGroups(data));
+          console.log("I am fetched");
         } catch (error) {
           console.log("Group APi Error", JSON.stringify(error, null, 2));
         }
@@ -45,19 +47,14 @@ const groupApi = api.injectEndpoints({
         method: "POST",
         body: payload,
       }),
-      invalidatesTags: [{ type: "Group", id: "LIST" }],
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          dispatch(
-            setUserGroups({
-              groups: data.groups,
-            }),
-          );
         } catch (error) {
-          console.log("The error from group api is", error);
+          console.log("Error aayo creation bata", error);
         }
       },
+      invalidatesTags: [{ type: "Group", id: "LIST" }],
     }),
 
     getGroupBalance: builder.query<GroupBalanceResponse[], string>({
@@ -150,7 +147,6 @@ const groupApi = api.injectEndpoints({
 export const {
   useCreateGroupMutation,
   useGetGroupsQuery,
-  useDeleteGroupMutation,
   useGetGroupQuery,
   useGetGroupBalanceQuery,
   useUpdateGroupMutation,

@@ -1,13 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type UserInfoState = {
-  givenName: string;
-  familyName: string;
-  imgUrl: string;
-  username: string;
+  address: string;
   email: string;
-  phoneNumber: string;
+  familyName: string;
+  givenName: string;
+  id: string;
+  imageUrl: string;
   memberSince: string;
+  phoneNumber: string;
+  username: string;
 };
 
 const initialState: UserInfoState = {

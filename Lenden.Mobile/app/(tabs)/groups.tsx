@@ -1,34 +1,32 @@
-import {
-  View,
-  Image,
-  Pressable,
-  ScrollView,
-  RefreshControl,
-} from "react-native";
-import React, { useCallback } from "react";
-import { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { CreateGroupModal } from "@/src/modules/groups/components/create-group/create-group.modal";
+import { GroupSummaryResponse } from "@/src/modules/groups/types/group-slice.type";
+import { useGetGroupsQuery } from "@/src/shared/store/apiSlices/group-slice.api";
+import { RootState } from "@/src/shared/store/store";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
-import { ArrowRight2 } from "iconsax-react-nativejs";
-import { router } from "expo-router";
-import { CreateGroupModal } from "@/src/modules/groups/components/create-group/create-group.modal";
-import { getColorFromString } from "@/src/shared/utils/get-random-color.utils";
 import { getInitials } from "@/src/shared/utils/get-initials.utils";
-import { useGetGroupsQuery } from "@/src/shared/store/apiSlices/group-slice.api";
-import { Group } from "@/src/modules/groups/types/group-member";
+import { getColorFromString } from "@/src/shared/utils/get-random-color.utils";
+import { router } from "expo-router";
+import { ArrowRight2 } from "iconsax-react-nativejs";
+import React, { useCallback, useState } from "react";
+import {
+  Image,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
-import { RootState } from "@/src/shared/store/store";
-import { GroupSummaryResponse } from "@/src/modules/groups/types/group-slice.type";
 
 const GroupScreen = () => {
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
-  const { data, refetch, isFetching, error } = useGetGroupsQuery(undefined);
+  const { data, refetch, isFetching, error } = useGetGroupsQuery();
 
   const groups: GroupSummaryResponse[] = useSelector(
     (state: RootState) => state.group,
   );
-  console.log("The Group Data", groups);
+  // console.log("The Group Data", JSON.stringify(groups, null, 3));
   const onRefresh = useCallback(() => {
     refetch();
   }, [refetch]);

@@ -1,4 +1,3 @@
-import { setAuthCredentials } from "@/src/shared/store/slices/auth-slice";
 import { api } from "@/src/shared/store/apiSlices/apiClient";
 import { setUserInfo, UserInfoState } from "../slices/user-slice";
 import { RootState } from "../store";
@@ -25,11 +24,13 @@ const userApi = api.injectEndpoints({
             setUserInfo({
               givenName: data.givenName,
               familyName: data.familyName,
-              imgUrl: data.imgUrl,
+              imageUrl: data.imageUrl,
               username: data.username,
               email: data.email,
               phoneNumber: data.phoneNumber,
               memberSince: data.memberSince,
+              address: data.address,
+              id: data.id,
             }),
           );
         } catch (error) {
