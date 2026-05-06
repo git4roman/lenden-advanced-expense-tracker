@@ -32,7 +32,7 @@ public class GroupApiController : ControllerBase
     public async Task<IActionResult> GetGroup(Guid groupId, CancellationToken ct = default)
     {
         var currentUser = await _authService.ValidateUserAsync(User, ct);
-        var result = _groupService.GetGroupByPublicIdAsync(groupId, ct);
+        var result = await _groupService.GetGroupByPublicIdAsync(groupId, ct);
 
         return Ok(result);
     }

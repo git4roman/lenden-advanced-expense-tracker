@@ -3,7 +3,7 @@ import { useGetGroupsQuery } from "@/src/shared/store/apiSlices/group-slice.api"
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { Ionicons } from "@expo/vector-icons";
-import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { BottomSheetScrollView, BottomSheetView } from "@gorhom/bottom-sheet";
 import React, { useState } from "react";
 import { Pressable, View } from "react-native";
 
@@ -15,10 +15,9 @@ const SelectGroupScreen = () => {
   const [pendingGroup, setPendingGroup] = useState<any>(currentValue ?? null);
 
   return (
-    <View
+    <BottomSheetView
       style={{
         backgroundColor: Colors.neutral[900],
-        flex: 1,
         paddingVertical: 16,
         paddingHorizontal: 20,
         gap: 16,
@@ -32,15 +31,16 @@ const SelectGroupScreen = () => {
       </View>
 
       <BottomSheetScrollView
+        style={{ flex: 1 }}
         contentContainerStyle={{ gap: 10 }}
         showsVerticalScrollIndicator={false}
       >
         {groups.map((group: any) => {
-          const isSelected = pendingGroup?.id === group.id; // 👈 use local state
+          const isSelected = pendingGroup?.id === group.id;
           return (
             <Pressable
               key={group.id}
-              onPress={() => setPendingGroup(group)} // 👈 only update local state
+              onPress={() => setPendingGroup(group)}
               style={{
                 flexDirection: "row",
                 alignItems: "center",
@@ -139,7 +139,7 @@ const SelectGroupScreen = () => {
           <CText weight="bold">Confirm</CText>
         </Pressable>
       </View>
-    </View>
+    </BottomSheetView>
   );
 };
 

@@ -1,7 +1,7 @@
-import SelectParticipantsScreen from "@/src/modules/quickActions/expense/components/BottomSheetComponents/select-participants-bottomSheet-screen";
 import AddPayersBottomSheetScreen from "@/src/modules/quickActions/expense/components/BottomSheetComponents/add-payers-bottomSheet-screen";
 import AddSplittersBottomSheetScreen from "@/src/modules/quickActions/expense/components/BottomSheetComponents/add-splitter-bottomSheet-screen";
 import SelectGroupScreen from "@/src/modules/quickActions/expense/components/BottomSheetComponents/select-group-bottomSheet-screen";
+import SelectParticipantsScreen from "@/src/modules/quickActions/expense/components/BottomSheetComponents/select-participants-bottomSheet-screen";
 import { SheetFieldConfig } from "@/src/shared/types/field-bottomSheet.type";
 
 export const expenseFieldConfig = {
@@ -17,7 +17,7 @@ export const expenseFieldConfig = {
   },
   selectGroup: {
     screen: SelectGroupScreen,
-    snapPoints: ["50%"],
+    snapPoints: ["40%", "50%", "75%", "95%"],
     enableDynamicSizing: false,
   },
   selectParticipants: {

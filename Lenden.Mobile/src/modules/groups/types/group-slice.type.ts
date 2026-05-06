@@ -2,9 +2,15 @@ export interface GroupSummaryResponse {
   id: string;
   name: string;
   imageUrl: string;
-  memberImgUrls: string[];
+  members: GroupMembersSummary[];
   memberCount: number;
   createdAt: string;
+}
+export interface GroupMembersSummary {
+  id: string;
+  givenName: string;
+  familyName: string;
+  imageUrl: string;
 }
 
 export interface GroupBalanceResponse {

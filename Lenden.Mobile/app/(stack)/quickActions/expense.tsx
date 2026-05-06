@@ -1,29 +1,24 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Colors } from "@/src/shared/ui/theme/colors";
-import { CText } from "@/src/shared/ui/components/CText";
 import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  TextInput,
-  View,
-} from "react-native";
+  GroupMembersSummary,
+  GroupSummaryResponse,
+} from "@/src/modules/groups/types/group-slice.type";
+import {
+  ExpenseCategories,
+  ExpenseCategory,
+} from "@/src/shared/constants/expense-category.constant";
+import { useBottomSheet } from "@/src/shared/hooks/use-base-bottomSheet";
+import { useCreateExpenseMutation } from "@/src/shared/store/apiSlices/expense-slice.api";
+import { useGetGroupsQuery } from "@/src/shared/store/apiSlices/group-slice.api";
+import { RootState } from "@/src/shared/store/store";
+import { CText } from "@/src/shared/ui/components/CText";
+import { Colors } from "@/src/shared/ui/theme/colors";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { useGetGroupsQuery } from "@/src/shared/store/apiSlices/group-slice.api";
-import { useCreateExpenseMutation } from "@/src/shared/store/apiSlices/expense-slice.api";
-import { useBottomSheet } from "@/src/shared/hooks/use-base-bottomSheet";
-import {
-  Group,
-  GroupState,
-  Member,
-} from "@/src/shared/store/slices/group-slice";
-import {
-  ExpenseCategory,
-  ExpenseCategories,
-} from "@/src/shared/constants/expense-category.constant";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Pressable, TextInput, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
+import { useSelector } from "react-redux";
 
 export type ExpenseUser = {
   userId: string;
@@ -48,13 +43,13 @@ export interface ExpenseFormParticipantType extends ExpenseFormUserType {}
 
 export type ExpenseFormType = {
   totalAmount: number;
-  groups: Group[];
+  groups: GroupSummaryResponse[];
   categories: ExpenseCategory[];
   description: string;
   imageUrl: string;
   users: ExpenseFormUserType[];
   participants: ExpenseFormParticipantType[] | [];
-  selectedGroup: Group | null;
+  selectedGroup: GroupSummaryResponse | null;
   selectedCategory: number;
   expenseMetaData: ExpenseMetaData;
 };
@@ -66,7 +61,11 @@ export type UserUpdate = {
 };
 
 const Expense = () => {
-  const { data: groups, isLoading } = useGetGroupsQuery(undefined);
+  const { data, isLoading } = useGetGroupsQuery(undefined);
+
+  const groups: GroupSummaryResponse[] = useSelector(
+    (state: RootState) => state.group,
+  );
 
   const [expenseForm, setExpenseForm] = useState<ExpenseFormType>({
     totalAmount: 0,
@@ -88,9 +87,11 @@ const Expense = () => {
     if (!groups?.length) return;
 
     const users: ExpenseFormUserType[] =
-      groups[0]?.members?.map((user: Member) => ({
+      groups[0]?.members?.map((user: GroupMembersSummary) => ({
         userId: user.id,
         fullName: user.givenName + " " + user.familyName,
+        paidAmount: 0,
+        splitAmount: 0,
       })) ?? [];
 
     setExpenseForm((prev) => ({
@@ -321,14 +322,14 @@ const Expense = () => {
               onPress={() =>
                 openSheet(
                   "selectGroup",
-                  (group: Group) => {
+                  (group: GroupSummaryResponse) => {
                     setExpenseForm((prev) => ({
                       ...prev,
                       selectedGroup: group,
                     }));
                   },
                   expenseForm.groups,
-                  0,
+                  2,
                 )
               }
               style={{

@@ -149,7 +149,7 @@ const GroupScreen = () => {
                     <View
                       style={{ flexDirection: "row", alignItems: "center" }}
                     >
-                      {group.memberImgUrls.slice(0, 3).map((url, i) => (
+                      {group.members.slice(0, 3).map((member, i) => (
                         <View
                           key={i}
                           style={{
@@ -164,14 +164,14 @@ const GroupScreen = () => {
                           }}
                         >
                           <Image
-                            source={{ uri: url }}
+                            source={{ uri: member.imageUrl }}
                             style={{ width: "100%", height: "100%" }}
                             resizeMode="cover"
                           />
                         </View>
                       ))}
 
-                      {group.memberImgUrls.length > 3 && (
+                      {group.members.length > 3 && (
                         <View
                           style={{
                             width: 20,
@@ -191,7 +191,7 @@ const GroupScreen = () => {
                             color="neutral"
                             shade={50}
                           >
-                            +{group.memberImgUrls.length - 3}
+                            +{group.members.length - 3}
                           </CText>
                         </View>
                       )}

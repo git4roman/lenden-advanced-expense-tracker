@@ -49,7 +49,10 @@ public class GroupService : IGroupService
             .Select(u =>
             {
                 var (firstName, lastName) = SplitFullName(u.FullName);
-                return new UserEntity(Email.Create(u.Email), firstName, lastName, u.PhoneNumber);
+                var email = string.IsNullOrWhiteSpace(u.Email)
+                    ? $"missing-{u.PhoneNumber}@invalid.local"
+                    : u.Email;
+                return new UserEntity(Email.Create(email), firstName, lastName, u.PhoneNumber);
             })
             .ToList();
 
@@ -195,7 +198,13 @@ public class GroupService : IGroupService
             Id = g.Slug,
             Name = g.Name,
             ImageUrl = g.ImageUrl,
-            MemberImgUrls = g.Members.Select(m=>m.User?.UserInfo?.ImageUrl ?? "").ToList(),
+            Members = g.Members.Select(m=>new GroupMembersSummary
+            {
+                Id = m.User.Slug,
+                GivenName = m.User.GivenName,
+                FamilyName = m.User.FamilyName,
+                ImageUrl = m.User?.UserInfo?.ImageUrl ?? "",
+            }).ToList(),
             MemberCount = g.Members.Count,
             CreatedAt = g.CreatedAt
         });
