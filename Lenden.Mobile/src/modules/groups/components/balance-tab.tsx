@@ -1,11 +1,15 @@
-import { View, FlatList, ScrollView } from "react-native";
-import React from "react";
-import { Colors } from "@/src/shared/ui/theme/colors";
-import { CText } from "@/src/shared/ui/components/CText";
 import {
   useGetGroupBalanceQuery,
   useGetGroupQuery,
 } from "@/src/shared/store/apiSlices/group-slice.api";
+import { Transaction } from "@/src/shared/store/slices/group-slice";
+import { RootState } from "@/src/shared/store/store";
+import { CText } from "@/src/shared/ui/components/CText";
+import { Colors } from "@/src/shared/ui/theme/colors";
+import React from "react";
+import { FlatList, Pressable, ScrollView, View } from "react-native";
+import Toast from "react-native-toast-message";
+import { useSelector } from "react-redux";
 
 const BalanceTab = ({ groupId }: { groupId: string }) => {
   const { data: group, isLoading: isGroupLoading } = useGetGroupQuery(groupId);
@@ -21,6 +25,30 @@ const BalanceTab = ({ groupId }: { groupId: string }) => {
         .map((b: any) => Math.abs(Number(b.balance) || 0))
         .filter((v: any) => Number.isFinite(v)),
     ) || 1;
+
+  const currentUser = useSelector((state: RootState) => state.auth.user);
+
+  const handleSettlement = (type: string) => {
+    console.log("Type", type);
+
+    try {
+      if (type === "creditor") {
+        //make settlement
+      } else {
+        //request settlement
+      }
+
+      Toast.show({
+        type: "success",
+        text1: `Settlement ${type === "creditor" ? "Requested" : "Made"}`,
+      });
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: "error",
+      });
+    }
+  };
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
@@ -61,7 +89,13 @@ const BalanceTab = ({ groupId }: { groupId: string }) => {
         <FlatList
           keyExtractor={(_, index) => index.toString()}
           data={mutualBalances ?? []}
-          renderItem={({ item }) => <GroupMemberMutualBalance item={item} />}
+          renderItem={({ item }) => (
+            <GroupMemberMutualBalance
+              item={item}
+              handleSettlement={handleSettlement}
+              currentUserId={currentUser?.slug ?? ""}
+            />
+          )}
           contentContainerStyle={{
             gap: 10,
             borderWidth: 1,
@@ -148,10 +182,17 @@ function BalanceItem({ item, maxBalance }: { item: any; maxBalance: any }) {
   );
 }
 
-function GroupMemberMutualBalance({ item }: { item: any }) {
-  const from = item.from ?? item.From ?? "";
-  const to = item.to ?? item.To ?? "";
-  const amount = item.amount ?? item.Amount ?? 0;
+function GroupMemberMutualBalance({
+  item,
+  currentUserId,
+  handleSettlement,
+}: {
+  item: Transaction;
+  currentUserId: string;
+  handleSettlement: (type: string) => void;
+}) {
+  const isUserDebtor = currentUserId === item.fromUserId;
+  const isUserCreditor = currentUserId === item.toUserId;
   return (
     <View
       style={{
@@ -176,7 +217,7 @@ function GroupMemberMutualBalance({ item }: { item: any }) {
         <View style={{ gap: 2 }}>
           <View>
             <CText color="neutral" shade={300} weight="semibold" size="md">
-              {from}
+              {item.from}
             </CText>
           </View>
           <CText color="neutral" shade={500} weight="regular" size="ssm">
@@ -184,13 +225,25 @@ function GroupMemberMutualBalance({ item }: { item: any }) {
           </CText>
           <View>
             <CText color="neutral" shade={300} weight="semibold" size="md">
-              {to}
+              {item.to}
             </CText>
           </View>
         </View>
+
+        {(isUserCreditor || isUserDebtor) && (
+          <Pressable
+            onPress={() =>
+              handleSettlement(isUserCreditor ? "creditor" : "debtor")
+            }
+          >
+            <CText>
+              {isUserCreditor ? "Make Settlement" : "Request Settlement"}
+            </CText>
+          </Pressable>
+        )}
         <View style={{ alignItems: "flex-end", gap: 2 }}>
           <CText color="accent" shade={300} weight="bold" size="md">
-            NPR {amount}
+            NPR {item.amount}
           </CText>
         </View>
       </View>

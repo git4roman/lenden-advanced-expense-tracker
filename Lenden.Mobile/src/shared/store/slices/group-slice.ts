@@ -40,7 +40,9 @@ export type GroupState = {
 
 export type Transaction = {
   from: string;
+  fromUserId: string;
   to: string;
+  toUserId: string;
   amount: number;
 };
 
