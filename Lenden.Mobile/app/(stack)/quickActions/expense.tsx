@@ -328,7 +328,7 @@ const Expense = () => {
                       selectedGroup: group,
                     }));
                   },
-                  expenseForm.groups,
+                  expenseForm.selectedGroup,
                   2,
                 )
               }
@@ -353,14 +353,14 @@ const Expense = () => {
                   color={Colors.accent[400]}
                 />
                 <CText size="md" weight="semibold" color="accent" shade={300}>
-                  {groups?.[0]?.name ?? "Add Participants"}
+                  {expenseForm?.selectedGroup?.name ?? "Add Participants"}
                 </CText>
               </View>
               <View
                 style={{ flexDirection: "row", alignItems: "center", gap: 6 }}
               >
                 <CText size="xs" color="neutral" shade={500}>
-                  {groups?.[0]?.members?.length ?? 0} members
+                  {expenseForm?.selectedGroup?.members?.length ?? 0} members
                 </CText>
                 <Ionicons
                   name="chevron-down"

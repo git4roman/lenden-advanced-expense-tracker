@@ -12,7 +12,8 @@ const SelectGroupScreen = () => {
   const { data: groups = [] } = useGetGroupsQuery(undefined);
 
   // local pending state — initialized from currentValue (pre-selected group)
-  const [pendingGroup, setPendingGroup] = useState<any>(currentValue ?? null);
+  const [pendingGroup, setPendingGroup] = useState<any>(groups ?? null);
+  const [selectedGroup, setSelectedGroup] = useState(currentValue);
 
   return (
     <BottomSheetView
@@ -36,11 +37,11 @@ const SelectGroupScreen = () => {
         showsVerticalScrollIndicator={false}
       >
         {groups.map((group: any) => {
-          const isSelected = pendingGroup?.id === group.id;
+          const isSelected = selectedGroup?.id === group.id;
           return (
             <Pressable
               key={group.id}
-              onPress={() => setPendingGroup(group)}
+              onPress={() => setSelectedGroup(group)}
               style={{
                 flexDirection: "row",
                 alignItems: "center",
@@ -123,12 +124,12 @@ const SelectGroupScreen = () => {
         </Pressable>
         <Pressable
           onPress={() => {
-            if (pendingGroup) selectValue(pendingGroup); // 👈 only commit on Confirm
+            if (selectedGroup) selectValue(selectedGroup); // 👈 only commit on Confirm
             closeSheet();
           }}
           style={{
             flex: 1,
-            backgroundColor: pendingGroup
+            backgroundColor: selectedGroup
               ? Colors.accent[500]
               : Colors.neutral[700],
             padding: 10,

@@ -1,3 +1,5 @@
+import { Transaction } from "@/src/shared/store/slices/group-slice";
+
 export interface GroupSummaryResponse {
   id: string;
   name: string;
@@ -5,6 +7,7 @@ export interface GroupSummaryResponse {
   members: GroupMembersSummary[];
   memberCount: number;
   createdAt: string;
+  balances: Transaction[];
 }
 export interface GroupMembersSummary {
   id: string;
