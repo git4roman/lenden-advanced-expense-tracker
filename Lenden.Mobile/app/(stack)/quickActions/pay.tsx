@@ -1,5 +1,6 @@
 import { GroupSummaryResponse } from "@/src/modules/groups/types/group-slice.type";
 import { useBottomSheet } from "@/src/shared/hooks/use-base-bottomSheet";
+import { useRequestSettlementMutation } from "@/src/shared/store/apiSlices/settlement-slice.api";
 import { Transaction } from "@/src/shared/store/slices/group-slice";
 import { RootState } from "@/src/shared/store/store";
 import { CText } from "@/src/shared/ui/components/CText";
@@ -9,6 +10,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import React, { useMemo, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
 
 const groups = ["Roommates", "Office Team", "Trip to Pokhara"];
@@ -76,6 +78,7 @@ const Pay = () => {
     (state: RootState) => state.group,
   );
   const currentUser = useSelector((state: RootState) => state.auth.user);
+  const [requestSettlement] = useRequestSettlementMutation();
   const [paymentForm, setPaymentForm] = useState<PaymentFormType>({
     groups: [],
     imageUrl: "",
@@ -119,13 +122,23 @@ const Pay = () => {
     router.replace("/(tabs)/home");
   };
 
-  const handleSubmit = (toUserId: string) => {
+  const handleSubmit = async (toUserId: string) => {
     const payload: RequestSettlementPayload = {
       groupId: paymentForm.selectedGroup?.id!,
       requestedBy: currentUser?.slug!,
       creditorId: toUserId,
     };
     console.log("Create Payment", payload);
+    try {
+      const response = await requestSettlement(payload).unwrap();
+      console.log("Response", response);
+      Toast.show({
+        type: "success",
+        text1: response.message,
+      });
+    } catch (error) {
+      console.log("error", error);
+    }
 
     resetForm();
   };

@@ -33,6 +33,11 @@ export interface Settlements {
   createdAt: Date;
 }
 
+export interface ConfirmSettlementRequest {
+  groupId: string;
+  settlementId: string;
+}
+
 export enum SettlementStatus {
   Completed = "Completed",
   Pending = "Pending",

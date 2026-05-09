@@ -1,6 +1,6 @@
 ﻿namespace Lenden.Application.DTOs.Group;
 
-public class TransactionResponseDto
+public class GroupMembersBalanceResponseDto
 {
     public string From { get; set; }
     public Guid FromUserId { get; set; }

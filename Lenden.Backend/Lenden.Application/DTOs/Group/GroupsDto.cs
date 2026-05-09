@@ -7,9 +7,11 @@ public class GroupsResponseDto
     public string Name { get; set; }
     public string ImageUrl { get; set; }
     public List<GroupMembersSummary> Members { get; set; }
+    public List<GroupMembersBalanceResponseDto> Balances { get; set; }
     public int MemberCount { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
 }
+
 
 public class GroupMembersSummary
 {

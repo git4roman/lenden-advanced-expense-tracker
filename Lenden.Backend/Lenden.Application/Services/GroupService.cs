@@ -184,34 +184,41 @@ public class GroupService : IGroupService
                 FamilyName = m.User.FamilyName,
                 NetBalance = m.NetBalance,
                 ImgUrl = m.User?.UserInfo?.ImageUrl ?? "",
-            }).ToList()
+            }).ToList(),
         };
 
         return result;
     }
 
-    public async Task<IEnumerable<GroupsResponseDto?>> GetGroupsByUserIdAsync(Guid userId,CancellationToken ct = default)
+    public async Task<IEnumerable<GroupsResponseDto>> GetGroupsByUserIdAsync(
+        Guid userId,
+        CancellationToken ct = default)
     {
-         var groups=await _unitOfWork.GroupRepository.GetByUserPublicIdAsync(userId);
+        var groups = await _unitOfWork.GroupRepository.GetByUserPublicIdAsync(userId);
+
         var result = groups.Select(g => new GroupsResponseDto
         {
             Id = g.Slug,
             Name = g.Name,
             ImageUrl = g.ImageUrl,
-            Members = g.Members.Select(m=>new GroupMembersSummary
+
+            Members = g.Members.Select(m => new GroupMembersSummary
             {
                 Id = m.User.Slug,
                 GivenName = m.User.GivenName,
                 FamilyName = m.User.FamilyName,
                 ImageUrl = m.User?.UserInfo?.ImageUrl ?? "",
             }).ToList(),
+
+            Balances = GetBalance(g, ct),
             MemberCount = g.Members.Count,
             CreatedAt = g.CreatedAt
         });
+
         return result;
     }
 
-    public async Task<List<TransactionResponseDto>> GetGroupBalance(Guid groupId, CancellationToken ct = default)
+    public async Task<List<GroupMembersBalanceResponseDto>> GetGroupBalance(Guid groupId, CancellationToken ct = default)
     {
         var group = await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId);
         if (group is null) throw new Exception("Group not found");
@@ -220,7 +227,7 @@ public class GroupService : IGroupService
         return transactions;
     }
 
-    public List<TransactionResponseDto> GetBalance(GroupEntity group, CancellationToken ct)
+    public List<GroupMembersBalanceResponseDto> GetBalance(GroupEntity group, CancellationToken ct)
     {
         // Work with a snapshot, not the real entities
         var balances = group.Members.ToDictionary(
@@ -242,7 +249,7 @@ public class GroupService : IGroupService
         var debtors = workingBalances.Where(p => p.Balance < 0).OrderBy(d => d.Balance).ToList();
         var creditorsList = workingBalances.Where(p => p.Balance > 0).OrderByDescending(p => p.Balance).ToList();
 
-        var transactions = new List<TransactionResponseDto>();
+        var transactions = new List<GroupMembersBalanceResponseDto>();
         int i = 0, j = 0;
 
         while (i < debtors.Count && j < creditorsList.Count)
@@ -252,7 +259,7 @@ public class GroupService : IGroupService
 
             decimal amount = Math.Min(-debtor.Balance, creditor.Balance);
 
-            transactions.Add(new TransactionResponseDto
+            transactions.Add(new GroupMembersBalanceResponseDto
             {
                 From = debtor.Member.User.GivenName,
                 FromUserId = debtor.Member.User.Slug,

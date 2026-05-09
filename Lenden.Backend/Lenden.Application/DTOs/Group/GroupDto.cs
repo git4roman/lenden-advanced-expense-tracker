@@ -8,6 +8,8 @@ public class GroupResponseDto
     public List<GroupMemberDto> Members { get; set; }
 }
 
+
+
 public class GroupMemberDto
 {
     public Guid Id { get; set; }
