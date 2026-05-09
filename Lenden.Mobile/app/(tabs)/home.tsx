@@ -21,8 +21,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 // import { ActivityItem } from "../../src/modules/groups/components/activity-item";
-import { Href, router } from "expo-router";
 import { useTheme } from "@/src/shared/providers/ThemeProviders";
+import { Href, router } from "expo-router";
 
 const activityMockData = [
   {
@@ -216,15 +216,15 @@ const BalanceCard = () => (
       >
         <MoneyRecive size={28} color={Colors.accent[200]} />
       </IconCover>
-      {/* <IconCover
-        label="Statement"
+      <IconCover
+        label="Settlement"
         path={{
-          pathname: "/quickActions/statement",
+          pathname: "/quickActions/settlement",
           params: { from: "home" },
         }}
       >
         <TableDocument size={28} color={Colors.accent[200]} />
-      </IconCover> */}
+      </IconCover>
     </View>
   </ImageBackground>
 );
@@ -366,17 +366,17 @@ const HomeScreen = () => {
             }
             icon={<MoneyRecive size={22} color={Colors.neutral[700]} />}
           />
-          {/* <ActionCard
-            label="View Statement"
-            description="See your recent statement summary"
+          <ActionCard
+            label="Settlements"
+            description="See your recent settlements"
             onPress={() =>
               router.push({
-                pathname: "/quickActions/statement",
+                pathname: "/quickActions/settlement",
                 params: { from: "home" },
               })
             }
             icon={<TableDocument size={22} color={Colors.neutral[700]} />}
-          /> */}
+          />
         </View>
 
         {/* <View style={{ justifyContent: "center", alignItems: "center" }}>
