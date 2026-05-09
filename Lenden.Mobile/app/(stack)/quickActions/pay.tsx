@@ -19,7 +19,6 @@ export type PaymentFormType = {
   groups: GroupSummaryResponse[];
   imageUrl: string;
   groupBalances: Transaction[];
-  selectedGroupBalance: Transaction | null;
   selectedGroup: GroupSummaryResponse | null;
 };
 
@@ -29,29 +28,29 @@ export interface RequestSettlementPayload {
   creditorId: string;
 }
 
-export const groupBalanceMock: Transaction[] = [
-  {
-    from: "Roman",
-    fromUserId: "user_1",
-    to: "Alex",
-    toUserId: "user_2",
-    amount: 4000,
-  },
-  {
-    from: "Sarah",
-    fromUserId: "user_3",
-    to: "Roman",
-    toUserId: "user_1",
-    amount: 1800,
-  },
-  {
-    from: "Emily",
-    fromUserId: "user_4",
-    to: "Alex",
-    toUserId: "user_2",
-    amount: 950,
-  },
-];
+// export const groupBalanceMock: Transaction[] = [
+//   {
+//     from: "Roman",
+//     fromUserId: "user_1",
+//     to: "Alex",
+//     toUserId: "user_2",
+//     amount: 4000,
+//   },
+//   {
+//     from: "Sarah",
+//     fromUserId: "user_3",
+//     to: "Roman",
+//     toUserId: "user_1",
+//     amount: 1800,
+//   },
+//   {
+//     from: "Emily",
+//     fromUserId: "user_4",
+//     to: "Alex",
+//     toUserId: "user_2",
+//     amount: 950,
+//   },
+// ];
 
 const Pay = () => {
   const {
@@ -80,16 +79,9 @@ const Pay = () => {
   const [paymentForm, setPaymentForm] = useState<PaymentFormType>({
     groups: [],
     imageUrl: "",
-    selectedGroup: null,
+    selectedGroup: groups[0],
     groupBalances: [],
-    selectedGroupBalance: null,
   });
-
-  const fromData: RequestSettlementPayload = {
-    groupId: paymentForm.selectedGroup?.id!,
-    requestedBy: currentUser?.slug!,
-    creditorId: paymentForm?.selectedGroupBalance?.toUserId!,
-  };
 
   const hasEvidence = useMemo(
     () => evidenceUrl.trim().length > 0,
@@ -127,74 +119,135 @@ const Pay = () => {
     router.replace("/(tabs)/home");
   };
 
-  const handleSubmit = () => {
-    console.log("Create Payment", {
-      amount,
-      group,
-      recipient,
-      method,
-      evidenceUrl,
-      notes,
-    });
+  const handleSubmit = (toUserId: string) => {
+    const payload: RequestSettlementPayload = {
+      groupId: paymentForm.selectedGroup?.id!,
+      requestedBy: currentUser?.slug!,
+      creditorId: toUserId,
+    };
+    console.log("Create Payment", payload);
+
     resetForm();
   };
+
+  const payableBalances =
+    paymentForm?.selectedGroup?.balances?.filter(
+      (item) => item.fromUserId === currentUser?.slug,
+    ) ?? [];
 
   return (
     <SafeAreaView
       style={{
         flex: 1,
-        paddingHorizontal: 16,
+        // paddingHorizontal: 16,
         backgroundColor: Colors.neutral[900],
+        gap: 24,
       }}
     >
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          paddingVertical: 10,
-        }}
-      >
-        <CText weight="bold" size="xmd" color="neutral" shade={200}>
-          Record Payment
-        </CText>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+      <View style={{ position: "relative", gap: 8 }}>
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: -1,
+            backgroundColor: Colors.neutral[850],
+            height: 100,
+            // width: "100%",
+            borderBottomLeftRadius: 20,
+            borderBottomRightRadius: 20,
+          }}
+        />
+
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            paddingHorizontal: 14,
+            paddingVertical: 12,
+            borderRadius: 12,
+          }}
+        >
           <Pressable
             onPress={handleCancel}
-            style={{
-              paddingHorizontal: 12,
-              paddingVertical: 8,
-              borderRadius: 10,
-              borderWidth: 1,
-              borderColor: Colors.neutral[700],
-              backgroundColor: Colors.neutral[800],
-            }}
+            style={{ flexDirection: "row", gap: 12 }}
           >
-            <CText size="sm" weight="semibold" color="neutral" shade={300}>
-              Cancel
+            <Ionicons name="arrow-back" size={20} color={Colors.neutral[100]} />
+            <CText weight="medium" size="md" color="neutral" shade={100}>
+              Record Payment
             </CText>
           </Pressable>
-          <Pressable
-            onPress={handleSubmit}
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <Pressable
+              onPress={handleCancel}
+              style={{
+                paddingHorizontal: 10,
+                paddingVertical: 6,
+                borderRadius: 10,
+                borderWidth: 1,
+                borderColor: Colors.neutral[700],
+                backgroundColor: Colors.neutral[900],
+              }}
+            >
+              <CText size="sm" weight="semibold" color="neutral" shade={300}>
+                Cancel
+              </CText>
+            </Pressable>
+          </View>
+        </View>
+
+        <View
+          style={{
+            paddingHorizontal: 16,
+          }}
+        >
+          <View
             style={{
-              width: 38,
-              height: 38,
-              borderRadius: 999,
-              backgroundColor: Colors.accent[500],
-              justifyContent: "center",
-              alignItems: "center",
+              backgroundColor: Colors.primary[900],
+              borderRadius: 16,
+              padding: 16,
+              gap: 8,
+              borderWidth: 1,
+              borderColor: Colors.primary[700],
             }}
           >
-            <Ionicons name="checkmark" size={22} color={Colors.neutral[900]} />
-          </Pressable>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 8,
+              }}
+            >
+              <Ionicons
+                name="information-circle"
+                size={18}
+                color={Colors.primary[300]}
+              />
+
+              <CText weight="bold" size="md" color="primary" shade={300}>
+                Settlement Payments
+              </CText>
+            </View>
+
+            <CText size="sm" color="neutral" shade={400}>
+              Review outstanding balances in this group and record payments
+              after settlement is completed.
+            </CText>
+          </View>
         </View>
       </View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ gap: 16, paddingBottom: 24 }}
+        contentContainerStyle={{
+          gap: 24,
+          paddingBottom: 24,
+          paddingHorizontal: 16,
+        }}
       >
-        <View style={{ gap: 8, padding: 12 }}>
+        <View style={{ gap: 8 }}>
           <Pressable
             onPress={() =>
               openSheet(
@@ -214,7 +267,7 @@ const Pay = () => {
               alignItems: "center",
               justifyContent: "space-between",
               paddingHorizontal: 14,
-              paddingVertical: 12,
+              paddingVertical: 18,
               borderRadius: 12,
               borderWidth: 1,
               borderColor: Colors.accent[500],
@@ -247,21 +300,36 @@ const Pay = () => {
             </View>
           </Pressable>
         </View>
-
         <View
           style={{
             borderWidth: 1,
             borderRadius: 16,
             borderColor: Colors.neutral[700],
-            backgroundColor: Colors.neutral[800],
+            backgroundColor: Colors.neutral[850],
             gap: 12,
             paddingVertical: 12,
-            paddingHorizontal: 8,
+            paddingHorizontal: 14,
           }}
         >
-          {groupBalanceMock
-            ?.filter((item) => item.fromUserId === "user_1")
-            ?.map((item, index) => (
+          <View>
+            <CText size="md" weight="medium" color="neutral" shade={100}>
+              Pending Payments
+            </CText>
+          </View>
+          {payableBalances.length === 0 ? (
+            <View
+              style={{
+                paddingVertical: 32,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <CText weight="semibold" size="md" color="neutral" shade={400}>
+                Nobody to pay
+              </CText>
+            </View>
+          ) : (
+            payableBalances.map((item, index) => (
               <View
                 key={index}
                 style={{
@@ -270,7 +338,7 @@ const Pay = () => {
                   justifyContent: "space-between",
                   paddingVertical: 14,
                   paddingHorizontal: 16,
-                  borderRadius: 20,
+                  borderRadius: 14,
                   backgroundColor: Colors.neutral[900],
                   marginBottom: 12,
                   borderWidth: 1,
@@ -278,7 +346,6 @@ const Pay = () => {
                   gap: 12,
                 }}
               >
-                {/* Left Content */}
                 <View
                   style={{
                     flex: 1,
@@ -293,35 +360,44 @@ const Pay = () => {
                       gap: 4,
                     }}
                   >
-                    <CText weight="bold" size="xmd" color="neutral" shade={100}>
+                    <CText
+                      weight="semibold"
+                      size="ssm"
+                      color="neutral"
+                      shade={100}
+                    >
                       {item.from}
                     </CText>
 
                     <CText
                       weight="medium"
-                      size="md"
+                      size="ssm"
                       color="neutral"
                       shade={400}
                     >
                       needs to pay
                     </CText>
 
-                    <CText weight="bold" size="xmd" color="neutral" shade={100}>
+                    <CText
+                      weight="semibold"
+                      size="ssm"
+                      color="neutral"
+                      shade={100}
+                    >
                       {item.to}
                     </CText>
                   </View>
 
                   <CText
                     weight="semibold"
-                    size="lg"
+                    size="xmd"
                     color="primary"
                     shade={400}
                   >
-                    {item.amount}
+                    Rs. {item.amount}
                   </CText>
                 </View>
 
-                {/* Settlement Button */}
                 <Pressable
                   style={({ pressed }) => ({
                     paddingHorizontal: 16,
@@ -332,99 +408,15 @@ const Pay = () => {
                       : Colors.primary[600],
                     opacity: pressed ? 0.9 : 1,
                   })}
-                  onPress={() => {
-                    console.log("Request Settle");
-                  }}
+                  onPress={() => handleSubmit(item.toUserId)}
                 >
                   <CText weight="bold" size="sm" color="neutral" shade={50}>
-                    Settle
+                    Pay
                   </CText>
                 </Pressable>
               </View>
-            ))}
-          {groupBalanceMock
-            ?.filter((item) => item.toUserId === "user_1")
-            ?.map((item, index) => (
-              <View
-                key={index}
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  paddingVertical: 14,
-                  paddingHorizontal: 16,
-                  borderRadius: 20,
-                  backgroundColor: Colors.neutral[900],
-                  marginBottom: 12,
-                  borderWidth: 1,
-                  borderColor: Colors.neutral[800],
-                  gap: 12,
-                }}
-              >
-                {/* Left Content */}
-                <View
-                  style={{
-                    flex: 1,
-                    gap: 4,
-                  }}
-                >
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      flexWrap: "wrap",
-                      alignItems: "center",
-                      gap: 4,
-                    }}
-                  >
-                    <CText weight="bold" size="xmd" color="neutral" shade={100}>
-                      {item.from}
-                    </CText>
-
-                    <CText
-                      weight="medium"
-                      size="md"
-                      color="neutral"
-                      shade={400}
-                    >
-                      needs to pay
-                    </CText>
-
-                    <CText weight="bold" size="xmd" color="neutral" shade={100}>
-                      {item.to}
-                    </CText>
-                  </View>
-
-                  <CText
-                    weight="semibold"
-                    size="lg"
-                    color="primary"
-                    shade={400}
-                  >
-                    {item.amount}
-                  </CText>
-                </View>
-
-                {/* Settlement Button */}
-                <Pressable
-                  style={({ pressed }) => ({
-                    paddingHorizontal: 16,
-                    paddingVertical: 10,
-                    borderRadius: 14,
-                    backgroundColor: pressed
-                      ? Colors.primary[700]
-                      : Colors.primary[600],
-                    opacity: pressed ? 0.9 : 1,
-                  })}
-                  onPress={() => {
-                    console.log("Confirm Settle");
-                  }}
-                >
-                  <CText weight="bold" size="sm" color="neutral" shade={50}>
-                    Settle
-                  </CText>
-                </Pressable>
-              </View>
-            ))}
+            ))
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>

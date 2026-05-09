@@ -1,5 +1,5 @@
+import { Slot } from "expo-router";
 import React from "react";
-import { Slot, Stack } from "expo-router";
 
 const QuickActionsLayout = () => {
   return (

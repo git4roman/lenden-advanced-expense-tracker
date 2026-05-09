@@ -15,7 +15,13 @@ import { Colors } from "@/src/shared/ui/theme/colors";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Pressable, TextInput, View } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  TextInput,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
@@ -213,9 +219,7 @@ const Expense = () => {
     <SafeAreaView
       style={{
         flex: 1,
-        paddingHorizontal: 14,
         backgroundColor: Colors.neutral[900],
-        gap: 16,
       }}
     >
       {isCreatingExpense && (
@@ -243,43 +247,114 @@ const Expense = () => {
           </CText>
         </View>
       )}
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          paddingVertical: 6,
-        }}
-      >
-        <CText weight="bold" size="lg" color="neutral" shade={200}>
-          Add Expense
-        </CText>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+
+      <View style={{ position: "relative", gap: 8 }}>
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: -1,
+            backgroundColor: Colors.neutral[850],
+            height: 100,
+            // width: "100%",
+            borderBottomLeftRadius: 20,
+            borderBottomRightRadius: 20,
+          }}
+        />
+
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            paddingHorizontal: 14,
+            paddingVertical: 12,
+            borderRadius: 12,
+          }}
+        >
           <Pressable
             onPress={handleCancel}
-            style={{
-              paddingHorizontal: 10,
-              paddingVertical: 6,
-              borderRadius: 10,
-              borderWidth: 1,
-              borderColor: Colors.neutral[700],
-              backgroundColor: Colors.neutral[800],
-            }}
+            style={{ flexDirection: "row", gap: 12 }}
           >
-            <CText size="md" weight="semibold" color="neutral" shade={300}>
-              Cancel
+            <Ionicons name="arrow-back" size={20} color={Colors.neutral[100]} />
+            <CText weight="medium" size="md" color="neutral" shade={100}>
+              Record Expense
             </CText>
           </Pressable>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <Pressable
+              onPress={handleCancel}
+              style={{
+                paddingHorizontal: 10,
+                paddingVertical: 6,
+                borderRadius: 10,
+                borderWidth: 1,
+                borderColor: Colors.neutral[700],
+                backgroundColor: Colors.neutral[900],
+              }}
+            >
+              <CText size="sm" weight="semibold" color="neutral" shade={300}>
+                Cancel
+              </CText>
+            </Pressable>
+          </View>
+        </View>
+
+        <View
+          style={{
+            paddingHorizontal: 16,
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: Colors.primary[900],
+              borderRadius: 16,
+              padding: 16,
+              gap: 8,
+              borderWidth: 1,
+              borderColor: Colors.primary[700],
+            }}
+          >
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 8,
+              }}
+            >
+              <Ionicons
+                name="information-circle"
+                size={18}
+                color={Colors.primary[300]}
+              />
+
+              <CText weight="bold" size="md" color="primary" shade={300}>
+                Split Expenses
+              </CText>
+            </View>
+
+            <CText size="sm" color="neutral" shade={400}>
+              Expenses are automatically split among selected group members
+              based on the chosen split method ensuring a clear breakdown of who
+              owes what.
+            </CText>
+          </View>
         </View>
       </View>
 
-      <View>
+      <ScrollView
+        style={{ flex: 1, marginTop: 24 }}
+        contentContainerStyle={{ paddingBottom: 24 }}
+      >
         <View
           style={{
             paddingHorizontal: 4,
-            borderRadius: 16,
+            borderRadius: 28,
             borderWidth: 1,
-            borderColor: Colors.neutral[800],
+            borderColor: Colors.neutral[600],
+            backgroundColor: Colors.neutral[900],
           }}
         >
           <View
@@ -337,7 +412,7 @@ const Expense = () => {
                 alignItems: "center",
                 justifyContent: "space-between",
                 paddingHorizontal: 14,
-                paddingVertical: 12,
+                paddingVertical: 14,
                 borderRadius: 12,
                 borderWidth: 1,
                 borderColor: Colors.accent[500],
@@ -359,7 +434,7 @@ const Expense = () => {
               <View
                 style={{ flexDirection: "row", alignItems: "center", gap: 6 }}
               >
-                <CText size="xs" color="neutral" shade={500}>
+                <CText size="sm" color="neutral" shade={500}>
                   {expenseForm?.selectedGroup?.members?.length ?? 0} members
                 </CText>
                 <Ionicons
@@ -425,7 +500,7 @@ const Expense = () => {
                 );
               }}
             >
-              <CText weight="semibold" size="md" color="neutral" shade={300}>
+              <CText weight="medium" size="md" color="neutral" shade={300}>
                 + Add Participants
               </CText>
             </Pressable>
@@ -466,7 +541,7 @@ const Expense = () => {
               }}
             >
               <CText
-                weight="semibold"
+                weight="medium"
                 size="md"
                 color="neutral"
                 shade={300}
@@ -512,7 +587,7 @@ const Expense = () => {
               }}
             >
               <CText
-                weight="semibold"
+                weight="medium"
                 size="md"
                 color="neutral"
                 shade={300}
@@ -565,12 +640,13 @@ const Expense = () => {
                       }
                     />
                     <CText
-                      size="md"
+                      size="ssm"
                       color={isSelected ? "accent" : "neutral"}
                       shade={200}
-                      weight="semibold"
+                      weight="medium"
                       numberOfLines={1}
                       style={{ flex: 1 }}
+                      letterSpacing={0.5}
                     >
                       {category.key}
                     </CText>
@@ -636,21 +712,30 @@ const Expense = () => {
             </Pressable>
           </View>
         </View>
-      </View>
-      <Pressable
-        onPress={handleSubmit}
-        disabled={isCreatingExpense}
+      </ScrollView>
+      <View
         style={{
-          backgroundColor: Colors.accent[500],
-          padding: 10,
-          borderRadius: 10,
-          alignItems: "center",
+          paddingVertical: 12,
+          paddingHorizontal: 12,
+          borderTopWidth: 1,
+          borderTopColor: Colors.neutral[700],
         }}
       >
-        <CText weight="bold" size="md">
-          Save
-        </CText>
-      </Pressable>
+        <Pressable
+          onPress={handleSubmit}
+          disabled={isCreatingExpense}
+          style={{
+            backgroundColor: Colors.accent[500],
+            padding: 10,
+            borderRadius: 10,
+            alignItems: "center",
+          }}
+        >
+          <CText weight="bold" size="md">
+            Save
+          </CText>
+        </Pressable>
+      </View>
     </SafeAreaView>
   );
 };
