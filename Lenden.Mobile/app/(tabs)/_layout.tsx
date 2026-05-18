@@ -1,52 +1,19 @@
-import { LogoutService } from "@/src/modules/auth";
-import {
-  Colors,
-  RootState,
-  useDashboardQuery,
-  useGetGroupsQuery,
-  useMeQuery,
-} from "@/src/shared";
+import { useAuthBootstrap } from "@/src/modules/auth";
+import { Colors, useDashboardQuery, useGetGroupsQuery } from "@/src/shared";
 
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Home2, Profile } from "iconsax-react-nativejs";
-import React, { useEffect } from "react";
+import React from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import Toast from "react-native-toast-message";
-import { useSelector } from "react-redux";
 
 function AppBootstrap({ children }: { children: React.ReactNode }) {
-  const token = useSelector((state: RootState) => state.auth.accessToken);
+  const { isLoading, token } = useAuthBootstrap();
 
-  const { isLoading, isError, error, data } = useMeQuery(undefined, {
-    skip: !token,
-  });
+  useDashboardQuery();
+  useGetGroupsQuery(undefined, { skip: !token });
 
-  const { data: dashboard } = useDashboardQuery();
-  const { data: groups } = useGetGroupsQuery(undefined, { skip: !token });
-
-  useEffect(() => {
-    if (!isError || !error) return;
-
-    const status = (error as any)?.status;
-
-    if (status === 401) {
-      Toast.show({
-        type: "error",
-        text1: "Session Expired",
-        text2: "Please log in again.",
-      });
-      LogoutService();
-    } else {
-      // 500 or other — don't logout, just warn
-      Toast.show({
-        type: "error",
-        text1: "Server Error",
-        text2: "Something went wrong. Please try again later.",
-      });
-    }
-  }, [isError]);
   if (token && isLoading) return null;
 
   return <>{children}</>;
