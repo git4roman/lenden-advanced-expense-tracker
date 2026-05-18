@@ -20,7 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import UserIcon from "@/assets/icons/user.png";
 import { CText } from "@/src/shared/ui/components/CText";
 
-import { onLogout } from "@/src/shared/services/auth/google-auth.service";
+import { onLogout } from "@/src/modules/auth/helpers/google-auth.service";
 import { clearAuth } from "@/src/shared/services/storage/auth-storage";
 import { useMeQuery } from "@/src/shared/store/apiSlices/user-api-slice";
 import { logout } from "@/src/shared/store/slices/auth-slice";

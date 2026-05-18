@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { Pressable, TextInput, View, ActivityIndicator } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
-import { FontAwesome } from "@expo/vector-icons";
+import { onGoogleButtonPress } from "@/src/modules/auth/helpers/google-auth.service";
+import { useGoogleHandler } from "@/src/modules/auth/hooks/use-google-handler";
+import { useLoginHandler } from "@/src/modules/auth/hooks/use-login-handler";
+import { RootState } from "@/src/shared/store/store";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
-import { useLoginHandler } from "@/src/modules/auth/hooks/use-login- handler";
-import { onGoogleButtonPress } from "@/src/shared/services/auth/google-auth.service";
-import { useGoogleHandler } from "@/src/modules/auth/hooks/use-google-handler";
-import { RootState } from "@/src/shared/store/store";
+import { FontAwesome } from "@expo/vector-icons";
+import { router } from "expo-router";
+import React from "react";
+import { ActivityIndicator, Pressable, TextInput, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
-import { loadAuth } from "@/src/shared/services/storage/auth-storage";
 
 export default function LoginScreen() {
   const { email, setEmail, password, setPassword, handleLogin, isLoading } =

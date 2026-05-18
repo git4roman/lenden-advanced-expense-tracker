@@ -1,8 +1,3 @@
-import { Provider, useSelector } from "react-redux";
-import { Stack } from "expo-router";
-import Toast from "react-native-toast-message";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { useFonts } from "expo-font";
 import {
   Urbanist_400Regular,
   Urbanist_400Regular_Italic,
@@ -17,12 +12,22 @@ import {
   Urbanist_900Black,
   Urbanist_900Black_Italic,
 } from "@expo-google-fonts/urbanist";
-import { ThemeProvider } from "@/src/shared/providers/ThemeProviders";
-import { persistor, store, RootState } from "@/src/shared/store/store";
-import { PersistGate } from "redux-persist/integration/react";
-import GeneralBottomSheetScreen from "@/src/shared/ui/components/general-bottomSheet-screen";
-import { BottomSheetProvider } from "@/src/shared/providers/BottomSheetProviders";
+import { useFonts } from "expo-font";
+import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
+import { Provider, useSelector } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+
+import {
+  BottomSheetProvider,
+  GeneralBottomSheet,
+  persistor,
+  RootState,
+  store,
+  ThemeProvider,
+} from "@/src/shared";
 
 function RootNavigator() {
   const token = useSelector((state: RootState) => state.auth.accessToken);
@@ -41,7 +46,7 @@ function RootNavigator() {
         </Stack.Protected>
       </Stack>
 
-      <GeneralBottomSheetScreen />
+      <GeneralBottomSheet />
     </>
   );
 }

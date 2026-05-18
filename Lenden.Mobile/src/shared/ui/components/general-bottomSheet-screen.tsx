@@ -9,7 +9,7 @@ import BottomSheetComponent from "./BottomSheetComponent";
 
 const DEFAULT_SNAP_POINTS = ["40%", "50%", "75%", "95%"];
 
-const GeneralBottomSheet = () => {
+export const GeneralBottomSheet = () => {
   const { bottomSheetRef, closeSheet, activeField, snapIndex } =
     useBottomSheet();
 
@@ -43,5 +43,3 @@ const GeneralBottomSheet = () => {
     </BottomSheetComponent>
   );
 };
-
-export default GeneralBottomSheet;

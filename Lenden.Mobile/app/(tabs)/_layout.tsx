@@ -1,25 +1,20 @@
-import { Pressable, View } from "react-native";
-import React, { useEffect } from "react";
-import { router, Tabs } from "expo-router";
-import { FontAwesome5 } from "@expo/vector-icons";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
-import { Colors } from "@/src/shared/ui/theme/colors";
+import { LogoutService } from "@/src/modules/auth";
 import {
-  AddCircle,
-  Home2,
-  Profile,
-  Profile2User,
-} from "iconsax-react-nativejs";
-import { RootState, store } from "@/src/shared/store/store";
-import { useSelector } from "react-redux";
-import { useGetGroupsQuery } from "@/src/shared/store/apiSlices/group-slice.api";
-import {
+  Colors,
+  RootState,
   useDashboardQuery,
+  useGetGroupsQuery,
   useMeQuery,
-} from "@/src/shared/store/apiSlices/user-api-slice";
+} from "@/src/shared";
+
+import { FontAwesome5 } from "@expo/vector-icons";
+import { Tabs } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { Home2, Profile } from "iconsax-react-nativejs";
+import React, { useEffect } from "react";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
-import { LogoutService } from "@/src/shared/services/auth/logout.service";
+import { useSelector } from "react-redux";
 
 function AppBootstrap({ children }: { children: React.ReactNode }) {
   const token = useSelector((state: RootState) => state.auth.accessToken);
