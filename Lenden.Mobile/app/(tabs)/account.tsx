@@ -2,9 +2,14 @@ import ChervonRight from "@/assets/icons/chevron-right.png";
 import InfoIcon from "@/assets/icons/info.png";
 import LockIcon from "@/assets/icons/lock.png";
 import UserIcon from "@/assets/icons/user.png";
+
+import { DividedPattern, useAccount } from "@/src/modules/account";
+
+import { useTheme } from "@/src/shared";
 import { CText } from "@/src/shared/ui/components/CText";
-import { Href, useRouter } from "expo-router";
-import { useState } from "react";
+
+import { Href, router } from "expo-router";
+
 import {
   Image,
   ImageSourcePropType,
@@ -14,18 +19,6 @@ import {
   ScrollView,
   View,
 } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-
-import { onLogout } from "@/src/modules/auth/helpers/google-auth.service";
-import {
-  formatDate,
-  getInitials,
-  logout,
-  RootState,
-  ThemeColors,
-  useMeQuery,
-  useTheme,
-} from "@/src/shared";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -41,104 +34,30 @@ const accountItems: AcccountItems[] = [
     icon: UserIcon,
     path: "/(stack)/account/personalinfo",
   },
-  // { title: "Payment details", icon: CreditCardIcon, path: "/paymentDetails" },
-  { title: "Security", icon: LockIcon, path: "/(stack)/account/security" },
+  {
+    title: "Security",
+    icon: LockIcon,
+    path: "/(stack)/account/security",
+  },
 ];
 
-type SettingItemProps = {
-  Colors: ThemeColors;
-  leftIcon?: ImageSourcePropType;
-  title: string;
-  rightIcon: ImageSourcePropType;
-  onPress: () => void;
-  rightExtraContent?: string;
-  variant?: "default" | "danger";
-};
-
-export function DividedPattern({
-  Colors,
-  leftIcon,
-  title,
-  rightIcon,
-  onPress,
-  rightExtraContent,
-  variant,
-}: SettingItemProps) {
-  const isDanger = variant === "danger";
-  const textColor = isDanger ? Colors.warning[300] : Colors.neutral[200];
-
-  return (
-    <Pressable
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        minHeight: 38,
-      }}
-      onPress={onPress}
-    >
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 12,
-        }}
-      >
-        {leftIcon && (
-          <Image
-            source={leftIcon}
-            style={{ width: 18, height: 18, tintColor: textColor }}
-          />
-        )}
-        <CText size="sm" color={textColor} weight="semibold">
-          {title}
-        </CText>
-      </View>
-
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 8,
-        }}
-      >
-        {rightExtraContent && (
-          <CText size="sm" color={Colors.neutral[400]} weight="semibold">
-            {rightExtraContent}
-          </CText>
-        )}
-        <Image
-          source={rightIcon}
-          style={{ width: 16, height: 16, tintColor: Colors.neutral[400] }}
-        />
-      </View>
-    </Pressable>
-  );
-}
-
 export default function Account() {
-  const router = useRouter();
-  const dispatch = useDispatch();
+  const {
+    userInfo,
+    infoRows,
+    handleLogout,
+
+    isFetching,
+    refetch,
+
+    isLogoutModalVisible,
+    setIsLogoutModalVisible,
+
+    isRateModalVisible,
+    setIsRateModalVisible,
+  } = useAccount();
+
   const { Colors } = useTheme();
-  const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
-  const [isRateModalVisible, setIsRateModalVisible] = useState(false);
-
-  const { refetch, isFetching } = useMeQuery(undefined, {
-    skip: !useSelector((state: RootState) => state.auth.accessToken),
-  });
-
-  const userInfo = useSelector((state: RootState) => state.userInfo);
-  console.log("User Info", JSON.stringify(userInfo, null, 2));
-
-  const infoRows = {
-    fullName: `${userInfo.givenName} ${userInfo.familyName}` || "-",
-    username: userInfo.username || "-",
-    phone: userInfo.phone || "-",
-    memberSince: userInfo.memberSince
-      ? formatDate(userInfo.memberSince, { month: "long", year: "numeric" })
-      : "-",
-    email: userInfo.email || "-",
-  };
 
   return (
     <SafeAreaView
@@ -158,6 +77,7 @@ export default function Account() {
           <CText shade={200} size="xxlg">
             Please{" "}
           </CText>
+
           <Pressable
             style={{
               backgroundColor: Colors.primary[500],
@@ -168,7 +88,6 @@ export default function Account() {
             onPress={() => router.push("/(auth)/login")}
           >
             <CText shade={800} size="xmd" weight="semibold">
-              {" "}
               Login
             </CText>
           </Pressable>
@@ -232,13 +151,15 @@ export default function Account() {
                   />
                 ) : (
                   <CText size="sm" color="accent" shade={300} weight="bold">
-                    {getInitials(infoRows.fullName)}
+                    {infoRows.initials}
                   </CText>
                 )}
               </View>
+
               <CText size="sm" color={Colors.neutral[100]} weight="bold">
                 {infoRows.fullName}
               </CText>
+
               <Pressable
                 onPress={() => router.push("/(stack)/account/notification")}
               >
@@ -264,6 +185,7 @@ export default function Account() {
                 <CText size="ssm" color={Colors.neutral[300]} weight="bold">
                   Account
                 </CText>
+
                 <View
                   style={{
                     flexDirection: "column",
@@ -298,6 +220,7 @@ export default function Account() {
                 <CText size="sm" color={Colors.neutral[300]} weight="bold">
                   Support
                 </CText>
+
                 <View
                   style={{
                     flexDirection: "column",
@@ -317,6 +240,7 @@ export default function Account() {
                     rightIcon={ChervonRight}
                     onPress={() => router.push("/(stack)/account/about")}
                   />
+
                   <DividedPattern
                     Colors={Colors}
                     leftIcon={InfoIcon}
@@ -366,6 +290,7 @@ export default function Account() {
               <CText size="md" color={Colors.neutral[100]} weight="bold">
                 Logout
               </CText>
+
               <CText size="sm" color={Colors.neutral[400]}>
                 Are you sure you want to logout?
               </CText>
@@ -390,13 +315,7 @@ export default function Account() {
               </Pressable>
 
               <Pressable
-                onPress={() => {
-                  setIsLogoutModalVisible(false);
-                  console.log("I am clicked");
-                  onLogout();
-                  dispatch(logout());
-                  router.replace("/(auth)/login");
-                }}
+                onPress={handleLogout}
                 style={{
                   flex: 1,
                   borderRadius: 10,
@@ -449,6 +368,7 @@ export default function Account() {
               <CText size="md" color={Colors.neutral[100]} weight="bold">
                 Rate LenDen
               </CText>
+
               <CText size="sm" color={Colors.neutral[400]}>
                 Enjoying the app? Please rate us in the store.
               </CText>
