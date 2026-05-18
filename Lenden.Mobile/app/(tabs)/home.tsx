@@ -1,28 +1,17 @@
-import HeroSectionGenerativePattern from "@/assets/images/HeroSectionGenerativePatterns.png";
-import { CText } from "@/src/shared/ui/components/CText";
-import { Colors } from "@/src/shared/ui/theme/colors";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { ActionCard, BalanceCard, Header } from "@/src/modules/home";
+import { useTheme } from "@/src/shared";
+import { router } from "expo-router";
 import {
   // DirectInbox,
   MoneyRecive,
   Moneys,
   MoneySend,
-  Profile,
   // Send2,
   TableDocument,
 } from "iconsax-react-nativejs";
 import React, { useCallback, useState } from "react";
-import {
-  ImageBackground,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  View,
-} from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-// import { ActivityItem } from "../../src/modules/groups/components/activity-item";
-import { useTheme } from "@/src/shared/providers/ThemeProviders";
-import { Href, router } from "expo-router";
 
 const activityMockData = [
   {
@@ -47,237 +36,6 @@ const activityMockData = [
     amount: "650",
   },
 ];
-
-const IconCover = ({
-  children,
-  label,
-  path,
-}: {
-  children: React.ReactNode;
-  label: string;
-  path: Href;
-}) => (
-  <Pressable
-    onPress={() => {
-      router.push(path);
-    }}
-    style={{ justifyContent: "center", alignItems: "center", gap: 4, flex: 1 }}
-  >
-    <View
-      style={{
-        backgroundColor: Colors.warning[500],
-        width: 44,
-        height: 44,
-        padding: 10,
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 22,
-      }}
-    >
-      {children}
-    </View>
-    {label && (
-      <CText weight="medium" size="ssm">
-        {label}
-      </CText>
-    )}
-  </Pressable>
-);
-
-const Header = () => (
-  <View
-    style={{
-      flexDirection: "row",
-      // paddingHorizontal: 16,
-      paddingBottom: 12,
-      alignItems: "center",
-    }}
-  >
-    {/* <View style={{ flex: 1 }} /> */}
-    <View
-      style={{
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "row",
-        gap: 6,
-        flex: 1,
-      }}
-    >
-      <View
-        style={{
-          width: 38,
-          height: 38,
-          borderRadius: 19,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: Colors.neutral[100],
-        }}
-      >
-        <Profile size={32} color={Colors.accent[500]} />
-      </View>
-      <View style={{ flex: 1, justifyContent: "center" }}>
-        <CText weight="semibold" size="md">
-          Hi,Roman !
-        </CText>
-        <CText italic size="xs">
-          Proud Lenden User
-        </CText>
-      </View>
-    </View>
-    <View style={{ flex: 1, alignItems: "flex-end", marginRight: 10 }}>
-      <Pressable onPress={() => router.push("/(stack)/home/notification")}>
-        <FontAwesome5 name="bell" size={24} color={Colors.accent[800]} />
-      </Pressable>
-    </View>
-  </View>
-);
-
-const BalanceCard = () => (
-  <ImageBackground
-    source={HeroSectionGenerativePattern}
-    imageStyle={{ opacity: 0.5 }}
-    style={{
-      height: 180,
-      backgroundColor: Colors.accent[500],
-      borderRadius: 24,
-      borderColor: Colors.primary[400],
-      borderWidth: 1,
-      // borderTopRightRadius: 14,
-      padding: 12,
-      justifyContent: "center",
-      overflow: "hidden",
-      gap: 32,
-    }}
-  >
-    <View
-      style={{
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 14,
-        flexDirection: "row",
-        flex: 1,
-      }}
-    >
-      <View
-        style={{
-          justifyContent: "center",
-          flexDirection: "row",
-          alignItems: "center",
-          backgroundColor: Colors.accent[700],
-          paddingVertical: 4,
-          paddingHorizontal: 8,
-          borderRadius: 999,
-        }}
-      >
-        <CText
-          weight="semibold"
-          size="xs"
-          color="neutral"
-          shade={100}
-          style={{ textAlign: "center" }}
-        >
-          Net Balance
-        </CText>
-      </View>
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-        <CText weight="medium" size="md" style={{ lineHeight: 24 }}>
-          NPR.{" "}
-          <CText weight="semibold" size="xlg" letterSpacing={1}>
-            -398
-            <CText weight="medium" size="ssm" letterSpacing={1}>
-              .52
-            </CText>
-          </CText>
-        </CText>
-        {/* <Eye size="20" color={Colors.accent[900]} /> */}
-      </View>
-    </View>
-
-    <View
-      style={{
-        flexDirection: "row",
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <IconCover label="Expense" path="/(stack)/quickActions/expense">
-        <Moneys size={28} color={Colors.accent[200]} />
-      </IconCover>
-      <IconCover label="Pay" path="/(stack)/quickActions/pay">
-        <MoneySend size={28} color={Colors.accent[200]} />
-      </IconCover>
-      <IconCover
-        label="Request"
-        path={{
-          pathname: "/quickActions/request",
-          params: { from: "home" },
-        }}
-      >
-        <MoneyRecive size={28} color={Colors.accent[200]} />
-      </IconCover>
-      <IconCover
-        label="Settlement"
-        path={{
-          pathname: "/quickActions/settlement",
-          params: { from: "home" },
-        }}
-      >
-        <TableDocument size={28} color={Colors.accent[200]} />
-      </IconCover>
-    </View>
-  </ImageBackground>
-);
-
-const ActionCard = ({
-  label,
-  description,
-  onPress,
-  icon,
-}: {
-  label: string;
-  description: string;
-  onPress: () => void;
-  icon: React.ReactNode;
-}) => (
-  <View style={{ gap: 6 }}>
-    <CText weight="semibold" size="md" color="neutral" shade={100}>
-      {label}
-    </CText>
-    <View
-      style={{
-        backgroundColor: Colors.neutral[800],
-        borderRadius: 18,
-        padding: 14,
-        borderWidth: 1,
-        borderColor: Colors.neutral[700],
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 12,
-      }}
-    >
-      <View style={{ flex: 1 }}>
-        <CText size="sm" color="neutral" shade={400}>
-          {description}
-        </CText>
-      </View>
-      <Pressable
-        onPress={onPress}
-        style={{
-          width: 44,
-          height: 44,
-          borderRadius: 22,
-          backgroundColor: Colors.accent[500],
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        {icon}
-      </Pressable>
-    </View>
-  </View>
-);
 
 const HomeScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
@@ -338,24 +96,27 @@ const HomeScreen = () => {
             borderBottomRightRadius: 20,
           }}
         />
-        <Header />
+        <Header Colors={Colors} />
         <View>
-          <BalanceCard />
+          <BalanceCard Colors={Colors} />
         </View>
         <View style={{ gap: 10, paddingTop: 12 }}>
           <ActionCard
+            Colors={Colors}
             label="Split Your Expenses"
             description="Split your expenses in a group"
             onPress={() => router.push("/(stack)/quickActions/expense")}
             icon={<Moneys size={22} color={Colors.neutral[700]} />}
           />
           <ActionCard
+            Colors={Colors}
             label="Pay Your Friends"
             description="Pay your friends in a group"
             onPress={() => router.push("/(stack)/quickActions/pay")}
             icon={<MoneySend size={22} color={Colors.neutral[700]} />}
           />
           <ActionCard
+            Colors={Colors}
             label="Request Money"
             description="Request money from a friend or group"
             onPress={() =>
@@ -367,6 +128,7 @@ const HomeScreen = () => {
             icon={<MoneyRecive size={22} color={Colors.neutral[700]} />}
           />
           <ActionCard
+            Colors={Colors}
             label="Settlements"
             description="See your recent settlements"
             onPress={() =>
@@ -378,72 +140,6 @@ const HomeScreen = () => {
             icon={<TableDocument size={22} color={Colors.neutral[700]} />}
           />
         </View>
-
-        {/* <View style={{ justifyContent: "center", alignItems: "center" }}>
-          <CText color="primary" size="lg">
-            Under Construction
-          </CText>
-        </View> */}
-
-        {/* <View style={{ paddingTop: 16 }}>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <CText weight="semibold" size="xmd" color="neutral" shade={100}>
-              Activity
-            </CText>
-            <CText size="ssm" color="accent" shade={100}>
-              View All
-            </CText>
-          </View>
-
-          <View style={{ paddingLeft: 0 }}>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-                width: "100%",
-              }}
-            >
-              <View
-                style={{
-                  flex: 1,
-                  height: 1,
-                  backgroundColor: Colors.neutral[500],
-                }}
-              />
-              <CText
-                color="neutral"
-                shade={400}
-                size="xmd"
-                style={{ paddingHorizontal: 10 }}
-              >
-                Today
-              </CText>
-              <View
-                style={{
-                  flex: 1,
-                  height: 1,
-                  backgroundColor: Colors.neutral[500],
-                }}
-              />
-            </View>
-          </View>
-
-          <View>
-            {activities.map((item, i) => (
-              <ActivityItem
-                key={`${item.date}-${item.time}-${i}`}
-                item={item}
-              />
-            ))}
-          </View>
-        </View> */}
       </ScrollView>
     </SafeAreaView>
   );

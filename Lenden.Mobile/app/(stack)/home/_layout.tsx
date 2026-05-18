@@ -1,9 +1,6 @@
-import React from "react";
+import { Colors } from "@/src/shared";
 import { Stack } from "expo-router";
-import { Colors } from "@/src/shared/ui/theme/colors";
-import { useGetGroupsQuery } from "@/src/shared/store/apiSlices/group-slice.api";
-import { useSelector } from "react-redux";
-import { RootState } from "@/src/shared/store/store";
+import React from "react";
 
 const HomeTabLayout = () => {
   return (
