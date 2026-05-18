@@ -1,11 +1,12 @@
-import { CreateGroupModal } from "@/src/modules/groups/components/create-group/create-group.modal";
-import { GroupSummaryResponse } from "@/src/modules/groups/types/group-slice.type";
-import { useGetGroupsQuery } from "@/src/shared/store/apiSlices/group-slice.api";
-import { RootState } from "@/src/shared/store/store";
-import { CText } from "@/src/shared/ui/components/CText";
-import { Colors } from "@/src/shared/ui/theme/colors";
-import { getInitials } from "@/src/shared/utils/get-initials.utils";
-import { getColorFromString } from "@/src/shared/utils/get-random-color.utils";
+import { CreateGroupModal, GroupSummaryResponse } from "@/src/modules/groups";
+import {
+  CText,
+  Colors,
+  RootState,
+  getColorFromString,
+  getInitials,
+  useGetGroupsQuery,
+} from "@/src/shared";
 import { router } from "expo-router";
 import { ArrowRight2 } from "iconsax-react-nativejs";
 import React, { useCallback, useState } from "react";
@@ -26,7 +27,6 @@ const GroupScreen = () => {
   const groups: GroupSummaryResponse[] = useSelector(
     (state: RootState) => state.group,
   );
-  // console.log("The Group Data", JSON.stringify(groups, null, 3));
   const onRefresh = useCallback(() => {
     refetch();
   }, [refetch]);

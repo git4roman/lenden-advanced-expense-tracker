@@ -1,6 +1,8 @@
 import ChervonRight from "@/assets/icons/chevron-right.png";
 import InfoIcon from "@/assets/icons/info.png";
 import LockIcon from "@/assets/icons/lock.png";
+import UserIcon from "@/assets/icons/user.png";
+import { CText } from "@/src/shared/ui/components/CText";
 import { Href, useRouter } from "expo-router";
 import { useState } from "react";
 import {
@@ -13,21 +15,18 @@ import {
   View,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-// import BellICon from "@/assets/icons/bell.png";
-// import SettingIcon from "@/assets/icons/settings.png";
-// import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
-// import StarIcon from "@/assets/icons/star.png";
-import UserIcon from "@/assets/icons/user.png";
-import { CText } from "@/src/shared/ui/components/CText";
 
 import { onLogout } from "@/src/modules/auth/helpers/google-auth.service";
-import { clearAuth } from "@/src/shared/services/storage/auth-storage";
-import { useMeQuery } from "@/src/shared/store/apiSlices/user-api-slice";
-import { logout } from "@/src/shared/store/slices/auth-slice";
-import { RootState } from "@/src/shared/store/store";
-import { Colors } from "@/src/shared/ui/theme/colors";
-import { formatDate } from "@/src/shared/utils/format-date.utils";
-import { getInitials } from "@/src/shared/utils/get-initials.utils";
+import {
+  formatDate,
+  getInitials,
+  logout,
+  RootState,
+  ThemeColors,
+  useMeQuery,
+  useTheme,
+} from "@/src/shared";
+
 import { SafeAreaView } from "react-native-safe-area-context";
 
 type AcccountItems = {
@@ -47,6 +46,7 @@ const accountItems: AcccountItems[] = [
 ];
 
 type SettingItemProps = {
+  Colors: ThemeColors;
   leftIcon?: ImageSourcePropType;
   title: string;
   rightIcon: ImageSourcePropType;
@@ -56,6 +56,7 @@ type SettingItemProps = {
 };
 
 export function DividedPattern({
+  Colors,
   leftIcon,
   title,
   rightIcon,
@@ -118,6 +119,7 @@ export function DividedPattern({
 export default function Account() {
   const router = useRouter();
   const dispatch = useDispatch();
+  const { Colors } = useTheme();
   const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
   const [isRateModalVisible, setIsRateModalVisible] = useState(false);
 
@@ -276,6 +278,7 @@ export default function Account() {
                 >
                   {accountItems.map((item) => (
                     <DividedPattern
+                      Colors={Colors}
                       key={item.title}
                       leftIcon={item.icon}
                       title={item.title}
@@ -285,42 +288,6 @@ export default function Account() {
                   ))}
                 </View>
               </View>
-
-              {/* <View
-                style={{
-                  flexDirection: "column",
-                  gap: 8,
-                }}
-              >
-                <CText size="ssm" color={Colors.neutral[300]} weight="bold">
-                  Preferences
-                </CText>
-                <View
-                  style={{
-                    flexDirection: "column",
-                    gap: 4,
-                    paddingVertical: 16,
-                    paddingHorizontal: 20,
-                    borderRadius: 12,
-                    backgroundColor: Colors.neutral[800],
-                    borderWidth: 1,
-                    borderColor: Colors.neutral[700],
-                  }}
-                >
-                  <DividedPattern
-                    leftIcon={BellICon}
-                    title="Notification"
-                    rightIcon={ChervonRight}
-                    onPress={() => router.push("/(stack)/account/notification")}
-                  />
-                  <DividedPattern
-                    leftIcon={SettingIcon}
-                    title="Settings"
-                    rightIcon={ChervonRight}
-                    onPress={() => router.push("/(stack)/account/settings")}
-                  />
-                </View>
-              </View> */}
 
               <View
                 style={{
@@ -343,19 +310,15 @@ export default function Account() {
                     borderColor: Colors.neutral[700],
                   }}
                 >
-                  {/* <DividedPattern
-                    leftIcon={StarIcon}
-                    title="Rate the App"
-                    rightIcon={ChervonRight}
-                    onPress={() => setIsRateModalVisible(true)}
-                  /> */}
                   <DividedPattern
+                    Colors={Colors}
                     leftIcon={InfoIcon}
                     title="About App"
                     rightIcon={ChervonRight}
                     onPress={() => router.push("/(stack)/account/about")}
                   />
                   <DividedPattern
+                    Colors={Colors}
                     leftIcon={InfoIcon}
                     title="Logout"
                     rightIcon={ChervonRight}
@@ -432,7 +395,6 @@ export default function Account() {
                   console.log("I am clicked");
                   onLogout();
                   dispatch(logout());
-                  clearAuth();
                   router.replace("/(auth)/login");
                 }}
                 style={{
