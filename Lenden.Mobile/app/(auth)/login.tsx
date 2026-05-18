@@ -1,28 +1,16 @@
-import { onGoogleButtonPress } from "@/src/modules/auth/helpers/google-auth.service";
-import { useGoogleHandler } from "@/src/modules/auth/hooks/use-google-handler";
-import { useLoginHandler } from "@/src/modules/auth/hooks/use-login-handler";
-import { RootState } from "@/src/shared/store/store";
-import { CText } from "@/src/shared/ui/components/CText";
-import { Colors } from "@/src/shared/ui/theme/colors";
+import { useGoogleHandler, useLoginHandler } from "@/src/modules/auth";
+import { CText, useTheme } from "@/src/shared";
 import { FontAwesome } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
 import { ActivityIndicator, Pressable, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSelector } from "react-redux";
 
 export default function LoginScreen() {
   const { email, setEmail, password, setPassword, handleLogin, isLoading } =
     useLoginHandler();
   const { handleGoogle } = useGoogleHandler();
-  const token = useSelector((state: RootState) => state.auth.accessToken);
-
-  const handleGoogleLogin = async () => {
-    console.log("I am clicked");
-    const data = await onGoogleButtonPress();
-    // console.log("Google Sign-In Response:", data);
-    handleGoogle(data);
-  };
+  const { Colors } = useTheme();
 
   return (
     <SafeAreaView
@@ -139,7 +127,7 @@ export default function LoginScreen() {
           </View>
 
           <Pressable
-            onPress={handleGoogleLogin}
+            onPress={handleGoogle}
             style={{
               borderWidth: 1,
               borderColor: Colors.neutral[700],

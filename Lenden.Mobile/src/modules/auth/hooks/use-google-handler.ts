@@ -1,19 +1,18 @@
-import { useState } from "react";
+import { useGoogleMutation } from "@/src/shared/store/apiSlices/auth-slice.api";
 import { router } from "expo-router";
 import Toast from "react-native-toast-message";
-import {
-  useGoogleMutation,
-  useLoginMutation,
-} from "@/src/shared/store/apiSlices/auth-slice.api";
+import { onGoogleButtonPress } from "../helpers";
 
 export const useGoogleHandler = () => {
   const [google, { isLoading }] = useGoogleMutation();
 
-  const handleGoogle = async (data: any) => {
-    console.log("Handle Google data", data);
+  const handleGoogle = async () => {
+    const firebaseToken = await onGoogleButtonPress();
+
+    console.log("Handle Google data", firebaseToken);
 
     const payload = {
-      idToken: data,
+      idToken: firebaseToken,
       deviceInfo: "Android",
       ipAddress: "192.168.1.0",
     };
