@@ -16,13 +16,14 @@ builder.Services.AddAuthorization();
 builder.Services.AddControllersWithViews();
 builder.Services.AddCorsPolicies();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerDocumentation(); 
+builder.Services.AddSwaggerDocumentation();
 
-var serviceAccountPath = builder.Configuration["Firebase:ServiceAccountPath"];
+var credentialJson = Environment.GetEnvironmentVariable("GOOGLE_CREDENTIALS_JSON")
+    ?? throw new InvalidOperationException("GOOGLE_CREDENTIALS_JSON is not set.");
 
 FirebaseApp.Create(new AppOptions()
 {
-    Credential = GoogleCredential.FromFile(serviceAccountPath)
+    Credential = GoogleCredential.FromJson(credentialJson)
 });
 
 var app = builder.Build();
