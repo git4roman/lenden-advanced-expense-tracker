@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # Copy everything from repo root
@@ -13,7 +13,7 @@ RUN dotnet publish Lenden.Backend/Lenden.Web/Lenden.Web.csproj \
     --no-restore \
     -o /out
 
-FROM mcr.microsoft.com/dotnet/aspnet:9.0
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build /out .
 ENTRYPOINT ["dotnet", "Lenden.Web.dll"]
