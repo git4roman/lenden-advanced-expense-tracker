@@ -5,6 +5,7 @@ import {
   RootState,
   getColorFromString,
   getInitials,
+  useDeleteGroupByIdMutation,
   useGetGroupsQuery,
 } from "@/src/shared";
 import { router } from "expo-router";
@@ -12,6 +13,7 @@ import { ArrowRight2 } from "iconsax-react-nativejs";
 import React, { useCallback, useState } from "react";
 import {
   Image,
+  Modal,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -22,7 +24,15 @@ import { useSelector } from "react-redux";
 
 const GroupScreen = () => {
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
+
+  const [selectedGroup, setSelectedGroup] =
+    useState<GroupSummaryResponse | null>(null);
+
+  const [isGroupActionOpen, setIsGroupActionOpen] = useState(false);
   const { data, refetch, isFetching, error } = useGetGroupsQuery();
+
+  const [deleteGroupById, { isLoading: isDeleting }] =
+    useDeleteGroupByIdMutation();
 
   const groups: GroupSummaryResponse[] = useSelector(
     (state: RootState) => state.group,
@@ -92,6 +102,11 @@ const GroupScreen = () => {
                     params: { groupId: group.id },
                   })
                 }
+                onLongPress={() => {
+                  setSelectedGroup(group);
+                  setIsGroupActionOpen(true);
+                  console.log("LOng");
+                }}
               >
                 {/* Group image / initials */}
                 <View
@@ -239,6 +254,80 @@ const GroupScreen = () => {
         onClose={() => setIsCreateGroupOpen(false)}
         members={[]}
       />
+
+      <Modal
+        transparent
+        visible={isGroupActionOpen}
+        animationType="fade"
+        onRequestClose={() => setIsGroupActionOpen(false)}
+      >
+        <View style={{ flex: 1 }}>
+          <Pressable
+            onPress={() => setIsGroupActionOpen(false)}
+            style={{
+              position: "absolute",
+              inset: 0,
+              backgroundColor: "rgba(0,0,0,0.45)",
+            }}
+          />
+
+          <View
+            style={{
+              position: "absolute",
+              bottom: 20,
+              left: 12,
+              right: 12,
+              backgroundColor: Colors.neutral[800],
+              borderRadius: 16,
+              padding: 14,
+              gap: 10,
+              borderWidth: 1,
+              borderColor: Colors.neutral[700],
+            }}
+          >
+            <CText weight="bold" size="md" shade={200}>
+              Group Actions
+            </CText>
+
+            <Pressable
+              onPress={async () => {
+                if (!selectedGroup) return;
+
+                try {
+                  await deleteGroupById(selectedGroup.id).unwrap();
+                  setIsGroupActionOpen(false);
+                } catch {}
+              }}
+              style={{
+                backgroundColor: Colors.warning[900],
+                borderWidth: 1,
+                borderColor: Colors.warning[700],
+                padding: 12,
+                borderRadius: 10,
+                alignItems: "center",
+                opacity: isDeleting ? 0.7 : 1,
+              }}
+            >
+              <CText weight="bold" color="warning" shade={300}>
+                {isDeleting ? "Deleting..." : "Delete Group"}
+              </CText>
+            </Pressable>
+
+            <Pressable
+              onPress={() => setIsGroupActionOpen(false)}
+              style={{
+                borderWidth: 1,
+                borderColor: Colors.neutral[600],
+                padding: 12,
+                borderRadius: 10,
+                alignItems: "center",
+              }}
+            >
+              <CText shade={300}>Cancel</CText>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };

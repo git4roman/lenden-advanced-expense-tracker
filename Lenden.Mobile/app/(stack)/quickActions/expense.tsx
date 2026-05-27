@@ -14,7 +14,7 @@ import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -116,7 +116,9 @@ const Expense = () => {
     useCreateExpenseMutation();
 
   const { openSheet } = useBottomSheet();
-
+  const amountRef = useRef(
+    expenseForm.totalAmount === 0 ? "" : expenseForm.totalAmount.toString(),
+  );
   const resetForm = () => {
     setExpenseForm({
       totalAmount: 0,
@@ -362,33 +364,37 @@ const Expense = () => {
               justifyContent: "center",
               alignItems: "center",
               paddingVertical: 14,
+              // gap: 4,
             }}
           >
             <CText weight="semibold" size="md" color="neutral" shade={300}>
               Amount (NPR)
             </CText>
             <TextInput
-              value={expenseForm.totalAmount.toFixed(2) ?? "0.00"}
-              onChangeText={(text) =>
-                setExpenseForm((prev) => ({
-                  ...prev,
-                  totalAmount: Number(text ?? 0),
-                }))
-              }
-              placeholder="0.00"
               keyboardType="decimal-pad"
+              value={amountRef.current}
+              onChangeText={(text) => {
+                if (text === "" || /^\d*\.?\d*$/.test(text)) {
+                  amountRef.current = text;
+                  setExpenseForm((prev) => ({
+                    ...prev,
+                    totalAmount: parseFloat(text) || 0,
+                  }));
+                }
+              }}
+              placeholder="0.00"
               placeholderTextColor={Colors.neutral[600]}
-              style={[
-                {
-                  fontSize: 32,
-                  lineHeight: 32,
-                  borderBottomWidth: 1,
-                  borderBottomColor: Colors.primary[500],
-
-                  textAlignVertical: "center",
-                  color: Colors.neutral[500],
-                },
-              ]}
+              textAlign="center"
+              style={{
+                fontSize: 32,
+                fontWeight: "700",
+                letterSpacing: 1,
+                paddingVertical: 4,
+                borderBottomWidth: 2,
+                borderBottomColor: Colors.primary[500],
+                color: Colors.neutral[100],
+                minWidth: 120,
+              }}
             />
           </View>
 
@@ -404,7 +410,7 @@ const Expense = () => {
                     }));
                   },
                   expenseForm.selectedGroup,
-                  2,
+                  0,
                 )
               }
               style={{

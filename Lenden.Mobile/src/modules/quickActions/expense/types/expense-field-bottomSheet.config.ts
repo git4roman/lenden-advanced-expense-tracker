@@ -17,7 +17,7 @@ export const expenseFieldConfig = {
   },
   selectGroup: {
     screen: SelectGroupScreen,
-    snapPoints: ["40%", "50%", "75%", "95%"],
+    snapPoints: ["70%"],
     enableDynamicSizing: false,
   },
   selectParticipants: {
