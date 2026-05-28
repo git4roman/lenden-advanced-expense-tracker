@@ -1,9 +1,10 @@
 import {
   useCreateGroupMutation,
   useDeleteGroupByIdMutation,
+  useLeaveGroupMutation,
 } from "@/src/shared/store/apiSlices/group-slice.api";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Toast from "react-native-toast-message";
 
 type SelectedGroupUser = {
@@ -19,15 +20,17 @@ export type CreateGroupPayloadType = {
   users: SelectedGroupUser[];
 };
 
-export const useGroupHandler = (onClose: () => void) => {
+export const useGroupHandler = (onClose: () => void, groupIdParam?: string) => {
   const [groupName, setGroupName] = useState("My Group");
   const [groupImageUri, setGroupImageUri] = useState("");
   const [selectedUsers, setSelectedUsers] = useState<SelectedGroupUser[]>([]);
 
   const [createGroup, { isLoading: isCreateGroupLoading }] =
     useCreateGroupMutation();
-  const [deleteGroup, { isLoading: isDeleteGroupLoading }] =
+  const [deleteGroupById, { isLoading: isDeleteGroupLoading }] =
     useDeleteGroupByIdMutation();
+  const [leaveGroup, { isLoading: isLeaveGroupLoading }] =
+    useLeaveGroupMutation();
 
   const handleCreateGroup = async () => {
     try {
@@ -36,19 +39,14 @@ export const useGroupHandler = (onClose: () => void) => {
         imageUrl: groupImageUri,
         requestedUsers: selectedUsers.map(({ id, ...users }) => users),
       };
-      console.log("Create Group Payload", JSON.stringify(payload, null, 3));
-
       const response = await createGroup(payload).unwrap();
-
       Toast.show({ type: "success", text1: "Group Creation Successful" });
       setGroupName("");
       setGroupImageUri("");
       setSelectedUsers([]);
       onClose();
-
       router.replace("/(tabs)/groups");
     } catch (error: any) {
-      console.log("the main error", error);
       Toast.show({
         type: "error",
         text1: "Group Creation Failed",
@@ -57,20 +55,21 @@ export const useGroupHandler = (onClose: () => void) => {
     }
   };
 
-  const handleDeleteGroup = async (groupId: string) => {
+  const handleDeleteGroup = useCallback(async () => {
+    if (!groupIdParam) return;
     try {
-      const response = await deleteGroup(groupId).unwrap();
+      await deleteGroupById(groupIdParam).unwrap();
+      router.back();
+    } catch {}
+  }, [deleteGroupById, groupIdParam]);
 
-      Toast.show({ type: "success", text1: "Group Deletion Successful" });
-      router.replace("/(tabs)/groups");
-    } catch (error: any) {
-      Toast.show({
-        type: "error",
-        text1: "Group Deletion Failed",
-        text2: error?.data?.message ?? "Something Went Wrong",
-      });
-    }
-  };
+  const handleLeaveGroup = useCallback(async () => {
+    if (!groupIdParam) return;
+    try {
+      await leaveGroup(groupIdParam).unwrap();
+      router.back();
+    } catch {}
+  }, [leaveGroup, groupIdParam]);
 
   return {
     groupName,
@@ -79,10 +78,11 @@ export const useGroupHandler = (onClose: () => void) => {
     setGroupImageUri,
     selectedMembers: selectedUsers,
     setSelectedMembers: setSelectedUsers,
-
     handleCreateGroup,
     handleDeleteGroup,
+    handleLeaveGroup,
     isCreateGroupLoading,
     isDeleteGroupLoading,
+    isLeaveGroupLoading,
   };
 };

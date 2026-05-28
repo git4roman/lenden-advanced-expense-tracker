@@ -6,13 +6,18 @@ import { Tabs } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Home2, Profile } from "iconsax-react-nativejs";
 import React from "react";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 function AppBootstrap({ children }: { children: React.ReactNode }) {
   const { isLoading, token } = useAuthBootstrap();
 
-  useDashboardQuery();
-  useGetGroupsQuery(undefined, { skip: !token });
+  useDashboardQuery(undefined, {
+    skip: !token || isLoading,
+  });
+  useGetGroupsQuery(undefined, { skip: !token || isLoading });
 
   if (token && isLoading) return null;
 
@@ -20,7 +25,7 @@ function AppBootstrap({ children }: { children: React.ReactNode }) {
 }
 export default function TabsLayout() {
   const TAB_ICON_SIZE = 18;
-
+  const insets = useSafeAreaInsets();
   return (
     <AppBootstrap>
       <SafeAreaProvider>
@@ -31,7 +36,8 @@ export default function TabsLayout() {
             tabBarInactiveTintColor: Colors.neutral[300],
             tabBarStyle: {
               backgroundColor: Colors.neutral[900],
-              height: 64,
+              height: 64 + insets.bottom,
+              paddingBottom: insets.bottom,
             },
             tabBarLabelStyle: { fontSize: 14, marginTop: -4 },
             headerShown: false,

@@ -1,8 +1,8 @@
-import { LogoutService } from "@/src/modules/auth";
 import { RootState, useMeQuery } from "@/src/shared";
 import { useEffect } from "react";
 import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
+import { LogoutService } from "../helpers/logout.service";
 
 export function useAuthBootstrap() {
   const token = useSelector((state: RootState) => state.auth.accessToken);

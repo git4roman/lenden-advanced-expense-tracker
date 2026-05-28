@@ -1,11 +1,14 @@
-import { CreateGroupModal, GroupSummaryResponse } from "@/src/modules/groups";
+import {
+  CreateGroupModal,
+  GroupSummaryResponse,
+  useGroupHandler,
+} from "@/src/modules/groups";
 import {
   CText,
   Colors,
   RootState,
   getColorFromString,
   getInitials,
-  useDeleteGroupByIdMutation,
   useGetGroupsQuery,
 } from "@/src/shared";
 import { router } from "expo-router";
@@ -24,19 +27,23 @@ import { useSelector } from "react-redux";
 
 const GroupScreen = () => {
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
-
   const [selectedGroup, setSelectedGroup] =
     useState<GroupSummaryResponse | null>(null);
-
   const [isGroupActionOpen, setIsGroupActionOpen] = useState(false);
-  const { data, refetch, isFetching, error } = useGetGroupsQuery();
 
-  const [deleteGroupById, { isLoading: isDeleting }] =
-    useDeleteGroupByIdMutation();
+  const { data, refetch, isFetching } = useGetGroupsQuery();
+
+  const {
+    handleDeleteGroup,
+    handleLeaveGroup,
+    isDeleteGroupLoading: isDeletingGroup,
+    isLeaveGroupLoading: isLeavingGroup,
+  } = useGroupHandler(() => setIsGroupActionOpen(false), selectedGroup?.id);
 
   const groups: GroupSummaryResponse[] = useSelector(
     (state: RootState) => state.group,
   );
+
   const onRefresh = useCallback(() => {
     refetch();
   }, [refetch]);
@@ -105,10 +112,8 @@ const GroupScreen = () => {
                 onLongPress={() => {
                   setSelectedGroup(group);
                   setIsGroupActionOpen(true);
-                  console.log("LOng");
                 }}
               >
-                {/* Group image / initials */}
                 <View
                   style={{
                     width: 100,
@@ -141,7 +146,6 @@ const GroupScreen = () => {
                   )}
                 </View>
 
-                {/* Group info */}
                 <View
                   style={{
                     flexDirection: "row",
@@ -160,7 +164,6 @@ const GroupScreen = () => {
                       {group.name}
                     </CText>
 
-                    {/* Member avatars (initials since no avatar URL) */}
                     <View
                       style={{ flexDirection: "row", alignItems: "center" }}
                     >
@@ -286,18 +289,27 @@ const GroupScreen = () => {
             }}
           >
             <CText weight="bold" size="md" shade={200}>
-              Group Actions
+              {selectedGroup?.name}
             </CText>
 
             <Pressable
-              onPress={async () => {
-                if (!selectedGroup) return;
-
-                try {
-                  await deleteGroupById(selectedGroup.id).unwrap();
-                  setIsGroupActionOpen(false);
-                } catch {}
+              onPress={handleLeaveGroup}
+              style={{
+                borderWidth: 1,
+                borderColor: Colors.neutral[600],
+                padding: 12,
+                borderRadius: 10,
+                alignItems: "center",
+                opacity: isLeavingGroup ? 0.7 : 1,
               }}
+            >
+              <CText weight="bold" color="neutral" shade={300}>
+                {isLeavingGroup ? "Leaving..." : "Leave Group"}
+              </CText>
+            </Pressable>
+
+            <Pressable
+              onPress={handleDeleteGroup}
               style={{
                 backgroundColor: Colors.warning[900],
                 borderWidth: 1,
@@ -305,11 +317,11 @@ const GroupScreen = () => {
                 padding: 12,
                 borderRadius: 10,
                 alignItems: "center",
-                opacity: isDeleting ? 0.7 : 1,
+                opacity: isDeletingGroup ? 0.7 : 1,
               }}
             >
               <CText weight="bold" color="warning" shade={300}>
-                {isDeleting ? "Deleting..." : "Delete Group"}
+                {isDeletingGroup ? "Deleting..." : "Delete Group"}
               </CText>
             </Pressable>
 

@@ -7,7 +7,7 @@ import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
@@ -84,20 +84,6 @@ const Pay = () => {
     imageUrl: "",
     selectedGroup: groups[0],
     groupBalances: [],
-  });
-
-  const hasEvidence = useMemo(
-    () => evidenceUrl.trim().length > 0,
-    [evidenceUrl],
-  );
-
-  const chipStyle = (active: boolean) => ({
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: active ? Colors.accent[500] : Colors.neutral[700],
-    backgroundColor: active ? Colors.accent[900] : Colors.neutral[900],
   });
 
   const resetForm = () => {};

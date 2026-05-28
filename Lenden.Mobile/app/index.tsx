@@ -1,6 +1,6 @@
-import { useSelector } from "react-redux";
 import { RootState } from "@/src/shared/store/store";
 import { Redirect } from "expo-router";
+import { useSelector } from "react-redux";
 
 const Index = () => {
   const token = useSelector((state: RootState) => state.auth.accessToken);
