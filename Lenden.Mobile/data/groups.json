@@ -1,0 +1,128 @@
+{
+  "groups": [
+    {
+      "id": 94239772,
+      "name": "FunkyTOwn",
+      "created_at": "2026-02-26T14:53:05Z",
+      "updated_at": "2026-05-28T06:51:55Z",
+      "members": [
+        {
+          "id": 117645345,
+          "first_name": "Roman",
+          "last_name": "Ghimire Khatri",
+          "picture": {
+            "small": "https://splitwise.s3.amazonaws.com/uploads/user/avatar/117645345/small_6d2c19cc-2253-4f66-9441-66d72015eabe.jpg",
+            "medium": "https://splitwise.s3.amazonaws.com/uploads/user/avatar/117645345/medium_6d2c19cc-2253-4f66-9441-66d72015eabe.jpg",
+            "large": "https://splitwise.s3.amazonaws.com/uploads/user/avatar/117645345/large_6d2c19cc-2253-4f66-9441-66d72015eabe.jpg"
+          },
+          "custom_picture": true,
+          "email": "rougavko@gmail.com",
+          "registration_status": "confirmed",
+          "balance": [
+            {
+              "currency_code": "USD",
+              "amount": "743.33"
+            }
+          ]
+        },
+        {
+          "id": 117645599,
+          "first_name": "Ligag",
+          "last_name": null,
+          "picture": {
+            "small": "https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-invited-50px.png",
+            "medium": "https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-invited-100px.png",
+            "large": "https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-invited-200px.png"
+          },
+          "custom_picture": false,
+          "email": "ligag37154@creteanu.com",
+          "registration_status": "invited",
+          "balance": [
+            {
+              "currency_code": "USD",
+              "amount": "-71.67"
+            }
+          ]
+        },
+        {
+          "id": 117645600,
+          "first_name": "waxok",
+          "last_name": null,
+          "picture": {
+            "small": "https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-invited-50px.png",
+            "medium": "https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-invited-100px.png",
+            "large": "https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-invited-200px.png"
+          },
+          "custom_picture": false,
+          "email": "waxok38138@creteanu.com",
+          "registration_status": "invited",
+          "balance": [
+            {
+              "currency_code": "USD",
+              "amount": "-671.66"
+            }
+          ]
+        }
+      ],
+      "simplify_by_default": true,
+      "original_debts": [
+        {
+          "from": 117645600,
+          "to": 117645345,
+          "amount": "471.66",
+          "currency_code": "USD"
+        },
+        {
+          "from": 117645599,
+          "to": 117645345,
+          "amount": "271.67",
+          "currency_code": "USD"
+        },
+        {
+          "from": 117645600,
+          "to": 117645599,
+          "amount": "200.0",
+          "currency_code": "USD"
+        }
+      ],
+      "simplified_debts": [
+        {
+          "from": 117645599,
+          "to": 117645345,
+          "amount": "71.67",
+          "currency_code": "USD"
+        },
+        {
+          "from": 117645600,
+          "to": 117645345,
+          "amount": "671.66",
+          "currency_code": "USD"
+        }
+      ],
+      "whiteboard": null,
+      "whiteboard_lock_version": 0,
+      "whiteboard_updated_at": null,
+      "whiteboard_updated_by": null,
+      "group_type": "trip",
+      "invite_link": "https://www.splitwise.com/join/U9FyN2cJgt1+1y1jq9",
+      "group_reminders": null,
+      "avatar": {
+        "small": "https://s3.amazonaws.com/splitwise/uploads/group/default_avatars/v2021/avatar-teal26-trip-50px.png",
+        "medium": "https://s3.amazonaws.com/splitwise/uploads/group/default_avatars/v2021/avatar-teal26-trip-100px.png",
+        "large": "https://s3.amazonaws.com/splitwise/uploads/group/default_avatars/v2021/avatar-teal26-trip-200px.png",
+        "xlarge": "https://s3.amazonaws.com/splitwise/uploads/group/default_avatars/v2021/avatar-teal26-trip-500px.png",
+        "xxlarge": "https://s3.amazonaws.com/splitwise/uploads/group/default_avatars/v2021/avatar-teal26-trip-1000px.png",
+        "original": null
+      },
+      "tall_avatar": {
+        "xlarge": "https://s3.amazonaws.com/splitwise/uploads/group/default_tall_avatars/avatar-teal26-trip-288px.png",
+        "large": "https://s3.amazonaws.com/splitwise/uploads/group/default_tall_avatars/avatar-teal26-trip-192px.png"
+      },
+      "custom_avatar": false,
+      "cover_photo": {
+        "xxlarge": "https://s3.amazonaws.com/splitwise/uploads/group/default_cover_photos/teal-trip-1000px.png",
+        "xlarge": "https://s3.amazonaws.com/splitwise/uploads/group/default_cover_photos/teal-trip-500px.png"
+      }
+    }
+  ]
+}

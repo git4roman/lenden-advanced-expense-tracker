@@ -6,6 +6,7 @@ import { Transaction } from "@/src/shared/store/slices/group-slice";
 import { RootState } from "@/src/shared/store/store";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
+import { router } from "expo-router";
 import React from "react";
 import { FlatList, Pressable, ScrollView, View } from "react-native";
 import Toast from "react-native-toast-message";
@@ -52,6 +53,16 @@ const BalanceTab = ({ groupId }: { groupId: string }) => {
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
+      <Pressable
+        onPress={() => {
+          router.push(`/(stack)/groups/${groupId}/settlement`);
+        }}
+        style={{ justifyContent: "flex-end", alignItems: "center" }}
+      >
+        <CText weight="bold" size="sm" color="neutral" shade={400}>
+          Settlements
+        </CText>
+      </Pressable>
       <View style={{ gap: 12, paddingBottom: 20 }}>
         {balanceItems.length === 0 && !isGroupLoading ? (
           <View

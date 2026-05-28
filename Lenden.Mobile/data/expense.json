@@ -1,0 +1,35 @@
+{
+  "id": "eccdc65d-7f6f-4cff-88c9-5c707d466b6c",
+  "totalAmount": 4000.0,
+  "participants": [
+    {
+      "publicId": "4df6e0c4-458c-4985-8156-6a338cee7ed5",
+      "givenName": "Roman",
+      "familyName": "Khatri",
+      "value": "romanhelmet22@gmail.com",
+      "net": -1500.0,
+      "paid": 0.0,
+      "split": 1500.0
+    },
+    {
+      "publicId": "79ba90ba-e90c-40d0-b77f-fb029e2f73c2",
+      "givenName": "Helmet",
+      "familyName": "Admin",
+      "value": "roman@gmail.com",
+      "net": 3000.0,
+      "paid": 4000.0,
+      "split": 1000.0
+    },
+    {
+      "publicId": "d5cf0778-991c-4dcc-b072-957cc554ac83",
+      "givenName": "string",
+      "familyName": "string",
+      "value": "admin2@admin.com",
+      "net": -1500.0,
+      "paid": 0.0,
+      "split": 1500.0
+    }
+  ],
+  "createdAt": "2026-05-04T15:01:49.164105+00:00",
+  "categoryKey": "Household"
+}

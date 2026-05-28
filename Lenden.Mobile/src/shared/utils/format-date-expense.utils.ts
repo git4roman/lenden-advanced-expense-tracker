@@ -1,5 +1,5 @@
-
 export const formatDateTime = (isoString: string) => {
+  if (!isoString) return { date: "", time: "" };
   const dateObj = new Date(isoString);
 
   const date = dateObj.toLocaleDateString("en-US", {

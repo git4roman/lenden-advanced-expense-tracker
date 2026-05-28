@@ -1,17 +1,17 @@
-import {
-  View,
-  FlatList,
-  Pressable,
-  ActivityIndicator,
-  RefreshControl,
-} from "react-native";
-import React from "react";
+import { useGetExpensesQuery } from "@/src/shared/store/apiSlices/expense-slice.api";
 import { CText } from "@/src/shared/ui/components/CText";
-import { ActivityItem } from "./activity-item";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { router } from "expo-router";
-import { useGetExpensesQuery } from "@/src/shared/store/apiSlices/expense-slice.api";
-import { formatDateTime } from "@/src/shared/utils/format-date-expense.utils";
+import React from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  RefreshControl,
+  View,
+} from "react-native";
+import { groupByDate, toActivityData } from "../utils/expenseCard";
+import { ActivityItem } from "./activity-item";
 
 export const EXPENSE_FILTER_OPTIONS = [
   { key: "all", label: "All", days: 36500 },
@@ -25,7 +25,7 @@ export const EXPENSE_FILTER_OPTIONS = [
 
 type FilterKey = (typeof EXPENSE_FILTER_OPTIONS)[number]["key"];
 
-type ActivityData = {
+export type ActivityData = {
   date: string;
   time: string;
   categoryKey: string;
@@ -33,7 +33,7 @@ type ActivityData = {
   amount: string;
 };
 
-type GroupedActivity = {
+export type GroupedActivity = {
   date: string;
   items: ActivityData[];
 };
@@ -49,39 +49,6 @@ type ExpenseTabProps = {
 const INITIAL_VISIBLE_COUNT = 5;
 const LOAD_MORE_COUNT = 5;
 const LOAD_MORE_DELAY = 500;
-
-const buildDescription = (payers: any[], categoryKey: string): string => {
-  const names = payers.map((p) => p.givenName);
-  if (names.length === 0) return `Expense added for ${categoryKey}`;
-  if (names.length === 1) return `${names[0]} paid for ${categoryKey}`;
-  if (names.length === 2)
-    return `${names[0]} and ${names[1]} paid for ${categoryKey}`;
-  const last = names[names.length - 1];
-  const rest = names.slice(0, -1).join(", ");
-  return `${rest}, and ${last} paid for ${categoryKey}`;
-};
-
-const toActivityData = (expense: any): ActivityData => {
-  const { date, time } = formatDateTime(expense.createdAt);
-  const payers = expense?.participants?.filter((p: any) => p.paid > 0) ?? [];
-  return {
-    date,
-    time,
-    categoryKey: expense.categoryKey ?? "other",
-    description: buildDescription(payers, expense.categoryKey),
-    amount: expense.totalAmount?.toString() ?? "0",
-  };
-};
-
-const groupByDate = (items: ActivityData[]): GroupedActivity[] => {
-  const map = new Map<string, ActivityData[]>();
-  for (const item of items) {
-    const existing = map.get(item.date) ?? [];
-    existing.push(item);
-    map.set(item.date, existing);
-  }
-  return Array.from(map.entries()).map(([date, items]) => ({ date, items }));
-};
 
 const filterAndSortExpenses = (expenses: any[], filterKey?: FilterKey) => {
   const selected =

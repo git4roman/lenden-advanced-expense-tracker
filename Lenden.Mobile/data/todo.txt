@@ -1,0 +1,9 @@
+1. Group Settings
+- Hide/Show expenses not involving me
+- export to spreadsheet
+- Edit Group Settings
+  -Name Edit
+  -Members
+  -Leave/Delete Group
+
+2. 

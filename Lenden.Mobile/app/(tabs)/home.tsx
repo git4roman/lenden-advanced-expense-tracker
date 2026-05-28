@@ -1,16 +1,8 @@
-import { ActionCard, BalanceCard, Header } from "@/src/modules/home";
-import { useTheme } from "@/src/shared";
-import { router } from "expo-router";
-import {
-  // DirectInbox,
-  MoneyRecive,
-  Moneys,
-  MoneySend,
-  // Send2,
-  TableDocument,
-} from "iconsax-react-nativejs";
+import { BalanceCard, Header } from "@/src/modules/home";
+import { ExpenseActivityItem } from "@/src/modules/home/components/expense-activities";
+import { CText, useTheme } from "@/src/shared";
 import React, { useCallback, useState } from "react";
-import { RefreshControl, ScrollView, View } from "react-native";
+import { Pressable, RefreshControl, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const activityMockData = [
@@ -34,6 +26,42 @@ const activityMockData = [
     category: "Transport",
     description: "Roman paid for taxi",
     amount: "650",
+  },
+];
+
+export interface Expense {
+  id: string;
+  groupImage: string;
+  totalAmount: number;
+  createdAt: string;
+  categoryKey: string;
+  description: string;
+}
+
+const expenseActivities: Expense[] = [
+  {
+    id: "eccdc65d-7f6f-4cff-88c9-5c707d466b6c",
+    groupImage: "",
+    totalAmount: 4000.0,
+    description: "Helmet paid for Household",
+    createdAt: "2026-05-04T15:01:49.164105+00:00",
+    categoryKey: "Household",
+  },
+  {
+    id: "ceb09b5d-e119-4800-a060-721222dc4e39",
+    groupImage: "",
+    totalAmount: 4000.0,
+    description: "Helmet paid for Household",
+    createdAt: "2026-05-03T01:39:43.182201+00:00",
+    categoryKey: "Household",
+  },
+  {
+    id: "7346b2f3-e6a0-49dd-9563-3964dcfc5219",
+    groupImage: "",
+    totalAmount: 200.0,
+    description: "Roman paid for Household",
+    createdAt: "2026-05-02T14:01:08.055751+00:00",
+    categoryKey: "Household",
   },
 ];
 
@@ -100,7 +128,7 @@ const HomeScreen = () => {
         <View>
           <BalanceCard Colors={Colors} />
         </View>
-        <View style={{ gap: 10, paddingTop: 12 }}>
+        {/* <View style={{ gap: 10, paddingTop: 12 }}>
           <ActionCard
             Colors={Colors}
             label="Split Your Expenses"
@@ -139,6 +167,46 @@ const HomeScreen = () => {
             }
             icon={<TableDocument size={22} color={Colors.neutral[700]} />}
           />
+        </View> */}
+        <View style={{ gap: 12, paddingTop: 16 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <CText weight="semibold" size="md" color="neutral" shade={100}>
+              Expense Activities
+            </CText>
+            <Pressable
+              onPress={() => {
+                console.log("Expense is pressed");
+              }}
+            >
+              <CText weight="bold" size="ssm" color="neutral" shade={100}>
+                View All
+              </CText>
+            </Pressable>
+          </View>
+          <View style={{ borderRadius: 10, gap: 10 }}>
+            {expenseActivities.map((item, index) => (
+              <View
+                key={item.id}
+                style={{
+                  backgroundColor: Colors.neutral[800],
+                  borderWidth: 1,
+                  borderRadius: 12,
+                  borderColor: Colors.neutral[700],
+                  // marginHorizontal: 10,
+                  paddingHorizontal: 10,
+                  width: "100%",
+                }}
+              >
+                <ExpenseActivityItem item={item} />
+              </View>
+            ))}
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>

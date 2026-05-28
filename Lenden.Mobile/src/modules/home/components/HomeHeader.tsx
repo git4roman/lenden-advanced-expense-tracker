@@ -21,6 +21,7 @@ export const Header = ({ Colors }: { Colors: ThemeColors }) => (
         flexDirection: "row",
         gap: 6,
         flex: 1,
+        paddingHorizontal: 4,
       }}
     >
       <View

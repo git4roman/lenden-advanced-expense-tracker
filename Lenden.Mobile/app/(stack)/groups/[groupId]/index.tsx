@@ -1,34 +1,27 @@
-import {
-  View,
-  Pressable,
-  Image,
-  Modal,
-  RefreshControl,
-  TextInput,
-} from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
-import { Stack, router, useLocalSearchParams } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Colors } from "@/src/shared/ui/theme/colors";
-import { CText } from "@/src/shared/ui/components/CText";
-import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
-import { GroupTabs } from "../../../../src/modules/groups/components/GroupTabs";
+import BalanceTab from "@/src/modules/groups/components/balance-tab";
 import ExpenseTab, {
   EXPENSE_FILTER_OPTIONS,
 } from "@/src/modules/groups/components/expense-tab";
-import BalanceTab from "@/src/modules/groups/components/balance-tab";
-import TotalTab from "@/src/modules/groups/components/total-tab";
 import GroupInfoTab from "@/src/modules/groups/components/group-info-tab";
+import TotalTab from "@/src/modules/groups/components/total-tab";
 import { groupButtonsLabel } from "@/src/modules/groups/constants/group-buttons-label.constant";
-import {
-  useGetGroupQuery,
-  useUpdateGroupMutation,
-  useDeleteGroupByIdMutation,
-  useLeaveGroupMutation,
-} from "@/src/shared/store/apiSlices/group-slice.api";
-import { useDispatch } from "react-redux";
-import { api } from "@/src/shared/store/apiSlices/apiClient";
 import { useImagePicker } from "@/src/shared/hooks/use-image-picker";
+import { api } from "@/src/shared/store/apiSlices/apiClient";
+import {
+  useDeleteGroupByIdMutation,
+  useGetGroupQuery,
+  useLeaveGroupMutation,
+  useUpdateGroupMutation,
+} from "@/src/shared/store/apiSlices/group-slice.api";
+import { CText } from "@/src/shared/ui/components/CText";
+import { Colors } from "@/src/shared/ui/theme/colors";
+import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
+import { Stack, router, useLocalSearchParams } from "expo-router";
+import React, { useCallback, useState } from "react";
+import { Image, Modal, Pressable, TextInput, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useDispatch } from "react-redux";
+import { GroupTabs } from "../../../../src/modules/groups/components/GroupTabs";
 
 type FilterKey = (typeof EXPENSE_FILTER_OPTIONS)[number]["key"];
 
@@ -264,6 +257,7 @@ const GroupScreen = () => {
         return <BalanceTab groupId={groupId as string} />;
       case "label3":
         return <TotalTab groupId={groupId as string} />;
+
       default:
         return <GroupInfoTab groupId={groupId as string} />;
     }

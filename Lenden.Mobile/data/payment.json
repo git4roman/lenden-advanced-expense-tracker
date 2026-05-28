@@ -1,0 +1,86 @@
+{
+  "expenses": [
+    {
+      "id": 4483029659,
+      "group_id": 94239772,
+      "expense_bundle_id": null,
+      "description": "Payment",
+      "repeats": false,
+      "repeat_interval": null,
+      "email_reminder": false,
+      "email_reminder_in_advance": -1,
+      "next_repeat": null,
+      "details": null,
+      "comments_count": 0,
+      "payment": true,
+      "creation_method": "payment",
+      "transaction_method": "offline",
+      "transaction_confirmed": false,
+      "transaction_id": null,
+      "transaction_status": null,
+      "cost": "471.66",
+      "currency_code": "USD",
+      "repayments": [
+        {
+          "from": 117645345,
+          "to": 117645600,
+          "amount": "471.66"
+        }
+      ],
+      "date": "2026-05-28T09:14:07Z",
+      "created_at": "2026-05-28T09:14:48Z",
+      "created_by": {
+        "id": 117645345,
+        "first_name": "Roman",
+        "last_name": "Ghimire Khatri",
+        "picture": {
+          "medium": "https://splitwise.s3.amazonaws.com/uploads/user/avatar/117645345/medium_6d2c19cc-2253-4f66-9441-66d72015eabe.jpg"
+        },
+        "custom_picture": true
+      },
+      "updated_at": "2026-05-28T09:14:48Z",
+      "updated_by": null,
+      "deleted_at": null,
+      "deleted_by": null,
+      "category": {
+        "id": 18,
+        "name": "General"
+      },
+      "receipt": {
+        "large": null,
+        "original": null
+      },
+      "users": [
+        {
+          "user": {
+            "id": 117645345,
+            "first_name": "Roman",
+            "last_name": "Ghimire Khatri",
+            "picture": {
+              "medium": "https://splitwise.s3.amazonaws.com/uploads/user/avatar/117645345/medium_6d2c19cc-2253-4f66-9441-66d72015eabe.jpg"
+            }
+          },
+          "user_id": 117645345,
+          "paid_share": "0.0",
+          "owed_share": "471.66",
+          "net_balance": "-471.66"
+        },
+        {
+          "user": {
+            "id": 117645600,
+            "first_name": "waxok",
+            "last_name": null,
+            "picture": {
+              "medium": "https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-invited-100px.png"
+            }
+          },
+          "user_id": 117645600,
+          "paid_share": "471.66",
+          "owed_share": "0.0",
+          "net_balance": "471.66"
+        }
+      ]
+    }
+  ],
+  "errors": {}
+}

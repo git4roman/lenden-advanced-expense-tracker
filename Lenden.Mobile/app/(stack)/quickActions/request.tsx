@@ -370,7 +370,7 @@ const RequestPayment = () => {
                       color="neutral"
                       shade={400}
                     >
-                      needs to pay
+                      needs to receive
                     </CText>
 
                     <CText
@@ -406,7 +406,7 @@ const RequestPayment = () => {
                   onPress={() => handleSubmit(item.toUserId)}
                 >
                   <CText weight="bold" size="sm" color="neutral" shade={50}>
-                    Pay
+                    Receive
                   </CText>
                 </Pressable>
               </View>

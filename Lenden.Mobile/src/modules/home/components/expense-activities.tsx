@@ -1,14 +1,13 @@
-import { ExpenseCategories } from "@/src/shared/constants/expense-category.constant";
+import { formatDateTime } from "@/src/shared";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
-import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
-import { View } from "react-native";
+import { Image, View } from "react-native";
 
-export const ActivityItem = ({ item }: any) => {
-  const category = ExpenseCategories.find(
-    (cat) => cat.key === item.categoryKey,
-  );
+export const ExpenseActivityItem = ({ item }: any) => {
+  console.log("Items", item);
+  const { date, time } = formatDateTime(item.createdAt);
+
   return (
     <View
       style={{
@@ -30,12 +29,19 @@ export const ActivityItem = ({ item }: any) => {
           alignItems: "center",
           borderRadius: 20,
           backgroundColor: Colors.neutral[700],
+          overflow: "hidden",
         }}
       >
-        <MaterialIcons
-          name={category?.iconName ?? "apartment"}
-          size={22}
-          color={Colors.accent[400]}
+        <Image
+          source={{
+            uri:
+              item.groupImage === ""
+                ? "https://picsum.photos/200/300"
+                : item.groupImage,
+          }}
+          width={40}
+          height={40}
+          resizeMode="cover"
         />
       </View>
 
@@ -59,12 +65,12 @@ export const ActivityItem = ({ item }: any) => {
             {item.description}
           </CText>
           <CText size="xs" color="neutral" shade={500}>
-            {item.time}
+            {date} {time}
           </CText>
         </View>
         <View style={{}}>
           <CText size="ssm" weight="semibold" color="accent" shade={300}>
-            NPR. {item.amount}
+            NPR. {item.totalAmount}
           </CText>
         </View>
       </View>
