@@ -241,21 +241,42 @@ function GroupMemberMutualBalance({
           </View>
         </View>
 
-        {(isUserCreditor || isUserDebtor) && (
-          <Pressable
-            onPress={() =>
-              handleSettlement(isUserCreditor ? "creditor" : "debtor")
-            }
-          >
-            <CText>
-              {isUserCreditor ? "Make Settlement" : "Request Settlement"}
+        {/* <View style={{ flex: 0.2 }} /> */}
+
+        <View
+          style={{
+            alignItems: "center",
+            gap: 8,
+            flexDirection: "row-reverse",
+            // flex: 1,
+            // borderWidth: 1,
+            // maxWidth: 200,
+          }}
+        >
+          <View>
+            <CText color="accent" shade={300} weight="bold" size="md">
+              NPR {item.amount}
             </CText>
-          </Pressable>
-        )}
-        <View style={{ alignItems: "flex-end", gap: 2 }}>
-          <CText color="accent" shade={300} weight="bold" size="md">
-            NPR {item.amount}
-          </CText>
+          </View>
+          {(isUserCreditor || isUserDebtor) && (
+            <Pressable
+              onPress={() =>
+                handleSettlement(isUserCreditor ? "creditor" : "debtor")
+              }
+              style={{
+                borderWidth: 1,
+                borderColor: Colors.accent[300],
+                padding: 8,
+                borderRadius: 8,
+                backgroundColor: Colors.primary[900],
+                // flex: 1,
+              }}
+            >
+              <CText color="neutral" shade={200}>
+                {isUserCreditor ? "Make Settlement" : "Request Settlement"}
+              </CText>
+            </Pressable>
+          )}
         </View>
       </View>
     </View>

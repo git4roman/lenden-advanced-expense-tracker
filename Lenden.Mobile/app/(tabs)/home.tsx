@@ -1,8 +1,15 @@
 import { BalanceCard, Header } from "@/src/modules/home";
 import { ExpenseActivityItem } from "@/src/modules/home/components/expense-activities";
 import { CText, useTheme } from "@/src/shared";
+import { router } from "expo-router";
 import React, { useCallback, useState } from "react";
-import { Pressable, RefreshControl, ScrollView, View } from "react-native";
+import {
+  Image,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const activityMockData = [
@@ -62,6 +69,21 @@ const expenseActivities: Expense[] = [
     description: "Roman paid for Household",
     createdAt: "2026-05-02T14:01:08.055751+00:00",
     categoryKey: "Household",
+  },
+];
+
+const recentGroupsMockData = [
+  {
+    id: "2bb0ceca-81f8-4494-9f50-3b2630550ec7",
+    name: "Edit Group Roman ko",
+    imageUrl: "https://picsum.photos/200/300",
+    updatedAt: "2026-03-26T19:19:09.249947+00:00",
+  },
+  {
+    id: "e1f88d5c-1f88-4a5b-a2f7-824de96988c6",
+    name: "Shivapuri Hike",
+    imageUrl: "https://picsum.photos/200/300",
+    updatedAt: "2026-03-24T19:19:09.249947+00:00",
   },
 ];
 
@@ -179,15 +201,15 @@ const HomeScreen = () => {
             <CText weight="semibold" size="md" color="neutral" shade={100}>
               Expense Activities
             </CText>
-            <Pressable
+            {/* <Pressable
               onPress={() => {
-                console.log("Expense is pressed");
+                router.push("/")
               }}
             >
               <CText weight="bold" size="ssm" color="neutral" shade={100}>
                 View All
               </CText>
-            </Pressable>
+            </Pressable> */}
           </View>
           <View style={{ borderRadius: 10, gap: 10 }}>
             {expenseActivities.map((item, index) => (
@@ -205,6 +227,67 @@ const HomeScreen = () => {
               >
                 <ExpenseActivityItem item={item} />
               </View>
+            ))}
+          </View>
+        </View>
+
+        <View style={{ gap: 12, paddingTop: 16 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <CText weight="semibold" size="md" color="neutral" shade={100}>
+              Recent Groups
+            </CText>
+            <Pressable
+              onPress={() => {
+                router.push("/(tabs)/groups");
+              }}
+            >
+              <CText weight="semibold" size="md" color="neutral" shade={100}>
+                View All
+              </CText>
+            </Pressable>
+          </View>
+          <View
+            style={{
+              backgroundColor: Colors.neutral[800],
+              borderWidth: 1,
+              borderRadius: 12,
+              borderColor: Colors.neutral[700],
+              // marginHorizontal: 10,
+              paddingHorizontal: 10,
+              width: "100%",
+              minHeight: 70,
+              alignItems: "center",
+              justifyContent: "flex-start",
+              flexDirection: "row",
+              gap: 12,
+            }}
+          >
+            {recentGroupsMockData.map((item, index) => (
+              <Pressable
+                onPress={() => {
+                  router.push({
+                    pathname: "/(stack)/groups/[groupId]",
+                    params: { groupId: item.id },
+                  });
+                }}
+                style={{
+                  borderWidth: 1,
+                  borderRadius: "50%",
+                  width: 60,
+                  height: 60,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  overflow: "hidden",
+                }}
+              >
+                <Image source={{ uri: item.imageUrl }} width={60} height={60} />
+              </Pressable>
             ))}
           </View>
         </View>
