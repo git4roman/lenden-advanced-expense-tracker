@@ -92,15 +92,15 @@ namespace Lenden.Infrastructure.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("group_id");
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<string>("Receipt")
                         .HasColumnType("longtext")
                         .HasColumnName("image_url");
 
-                    b.Property<Guid>("PublicId")
+                    b.Property<Guid>("Slug")
                         .HasColumnType("char(36)")
                         .HasColumnName("public_id");
 
-                    b.Property<decimal>("TotalAmount")
+                    b.Property<decimal>("Cost")
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("total_amount");
 
@@ -110,7 +110,7 @@ namespace Lenden.Infrastructure.Migrations
 
                     b.HasIndex("GroupId");
 
-                    b.HasIndex("PublicId")
+                    b.HasIndex("Slug")
                         .IsUnique();
 
                     b.ToTable("expenses", (string)null);
@@ -195,7 +195,7 @@ namespace Lenden.Infrastructure.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("created_by");
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<string>("Receipt")
                         .IsRequired()
                         .HasColumnType("longtext")
                         .HasColumnName("image_url");
@@ -356,7 +356,7 @@ namespace Lenden.Infrastructure.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("date_of_birth");
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<string>("Receipt")
                         .HasColumnType("longtext")
                         .HasColumnName("image_url");
 

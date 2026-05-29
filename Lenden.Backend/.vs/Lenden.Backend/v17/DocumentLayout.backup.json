@@ -3,40 +3,16 @@
   "WorkspaceRootPath": "D:\\ReactNative\\LenDen\\Lenden.Backend\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{4C37FE3A-3A89-4826-B7BC-E50B99C66F27}|Lenden.Web\\Lenden.Web.csproj|d:\\reactnative\\lenden\\lenden.backend\\lenden.web\\controllers\\api\\authenticationapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4C37FE3A-3A89-4826-B7BC-E50B99C66F27}|Lenden.Web\\Lenden.Web.csproj|solutionrelative:lenden.web\\controllers\\api\\authenticationapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4C37FE3A-3A89-4826-B7BC-E50B99C66F27}|Lenden.Web\\Lenden.Web.csproj|d:\\reactnative\\lenden\\lenden.backend\\lenden.web\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4C37FE3A-3A89-4826-B7BC-E50B99C66F27}|Lenden.Web\\Lenden.Web.csproj|solutionrelative:lenden.web\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{169365FB-6298-4903-A8E0-E343468EA449}|Lenden.Application\\Lenden.Application.csproj|d:\\reactnative\\lenden\\lenden.backend\\lenden.application\\interfaces\\services\\iauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{169365FB-6298-4903-A8E0-E343468EA449}|Lenden.Application\\Lenden.Application.csproj|solutionrelative:lenden.application\\interfaces\\services\\iauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4C37FE3A-3A89-4826-B7BC-E50B99C66F27}|Lenden.Web\\Lenden.Web.csproj|d:\\reactnative\\lenden\\lenden.backend\\lenden.web\\appsettings.production.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{4C37FE3A-3A89-4826-B7BC-E50B99C66F27}|Lenden.Web\\Lenden.Web.csproj|solutionrelative:lenden.web\\appsettings.production.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4C37FE3A-3A89-4826-B7BC-E50B99C66F27}|Lenden.Web\\Lenden.Web.csproj|d:\\reactnative\\lenden\\lenden.backend\\lenden.web\\controllers\\api\\userapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4C37FE3A-3A89-4826-B7BC-E50B99C66F27}|Lenden.Web\\Lenden.Web.csproj|solutionrelative:lenden.web\\controllers\\api\\userapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{169365FB-6298-4903-A8E0-E343468EA449}|Lenden.Application\\Lenden.Application.csproj|d:\\reactnative\\lenden\\lenden.backend\\lenden.application\\interfaces\\services\\iuserservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{169365FB-6298-4903-A8E0-E343468EA449}|Lenden.Application\\Lenden.Application.csproj|solutionrelative:lenden.application\\interfaces\\services\\iuserservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{169365FB-6298-4903-A8E0-E343468EA449}|Lenden.Application\\Lenden.Application.csproj|d:\\reactnative\\lenden\\lenden.backend\\lenden.application\\services\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{169365FB-6298-4903-A8E0-E343468EA449}|Lenden.Application\\Lenden.Application.csproj|solutionrelative:lenden.application\\services\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{169365FB-6298-4903-A8E0-E343468EA449}|Lenden.Application\\Lenden.Application.csproj|d:\\reactnative\\lenden\\lenden.backend\\lenden.application\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{169365FB-6298-4903-A8E0-E343468EA449}|Lenden.Application\\Lenden.Application.csproj|solutionrelative:lenden.application\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{169365FB-6298-4903-A8E0-E343468EA449}|Lenden.Application\\Lenden.Application.csproj|d:\\reactnative\\lenden\\lenden.backend\\lenden.application\\dtos\\auth\\forgetpasswordrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{169365FB-6298-4903-A8E0-E343468EA449}|Lenden.Application\\Lenden.Application.csproj|solutionrelative:lenden.application\\dtos\\auth\\forgetpasswordrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{169365FB-6298-4903-A8E0-E343468EA449}|Lenden.Application\\Lenden.Application.csproj|d:\\reactnative\\lenden\\lenden.backend\\lenden.application\\dtos\\auth\\resetpasswordrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{169365FB-6298-4903-A8E0-E343468EA449}|Lenden.Application\\Lenden.Application.csproj|solutionrelative:lenden.application\\dtos\\auth\\resetpasswordrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{169365FB-6298-4903-A8E0-E343468EA449}|Lenden.Application\\Lenden.Application.csproj|d:\\reactnative\\lenden\\lenden.backend\\lenden.application\\dtos\\auth\\changepasswordrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{169365FB-6298-4903-A8E0-E343468EA449}|Lenden.Application\\Lenden.Application.csproj|solutionrelative:lenden.application\\dtos\\auth\\changepasswordrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4C37FE3A-3A89-4826-B7BC-E50B99C66F27}|Lenden.Web\\Lenden.Web.csproj|d:\\reactnative\\lenden\\lenden.backend\\lenden.web\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{4C37FE3A-3A89-4826-B7BC-E50B99C66F27}|Lenden.Web\\Lenden.Web.csproj|solutionrelative:lenden.web\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -46,7 +22,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 193,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
@@ -55,118 +31,40 @@
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "UserApiController.cs",
-              "DocumentMoniker": "D:\\ReactNative\\LenDen\\Lenden.Backend\\Lenden.Web\\Controllers\\API\\UserApiController.cs",
-              "RelativeDocumentMoniker": "Lenden.Web\\Controllers\\API\\UserApiController.cs",
-              "ToolTip": "D:\\ReactNative\\LenDen\\Lenden.Backend\\Lenden.Web\\Controllers\\API\\UserApiController.cs",
-              "RelativeToolTip": "Lenden.Web\\Controllers\\API\\UserApiController.cs",
-              "ViewState": "AgIAABYAAAAAAAAAAAAgwCwAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-18T02:31:32.77Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "ForgetPasswordRequest.cs",
-              "DocumentMoniker": "D:\\ReactNative\\LenDen\\Lenden.Backend\\Lenden.Application\\DTOs\\Auth\\ForgetPasswordRequest.cs",
-              "RelativeDocumentMoniker": "Lenden.Application\\DTOs\\Auth\\ForgetPasswordRequest.cs",
-              "ToolTip": "D:\\ReactNative\\LenDen\\Lenden.Backend\\Lenden.Application\\DTOs\\Auth\\ForgetPasswordRequest.cs",
-              "RelativeToolTip": "Lenden.Application\\DTOs\\Auth\\ForgetPasswordRequest.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAIAAAANAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-18T03:13:32.334Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "IUserService.cs",
-              "DocumentMoniker": "D:\\ReactNative\\LenDen\\Lenden.Backend\\Lenden.Application\\Interfaces\\Services\\IUserService.cs",
-              "RelativeDocumentMoniker": "Lenden.Application\\Interfaces\\Services\\IUserService.cs",
-              "ToolTip": "D:\\ReactNative\\LenDen\\Lenden.Backend\\Lenden.Application\\Interfaces\\Services\\IUserService.cs",
-              "RelativeToolTip": "Lenden.Application\\Interfaces\\Services\\IUserService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAoAAAAYAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-18T03:08:12.449Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "UserService.cs",
-              "DocumentMoniker": "D:\\ReactNative\\LenDen\\Lenden.Backend\\Lenden.Application\\Services\\UserService.cs",
-              "RelativeDocumentMoniker": "Lenden.Application\\Services\\UserService.cs",
-              "ToolTip": "D:\\ReactNative\\LenDen\\Lenden.Backend\\Lenden.Application\\Services\\UserService.cs",
-              "RelativeToolTip": "Lenden.Application\\Services\\UserService.cs",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAxwCIAAAAfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-18T03:09:38.255Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "ChangePasswordRequest.cs",
-              "DocumentMoniker": "D:\\ReactNative\\LenDen\\Lenden.Backend\\Lenden.Application\\DTOs\\Auth\\ChangePasswordRequest.cs",
-              "RelativeDocumentMoniker": "Lenden.Application\\DTOs\\Auth\\ChangePasswordRequest.cs",
-              "ToolTip": "D:\\ReactNative\\LenDen\\Lenden.Backend\\Lenden.Application\\DTOs\\Auth\\ChangePasswordRequest.cs",
-              "RelativeToolTip": "Lenden.Application\\DTOs\\Auth\\ChangePasswordRequest.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-18T03:13:36.876Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "AuthenticationApiController.cs",
-              "DocumentMoniker": "D:\\ReactNative\\LenDen\\Lenden.Backend\\Lenden.Web\\Controllers\\API\\AuthenticationApiController.cs",
-              "RelativeDocumentMoniker": "Lenden.Web\\Controllers\\API\\AuthenticationApiController.cs",
-              "ToolTip": "D:\\ReactNative\\LenDen\\Lenden.Backend\\Lenden.Web\\Controllers\\API\\AuthenticationApiController.cs*",
-              "RelativeToolTip": "Lenden.Web\\Controllers\\API\\AuthenticationApiController.cs*",
-              "ViewState": "AgIAAGgAAAAAAAAAAAAvwH4AAABQAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-18T03:32:37.519Z",
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\ReactNative\\LenDen\\Lenden.Backend\\Lenden.Web\\appsettings.json",
+              "RelativeDocumentMoniker": "Lenden.Web\\appsettings.json",
+              "ToolTip": "D:\\ReactNative\\LenDen\\Lenden.Backend\\Lenden.Web\\appsettings.json",
+              "RelativeToolTip": "Lenden.Web\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-19T09:32:10.132Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "IAuthService.cs",
-              "DocumentMoniker": "D:\\ReactNative\\LenDen\\Lenden.Backend\\Lenden.Application\\Interfaces\\Services\\IAuthService.cs",
-              "RelativeDocumentMoniker": "Lenden.Application\\Interfaces\\Services\\IAuthService.cs",
-              "ToolTip": "D:\\ReactNative\\LenDen\\Lenden.Backend\\Lenden.Application\\Interfaces\\Services\\IAuthService.cs",
-              "RelativeToolTip": "Lenden.Application\\Interfaces\\Services\\IAuthService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAuwBYAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-18T03:11:25.042Z",
+              "Title": "appsettings.Production.json",
+              "DocumentMoniker": "D:\\ReactNative\\LenDen\\Lenden.Backend\\Lenden.Web\\appsettings.Production.json",
+              "RelativeDocumentMoniker": "Lenden.Web\\appsettings.Production.json",
+              "ToolTip": "D:\\ReactNative\\LenDen\\Lenden.Backend\\Lenden.Web\\appsettings.Production.json",
+              "RelativeToolTip": "Lenden.Web\\appsettings.Production.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAxAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-19T09:33:15.785Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "ResetPasswordRequestDto.cs",
-              "DocumentMoniker": "D:\\ReactNative\\LenDen\\Lenden.Backend\\Lenden.Application\\DTOs\\Auth\\ResetPasswordRequestDto.cs",
-              "RelativeDocumentMoniker": "Lenden.Application\\DTOs\\Auth\\ResetPasswordRequestDto.cs",
-              "ToolTip": "D:\\ReactNative\\LenDen\\Lenden.Backend\\Lenden.Application\\DTOs\\Auth\\ResetPasswordRequestDto.cs",
-              "RelativeToolTip": "Lenden.Application\\DTOs\\Auth\\ResetPasswordRequestDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAsAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\ReactNative\\LenDen\\Lenden.Backend\\Lenden.Web\\Program.cs",
+              "RelativeDocumentMoniker": "Lenden.Web\\Program.cs",
+              "ToolTip": "D:\\ReactNative\\LenDen\\Lenden.Backend\\Lenden.Web\\Program.cs",
+              "RelativeToolTip": "Lenden.Web\\Program.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAABoAAAADAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-18T03:18:17.329Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "AuthService.cs",
-              "DocumentMoniker": "D:\\ReactNative\\LenDen\\Lenden.Backend\\Lenden.Application\\Services\\AuthService.cs",
-              "RelativeDocumentMoniker": "Lenden.Application\\Services\\AuthService.cs",
-              "ToolTip": "D:\\ReactNative\\LenDen\\Lenden.Backend\\Lenden.Application\\Services\\AuthService.cs",
-              "RelativeToolTip": "Lenden.Application\\Services\\AuthService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-18T03:10:28.676Z",
+              "WhenOpened": "2026-05-19T10:20:30.334Z",
               "EditorCaption": ""
             }
           ]

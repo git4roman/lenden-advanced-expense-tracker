@@ -7,7 +7,7 @@ public record CreateExpenseRequest(
     Guid GroupPublicId,
     int Category,
     string? Description,
-    string? ImageUrl,
+    string? Receipt,
     List<ExpenseParticipantDto> Users
 );
 

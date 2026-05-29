@@ -13,7 +13,7 @@ public class ExpenseEntityConfiguration : IEntityTypeConfiguration<ExpenseEntity
         builder.Property(x => x.Id)
             .HasColumnName("id");
 
-        builder.Property(x => x.PublicId)
+        builder.Property(x => x.Slug)
             .HasColumnName("public_id")
             .IsRequired();
 
@@ -25,7 +25,7 @@ public class ExpenseEntityConfiguration : IEntityTypeConfiguration<ExpenseEntity
             .HasColumnName("creator_id")
             .IsRequired();
 
-        builder.Property(x => x.TotalAmount)
+        builder.Property(x => x.Cost)
             .HasColumnName("total_amount")
             .HasColumnType("decimal(18,2)")
             .IsRequired();
@@ -38,7 +38,7 @@ public class ExpenseEntityConfiguration : IEntityTypeConfiguration<ExpenseEntity
         builder.Property(x => x.Description)
             .HasColumnName("description");
 
-        builder.Property(x => x.ImageUrl)
+        builder.Property(x => x.Receipt)
             .HasColumnName("image_url");
 
         builder.Property(x => x.CreatedAt)
@@ -55,7 +55,7 @@ public class ExpenseEntityConfiguration : IEntityTypeConfiguration<ExpenseEntity
             .HasForeignKey(x => x.CreatorId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasIndex(x => x.PublicId)
+        builder.HasIndex(x => x.Slug)
             .IsUnique();
 
         builder.HasIndex(x => x.GroupId);

@@ -1,4 +1,5 @@
 using Lenden.Application.DTOs;
+using Lenden.Application.DTOs.Expense;
 using Lenden.Application.Interfaces.Services;
 using Lenden.Application.Managers;
 using Microsoft.AspNetCore.Authorization;
@@ -68,16 +69,27 @@ public class ExpenseApiController : ControllerBase
     {
         var result = await _expenseService.GetGroupExpensesAsync(groupId, ct);
         var response = result.Select(r =>
-            new
+            new GroupExpenseResponseDto
             {
-                Id = r.PublicId,
-                TotalAmount = r.TotalAmount,
-                Participants = r.Participants.Select(p => new
+                Id = r.Slug,
+                Cost = r.Cost,
+                Users = r.Participants.Select(p => new Users
                 {
-                    PublicId = p.User.Slug, p.User.GivenName, p.User.FamilyName, p.User.Email.Value, p.Net, p.Paid, p.Split
-                }),
-                CreatedAt = r.CreatedAt,
+                   Id= p.User.Slug,
+                   Email = p.User.Email.Value,
+                   GivenName = p.User.GivenName,
+                   FamilyName = p.User.FamilyName,
+                   Avatar= p.User.UserInfo.ImageUrl,
+                   PaidAmount= p.Paid,
+                   NetBalance= p.Net,
+                   SplitAmount=p.Split,
+
+                }).ToList(),
                 CategoryKey = r.Category.Name,
+                Date =r.Date,
+                CreatedAt = r.CreatedAt,
+                UpdatedAt=r.UpdatedAt,
+                Receipt= r.Receipt,
             });
         return Ok(response);
     }

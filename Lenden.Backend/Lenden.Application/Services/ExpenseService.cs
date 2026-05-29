@@ -50,7 +50,8 @@ public class ExpenseService : IExpenseService
                 request.TotalAmount,
                 request.Category,
                 request.Description,
-                request.ImageUrl
+                request.Receipt,
+                request.Date
             );
 
             foreach (var x in request.Users)
@@ -107,7 +108,7 @@ public class ExpenseService : IExpenseService
             }
         }
         
-        await _unitOfWork.ExpenseRepository.RemoveExpenseAsync(expense.PublicId, ct);
+        await _unitOfWork.ExpenseRepository.RemoveExpenseAsync(expense.Slug, ct);
         await _unitOfWork.SaveChangesAsync(ct);
         
 
