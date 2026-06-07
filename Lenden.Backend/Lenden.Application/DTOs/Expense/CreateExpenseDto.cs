@@ -7,12 +7,13 @@ using System.Threading.Tasks;
 namespace Lenden.Application.DTOs.Expense
 {
     public record CreateExpenseRequest(
-    decimal TotalAmount,
+    decimal Amount,
     Guid GroupPublicId,
     int Category,
     string? Description,
     string? Receipt,
     List<ExpenseParticipantDto> Users,
-    DateTimeOffset Date
+    DateTimeOffset Date,
+    int CreationMethod
     );
 }

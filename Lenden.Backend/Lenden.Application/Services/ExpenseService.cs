@@ -4,6 +4,9 @@ using Lenden.Domain.Entities;
 using Lenden.Application.DTOs;
 using Lenden.Application.Interfaces.Validators;
 using Lenden.Web.Models.Exceptions;
+using Lenden.Application.DTOs.Expense;
+using Lenden.Domain.ValueObjects;
+using Repayments = Lenden.Domain.ValueObjects.Repayments;
 
 namespace Lenden.Application.Services;
 
@@ -20,19 +23,24 @@ public class ExpenseService : IExpenseService
         _groupValidator = groupValidator;
     }
 
-    public async Task CreateExpenseAsync(long creatorId, CreateExpenseRequest request, CancellationToken ct = default)
+    public async Task CreateExpenseAsync(UserEntity creator, CreateExpenseRequest request, CancellationToken ct = default)
     {
         using var transaction = await _unitOfWork.BeginTransactionAsync(ct);
+        
         try
         {
             var group = await _unitOfWork.GroupRepository.GetByPublicIdAsync(request.GroupPublicId, ct);
             if (group is null) throw new NotFoundException("Group not found");
             
-            decimal totalPaid = request.Users.Sum(u => u.paidAmount);
-            decimal totalSplit = request.Users.Sum(u => u.splitAmount);
-            if (totalPaid != request.TotalAmount || totalSplit != request.TotalAmount)
+            const decimal tolerance = 0.01m;
+
+            decimal totalPaid = request.Users.Sum(u => u.PaidAmount);
+            decimal totalSplit = request.Users.Sum(u => u.SplitAmount);
+
+            if (Math.Abs(totalPaid - request.Amount) > tolerance ||
+                Math.Abs(totalSplit - request.Amount) > tolerance)
             {
-                throw new BadRequestException("Total paid or split amount does not match the total amount");
+                throw new BadRequestException("Total does not match amount");
             }
 
             // var userBalances = group.UserBalances;
@@ -44,21 +52,45 @@ public class ExpenseService : IExpenseService
             var users = await _unitOfWork.UserRepository.GetUsersIdsInBulkWithPublicIdAsync(publicIds, ct);
             var userMap = users.ToDictionary(x => x.PublicId, x => x.UserId);
 
+            var receipt = new Receipt(request?.Receipt ?? "", request?.Receipt ?? "");
+
+            var repayments = new List<Repayments>();
+
+            var creditors = request?.Users.Where(u => u.NetAmount > 0).Select(u => u).ToList();
+            var debtors = request?.Users.Where(u => u.NetAmount < 0).Select(u => u).ToList();
+            for (int i=0; i<=debtors?.Count;i++ )
+            {
+                var creditor = creditors[i];
+                for (int j = 0; j <= creditors?.Count; j++)
+                {
+                    var debtor = debtors[j];
+                    var amount = Math.Min(creditor.NetAmount, -debtor.NetAmount);
+                    
+                    repayments.Add(new Repayments(debtor.UserId,creditor.UserId,amount));
+                    
+                    debtor.NetAmount += amount;
+                    creditor.NetAmount -= amount;
+                    if (debtor.NetAmount == 0) j++;
+                    if (creditor.NetAmount == 0) i++;
+                }
+            }
             var expenseEntity = ExpenseEntity.Create(
-                creatorId,
-                group.Id,
-                request.TotalAmount,
+                creator,
+                group,
+                request.Amount,
                 request.Category,
+                request.Date,
                 request.Description,
-                request.Receipt,
-                request.Date
+                receipt,
+                request.CreationMethod,
+                repayments
             );
 
             foreach (var x in request.Users)
             {
                 var userId = userMap[x.UserId];
-                var paidAmount = x.paidAmount;
-                var splitAmount = x.splitAmount;
+                var paidAmount = x.PaidAmount;
+                var splitAmount = x.SplitAmount;
                 expenseEntity.AddExpenseParticipant(
                     userId: userMap[x.UserId],
                     paid: paidAmount,
@@ -79,6 +111,8 @@ public class ExpenseService : IExpenseService
             throw new Exception(e.InnerException?.Message ?? e.Message);
         }
     }
+    
+   
 
     public async Task<IEnumerable<ExpenseEntity?>> GetGroupExpensesAsync(Guid groupId, CancellationToken ct = default)
     {
@@ -116,8 +150,8 @@ public class ExpenseService : IExpenseService
 
    public async Task UpdateExpense(UpdateExpenseRequest request, CancellationToken ct = default)
 {
-    var totalPaid = request.Users.Sum(u => u.paidAmount);
-    var totalSplit = request.Users.Sum(u => u.splitAmount);
+    var totalPaid = request.Users.Sum(u => u.PaidAmount);
+    var totalSplit = request.Users.Sum(u => u.SplitAmount);
 
     if (totalPaid != request.TotalAmount || totalSplit != request.TotalAmount)
         throw new Exception("Paid and split amounts must each equal the total amount.");
@@ -134,7 +168,7 @@ public class ExpenseService : IExpenseService
     var userMap = users.ToDictionary(u => u.PublicId, u => u.UserId);
     var memberMap = group.Members.ToDictionary(m => m.UserId, m => m);
 
-    expense.UpdateExpense(request.TotalAmount, request.Category, request.Description, request.ImageUrl);
+    expense.UpdateExpense(request.TotalAmount, request.Category, request.Description, new Receipt(request.ImageUrl,request.ImageUrl));
 
     var existingParticipants = expense.Participants
         .GroupBy(p => p.UserId)
@@ -151,17 +185,17 @@ public class ExpenseService : IExpenseService
             if (memberMap.TryGetValue(userId, out var member))
                 member.UpdateNetBalance(-existing.Net);
 
-            existing.Update(dto.paidAmount, dto.splitAmount);
+            existing.Update(dto.PaidAmount, dto.SplitAmount);
 
             if (memberMap.TryGetValue(userId, out member))
                 member.UpdateNetBalance(existing.Net);
         }
         else
         {
-            expense.AddExpenseParticipant(userId, dto.paidAmount, dto.splitAmount);
+            expense.AddExpenseParticipant(userId, dto.PaidAmount, dto.SplitAmount);
 
             if (memberMap.TryGetValue(userId, out var member))
-                member.UpdateNetBalance(dto.paidAmount - dto.splitAmount);
+                member.UpdateNetBalance(dto.PaidAmount - dto.SplitAmount);
         }
     }
 

@@ -1,3 +1,9 @@
 ﻿namespace Lenden.Application.DTOs;
 
-public record ExpenseParticipantDto(Guid UserId, decimal paidAmount, decimal splitAmount);
+public class ExpenseParticipantDto
+{
+    public Guid UserId { get; set; }
+    public decimal PaidAmount{ get; set; }
+    public decimal SplitAmount{ get; set; }
+    public decimal NetAmount{ get; set; }
+};

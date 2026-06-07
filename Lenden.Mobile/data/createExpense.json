@@ -1,0 +1,88 @@
+{
+	"0": {
+		"id": 4485510655,
+		"group_id": 94239772,
+		"description": "sjdkfjsd",
+		"creation_method": "equal",
+		"cost": "789.0",
+		"repayments": [
+			{
+				"from": 117645599,
+				"to": 117645345,
+				"amount": "263.0"
+			},
+			{
+				"from": 117645600,
+				"to": 117645345,
+				"amount": "263.0"
+			}
+		],
+		"date": "2026-05-29T17:10:53Z",
+		"created_at": "2026-05-29T17:11:04Z",
+		"created_by": {
+			"id": 117645345,
+			"first_name": "Roman",
+			"last_name": "Ghimire Khatri",
+			"picture": {
+				"medium": "https://splitwise.s3.amazonaws.com/uploads/user/avatar/117645345/medium_6d2c19cc-2253-4f66-9441-66d72015eabe.jpg"
+			},
+			"custom_picture": true
+		},
+		"updated_at": "2026-05-29T17:11:04Z",
+		"updated_by": null,
+		"deleted_at": null,
+		"deleted_by": null,
+		"category": {
+			"id": 18,
+			"name": "General"
+		},
+		"receipt": {
+			"large": null,
+			"original": null
+		},
+		"users": [
+			{
+				"user": {
+					"id": 117645345,
+					"first_name": "Roman",
+					"last_name": "Ghimire Khatri",
+					"picture": {
+						"medium": "https://splitwise.s3.amazonaws.com/uploads/user/avatar/117645345/medium_6d2c19cc-2253-4f66-9441-66d72015eabe.jpg"
+					}
+				},
+				"user_id": 117645345,
+				"paid_share": "789.0",
+				"owed_share": "263.0",
+				"net_balance": "526.0"
+			},
+			{
+				"user": {
+					"id": 117645599,
+					"first_name": "Ligag",
+					"last_name": null,
+					"picture": {
+						"medium": "https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-invited-100px.png"
+					}
+				},
+				"user_id": 117645599,
+				"paid_share": "0.0",
+				"owed_share": "263.0",
+				"net_balance": "-263.0"
+			},
+			{
+				"user": {
+					"id": 117645600,
+					"first_name": "waxok",
+					"last_name": null,
+					"picture": {
+						"medium": "https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-invited-100px.png"
+					}
+				},
+				"user_id": 117645600,
+				"paid_share": "0.0",
+				"owed_share": "263.0",
+				"net_balance": "-263.0"
+			}
+		]
+	}
+}

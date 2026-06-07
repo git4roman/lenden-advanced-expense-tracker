@@ -14,7 +14,7 @@ public class GroupMemberDto
 {
     public Guid Id { get; set; }
     public string Email { get; set; }
-    public string ImgUrl { get; set; }
+    public string Avatar { get; set; }
     public string GivenName { get; set; }
     public string FamilyName { get; set; }
     public decimal NetBalance { get; set; }

@@ -34,7 +34,7 @@ public class ExpenseApiController : ControllerBase
         try
         {
             var currentUser = await _authService.ValidateUserAsync(User, ct);
-            await _expenseService.CreateExpenseAsync(currentUser.Id, request, ct);
+            await _expenseService.CreateExpenseAsync(currentUser, request, ct);
             return Ok();
         }
         catch (System.Exception e)
@@ -69,10 +69,10 @@ public class ExpenseApiController : ControllerBase
     {
         var result = await _expenseService.GetGroupExpensesAsync(groupId, ct);
         var response = result.Select(r =>
-            new GroupExpenseResponseDto
+            new ExpenseResponseDto
             {
                 Id = r.Slug,
-                Cost = r.Cost,
+                Cost = r.Amount,
                 Users = r.Participants.Select(p => new Users
                 {
                    Id= p.User.Slug,

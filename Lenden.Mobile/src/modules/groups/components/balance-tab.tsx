@@ -6,6 +6,7 @@ import { Transaction } from "@/src/shared/store/slices/group-slice";
 import { RootState } from "@/src/shared/store/store";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
+import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
 import { FlatList, Pressable, ScrollView, View } from "react-native";
@@ -52,14 +53,23 @@ const BalanceTab = ({ groupId }: { groupId: string }) => {
   };
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ gap: 8 }}
+    >
       <Pressable
         onPress={() => {
           router.push(`/(stack)/groups/${groupId}/settlement`);
         }}
-        style={{ justifyContent: "flex-end", alignItems: "center" }}
+        style={{
+          justifyContent: "flex-end",
+          alignItems: "center",
+          flexDirection: "row",
+          gap: 4,
+        }}
       >
-        <CText weight="bold" size="sm" color="neutral" shade={400}>
+        <MaterialIcons name={"payments"} size={24} color={Colors.accent[500]} />
+        <CText weight="bold" size="md" color="primary" shade={500}>
           Settlements
         </CText>
       </Pressable>

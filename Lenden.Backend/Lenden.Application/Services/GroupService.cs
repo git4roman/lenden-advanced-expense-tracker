@@ -52,7 +52,9 @@ public class GroupService : IGroupService
                 var email = string.IsNullOrWhiteSpace(u.Email)
                     ? $"missing-{u.PhoneNumber}@invalid.local"
                     : u.Email;
-                return new UserEntity(Email.Create(email), firstName, lastName, u.PhoneNumber);
+                var user = new UserEntity(Email.Create(email), firstName, lastName, u.PhoneNumber);
+                user.UserStatusChange(UserStatus.InActive);
+                return user;
             })
             .ToList();
 
@@ -183,7 +185,7 @@ public class GroupService : IGroupService
                 GivenName = m.User.GivenName,
                 FamilyName = m.User.FamilyName,
                 NetBalance = m.NetBalance,
-                ImgUrl = m.User?.UserInfo?.ImageUrl ?? "",
+                Avatar = m.User?.UserInfo?.ImageUrl ?? "",
             }).ToList(),
         };
 
@@ -200,19 +202,23 @@ public class GroupService : IGroupService
         {
             Id = g.Slug,
             Name = g.Name,
-            ImageUrl = g.ImageUrl,
+            CoverPhoto = g.ImageUrl,
 
             Members = g.Members.Select(m => new GroupMembersSummary
             {
                 Id = m.User.Slug,
+                Email= m.User.Email.ToString(),
                 GivenName = m.User.GivenName,
                 FamilyName = m.User.FamilyName,
-                ImageUrl = m.User?.UserInfo?.ImageUrl ?? "",
+                Avatar = m.User?.UserInfo?.ImageUrl ?? "",
+                RegistrationStatus = m.User.Status.Name
             }).ToList(),
 
             Balances = GetBalance(g, ct),
             MemberCount = g.Members.Count,
-            CreatedAt = g.CreatedAt
+            CreatedAt = g.CreatedAt,
+            UpdatedAt = g.UpdatedAt,
+            InviteLink = ""
         });
 
         return result;

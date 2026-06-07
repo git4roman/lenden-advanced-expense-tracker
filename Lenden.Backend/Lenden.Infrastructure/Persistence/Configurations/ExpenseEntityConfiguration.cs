@@ -1,4 +1,5 @@
 ﻿using Lenden.Domain.Entities;
+using Lenden.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Lenden.Infrastructure.Persistence.Configurations;
@@ -25,8 +26,8 @@ public class ExpenseEntityConfiguration : IEntityTypeConfiguration<ExpenseEntity
             .HasColumnName("creator_id")
             .IsRequired();
 
-        builder.Property(x => x.Cost)
-            .HasColumnName("total_amount")
+        builder.Property(x => x.Amount)
+            .HasColumnName("cost")
             .HasColumnType("decimal(18,2)")
             .IsRequired();
 
@@ -35,7 +36,13 @@ public class ExpenseEntityConfiguration : IEntityTypeConfiguration<ExpenseEntity
             .HasConversion(new SmartEnumConverter<ExpenseCategory>())
             .IsRequired();
 
+        builder.Property(x => x.CreationMethod)
+            .HasColumnName("creation_method")
+            .HasConversion(new SmartEnumConverter<CreationMethod>())
+            .IsRequired();
+
         builder.Property(x => x.Description)
+            .HasMaxLength(100)
             .HasColumnName("description");
 
         builder.Property(x => x.Receipt)
@@ -44,6 +51,13 @@ public class ExpenseEntityConfiguration : IEntityTypeConfiguration<ExpenseEntity
         builder.Property(x => x.CreatedAt)
             .HasColumnName("created_at")
             .IsRequired();
+
+        builder.Property(x => x.Date)
+    .HasColumnName("date")
+    .IsRequired();
+
+        builder.Property(x => x.UpdatedAt)
+            .HasColumnName("updated_at");
 
         builder.HasOne(x => x.Group)
             .WithMany()
@@ -59,5 +73,15 @@ public class ExpenseEntityConfiguration : IEntityTypeConfiguration<ExpenseEntity
             .IsUnique();
 
         builder.HasIndex(x => x.GroupId);
+        
+        builder.OwnsMany(e => e.Repayments, r =>
+        {
+            r.ToJson();
+        });
+        
+        builder.OwnsOne(e => e.Receipt, r =>
+        {
+            r.ToJson();
+        });
     }
 }

@@ -100,7 +100,7 @@ namespace Lenden.Infrastructure.Migrations
                         .HasColumnType("char(36)")
                         .HasColumnName("public_id");
 
-                    b.Property<decimal>("Cost")
+                    b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("total_amount");
 

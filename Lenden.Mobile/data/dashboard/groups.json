@@ -1,0 +1,87 @@
+{
+  "groups": [
+    {
+      "id": 94239772,
+      "name": "FunkyTOwn",
+      "created_at": "2026-02-26T14:53:05Z",
+      "updated_at": "2026-05-28T10:19:27Z",
+      "members": [
+        {
+          "id": 117645345,
+          "first_name": "Roman",
+          "last_name": "Ghimire Khatri",
+          "imgUrl": "https://splitwise.s3.amazonaws.com/uploads/user/avatar/117645345/small_6d2c19cc-2253-4f66-9441-66d72015eabe.jpg",
+          "email": "rougavko@gmail.com",
+          "registration_status": "confirmed",
+          "balance": [
+            {
+              "currency_code": "USD",
+              "amount": "271.67"
+            }
+          ]
+        },
+        {
+          "id": 117645599,
+          "first_name": "Ligag",
+          "last_name": null,
+          "imgUrl": "https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-invited-50px.png",
+          "email": "ligag37154@creteanu.com",
+          "registration_status": "invited",
+          "balance": [
+            {
+              "currency_code": "USD",
+              "amount": "-71.67"
+            }
+          ]
+        },
+        {
+          "id": 117645600,
+          "first_name": "waxok",
+          "last_name": null,
+          "imgUrl": "https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-invited-50px.png",
+          "custom_picture": false,
+          "email": "waxok38138@creteanu.com",
+          "registration_status": "invited",
+          "balance": [
+            {
+              "currency_code": "USD",
+              "amount": "-200.0"
+            }
+          ]
+        }
+      ],
+      "simplify_by_default": false,
+      "original_debts": [
+        {
+          "from": 117645599,
+          "to": 117645345,
+          "amount": "271.67",
+          "currency_code": "USD"
+        },
+        {
+          "from": 117645600,
+          "to": 117645599,
+          "amount": "200.0",
+          "currency_code": "USD"
+        }
+      ],
+      "simplified_debts": [
+        {
+          "from": 117645599,
+          "to": 117645345,
+          "amount": "71.67",
+          "currency_code": "USD"
+        },
+        {
+          "from": 117645600,
+          "to": 117645345,
+          "amount": "200.0",
+          "currency_code": "USD"
+        }
+      ],
+
+      "invite_link": "https://www.splitwise.com/join/U9FyN2cJgt1+1y1jq9",
+      "avatar": "https://s3.amazonaws.com/splitwise/uploads/group/default_avatars/v2021/avatar-teal26-trip-50px.png"
+    }
+  ]
+}

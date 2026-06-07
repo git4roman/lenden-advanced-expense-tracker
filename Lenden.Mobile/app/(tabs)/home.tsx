@@ -284,6 +284,7 @@ const HomeScreen = () => {
                   justifyContent: "center",
                   alignItems: "center",
                   overflow: "hidden",
+                  borderColor: Colors.neutral[600],
                 }}
               >
                 <Image source={{ uri: item.imageUrl }} width={60} height={60} />

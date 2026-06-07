@@ -1,4 +1,5 @@
-﻿using Lenden.Domain.ValueObjects;
+﻿using Lenden.Domain.Enums;
+using Lenden.Domain.ValueObjects;
 
 namespace Lenden.Domain.Entities;
 
@@ -11,64 +12,69 @@ public class ExpenseEntity
     public GroupEntity Group { get; private set; } 
     public long CreatorId { get; private set; }
     public UserEntity Creator { get; private set; }
-    public decimal Cost { get; private set; }
-
+    public decimal Amount { get; private set; }
     public ExpenseCategory Category { get; private set; } = null!;
-
-    public string? Description { get; private set; }
-
-    public string? Receipt { get; private set; }
-
-    public DateTimeOffset CreatedAt { get; private set; }
+    public CreationMethod CreationMethod { get; private set; }
+    public string Description { get; private set; }
+    public Receipt? Receipt { get; private set; }
+    public List<Repayments> Repayments { get; private set; }
     public DateTimeOffset Date { get; private set; }
-    public DateTimeOffset UpdatedAt { get; private set; }
+    public DateTimeOffset CreatedAt { get; private set; }
+    public DateTimeOffset UpdatedAt { get; private set; }  
 
     private readonly List<ExpenseParticipantEntity> _participants = new();
     public IReadOnlyCollection<ExpenseParticipantEntity> Participants => _participants.AsReadOnly();
     private ExpenseEntity() { } 
 
     private ExpenseEntity(
-        long creatorId,
-        long groupId,
-        decimal totalAmount,
+        UserEntity creator,
+        GroupEntity group,
+        decimal amount,
         ExpenseCategory category,
-        string? description,
-        string? receipt
-        ,
-        DateTimeOffset date)
-    {
-        if (totalAmount <= 0)
-            throw new ArgumentException("Total amount must be greater than zero.");
+        DateTimeOffset date,
+        string description,
+        Receipt receipt,
+        CreationMethod creationMethod,
+        List<Repayments> repayments)
+    {        
         Id = Guid.NewGuid();
         Slug = Guid.NewGuid();
-        GroupId = groupId;
-        Cost = totalAmount;
+        Group = group;
+        Amount = amount;
         Category= category;
         Description = description;
         Receipt = receipt;
         CreatedAt = DateTimeOffset.UtcNow;
-        CreatorId = creatorId;
         Date = date;
+        Creator = creator;
+        CreationMethod = creationMethod;
+        Repayments = repayments;
     }
 
     public static ExpenseEntity Create(
-        long creatorId,
-        long groupId,
-        decimal totalAmount,
+        UserEntity creator,
+        GroupEntity group,
+        decimal amount,
         int category,
-        string? description,
-        string? receipt,
-        DateTimeOffset date
+        DateTimeOffset date,
+        string description,
+        Receipt receipt,
+        int creationMethod,
+        List<Repayments> repayments
         )
     {
+        if (amount <= 0)
+            throw new ArgumentException("Total amount must be greater than zero.");
         return new ExpenseEntity(
-            creatorId,
-            groupId,
-            totalAmount,
+            creator,
+            group,
+            amount,
             ExpenseCategory.FromValue(category),
+            date,
             description,
             receipt,
-            date);
+            CreationMethod.FromValue(creationMethod),
+            repayments);
     }
 
     public ExpenseParticipantEntity  AddExpenseParticipant(long userId, decimal paid, decimal split)
@@ -78,9 +84,9 @@ public class ExpenseEntity
         return participant;
     }
     
-    public void UpdateExpense(decimal totalAmount,int category,string? description, string? receipt)
+    public void UpdateExpense(decimal totalAmount,int category,string? description, Receipt? receipt)
     {
-        Cost = totalAmount;
+        Amount = totalAmount;
         Category = ExpenseCategory.FromValue(category);
         Description = description;
         Receipt = receipt;

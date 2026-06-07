@@ -26,6 +26,7 @@ public class UserEntity
         Username = GenerateUsername( givenName, familyName);
         CreateUserInfo("",phoneNumber,"",DateTime.MinValue);
     }
+
     
     private static string GenerateUsername(string givenName, string familyName)
     {

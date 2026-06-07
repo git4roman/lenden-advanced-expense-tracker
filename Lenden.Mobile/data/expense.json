@@ -1,35 +1,89 @@
 {
-  "id": "eccdc65d-7f6f-4cff-88c9-5c707d466b6c",
-  "totalAmount": 4000.0,
-  "participants": [
-    {
-      "publicId": "4df6e0c4-458c-4985-8156-6a338cee7ed5",
-      "givenName": "Roman",
-      "familyName": "Khatri",
-      "value": "romanhelmet22@gmail.com",
-      "net": -1500.0,
-      "paid": 0.0,
-      "split": 1500.0
+  "1": {
+    "id": 4482855657,
+    "group_id": 94239772,
+    "description": "uyiuhv",
+    "creation_method": "equal",
+    "cost": "215.0",
+    "currency_code": "USD",
+    "repayments": [
+      {
+        "from": 117645599,
+        "to": 117645345,
+        "amount": "71.67"
+      },
+      {
+        "from": 117645600,
+        "to": 117645345,
+        "amount": "71.66"
+      }
+    ],
+    "date": "2026-05-28T06:51:44Z",
+    "created_at": "2026-05-28T06:51:55Z",
+    "created_by": {
+      "id": 117645345,
+      "first_name": "Roman",
+      "last_name": "Ghimire Khatri",
+      "picture": {
+        "medium": "https://splitwise.s3.amazonaws.com/uploads/user/avatar/117645345/medium_6d2c19cc-2253-4f66-9441-66d72015eabe.jpg"
+      },
+      "custom_picture": true
     },
-    {
-      "publicId": "79ba90ba-e90c-40d0-b77f-fb029e2f73c2",
-      "givenName": "Helmet",
-      "familyName": "Admin",
-      "value": "roman@gmail.com",
-      "net": 3000.0,
-      "paid": 4000.0,
-      "split": 1000.0
+    "updated_at": "2026-05-28T06:51:55Z",
+    "updated_by": null,
+    "deleted_at": null,
+    "deleted_by": null,
+    "category": {
+      "id": 18,
+      "name": "General"
     },
-    {
-      "publicId": "d5cf0778-991c-4dcc-b072-957cc554ac83",
-      "givenName": "string",
-      "familyName": "string",
-      "value": "admin2@admin.com",
-      "net": -1500.0,
-      "paid": 0.0,
-      "split": 1500.0
-    }
-  ],
-  "createdAt": "2026-05-04T15:01:49.164105+00:00",
-  "categoryKey": "Household"
+    "receipt": {
+      "large": null,
+      "original": null
+    },
+    "users": [
+      {
+        "user": {
+          "id": 117645345,
+          "first_name": "Roman",
+          "last_name": "Ghimire Khatri",
+          "picture": {
+            "medium": "https://splitwise.s3.amazonaws.com/uploads/user/avatar/117645345/medium_6d2c19cc-2253-4f66-9441-66d72015eabe.jpg"
+          }
+        },
+        "user_id": 117645345,
+        "paid_share": "215.0",
+        "owed_share": "71.67",
+        "net_balance": "143.33"
+      },
+      {
+        "user": {
+          "id": 117645599,
+          "first_name": "Ligag",
+          "last_name": null,
+          "picture": {
+            "medium": "https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-invited-100px.png"
+          }
+        },
+        "user_id": 117645599,
+        "paid_share": "0.0",
+        "owed_share": "71.67",
+        "net_balance": "-71.67"
+      },
+      {
+        "user": {
+          "id": 117645600,
+          "first_name": "waxok",
+          "last_name": null,
+          "picture": {
+            "medium": "https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-invited-100px.png"
+          }
+        },
+        "user_id": 117645600,
+        "paid_share": "0.0",
+        "owed_share": "71.66",
+        "net_balance": "-71.66"
+      }
+    ]
+  }
 }

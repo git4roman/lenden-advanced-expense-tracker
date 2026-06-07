@@ -1,0 +1,31 @@
+{
+  "friends": [
+    {
+      "id": 1298646,
+      "first_name": "Peter",
+      "last_name": null,
+      "email": "peter@gmail.com",
+      "registration_status": "confirmed",
+      "imgUrl": "https://s3.amazonaws.com/splitwise/uploads/user/default_avatars/avatar-orange37-50px.png",
+      "custom_picture": false,
+      "balance": [
+        {
+          "currency_code": "USD",
+          "amount": "818.67"
+        }
+      ],
+      "groups": [
+        {
+          "group_id": 98027176,
+          "balance": [
+            {
+              "currency_code": "USD",
+              "amount": "818.67"
+            }
+          ]
+        }
+      ],
+      "updated_at": "2026-05-28T06:53:55Z"
+    }
+  ]
+}
