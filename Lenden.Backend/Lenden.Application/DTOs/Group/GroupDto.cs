@@ -1,4 +1,6 @@
-﻿namespace Lenden.Application.DTOs.Group;
+﻿using Lenden.Domain.ValueObjects;
+
+namespace Lenden.Application.DTOs.Group;
 
 public class GroupResponseDto
 {

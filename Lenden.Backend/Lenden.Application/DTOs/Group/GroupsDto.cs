@@ -7,12 +7,19 @@ public class GroupsResponseDto
     public string Name { get; set; }
     public string CoverPhoto { get; set; }
     public List<GroupMembersSummary> Members { get; set; }
-    public List<GroupMembersBalanceResponseDto> Balances { get; set; }
+    public List<GroupRepayments> Repayments { get; set; }
     public int MemberCount { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset UpdatedAt { get; set; }
     public string InviteLink {get;set;}
 
+}
+
+public class GroupRepayments
+{
+    public Guid From { get; set; }
+    public Guid To { get; set; }
+    public decimal Amount { get; set; }
 }
 
 
@@ -25,6 +32,7 @@ public class GroupMembersSummary
     public string Email {get;set;}
     public string RegistrationStatus {get;set;}
     public decimal Amount {get;set;} 
+    public string Role {get;set;}
 }
 
 

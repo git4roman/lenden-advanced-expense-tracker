@@ -41,5 +41,8 @@ public class UserInfoEntityConfiguration : IEntityTypeConfiguration<UserInfoEnti
 
         builder.HasIndex(x => x.UserId)
             .IsUnique();
+        builder.HasIndex(x => x.PhoneNumber)
+            .IsUnique();
+        
     }
 }

@@ -83,7 +83,8 @@ public class GroupApiController : ControllerBase
     public async Task<IActionResult> GetAllGroups(CancellationToken ct = default)
     {
        var currenUser= await _authService.ValidateUserAsync(User, ct);
-       var allGroups = await _groupService.GetAllActiveAsync();
+       var allGroups = await _groupService.GetAllActiveAsync(ct);
+       Console.WriteLine(allGroups);
        return Ok(allGroups);
     }
 

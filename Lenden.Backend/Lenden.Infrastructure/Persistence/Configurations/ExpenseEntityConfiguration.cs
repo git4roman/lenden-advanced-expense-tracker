@@ -45,8 +45,8 @@ public class ExpenseEntityConfiguration : IEntityTypeConfiguration<ExpenseEntity
             .HasMaxLength(100)
             .HasColumnName("description");
 
-        builder.Property(x => x.Receipt)
-            .HasColumnName("image_url");
+        // builder.Property(x => x.Receipt)
+        //     .HasColumnName("image_url");
 
         builder.Property(x => x.CreatedAt)
             .HasColumnName("created_at")
@@ -76,12 +76,21 @@ public class ExpenseEntityConfiguration : IEntityTypeConfiguration<ExpenseEntity
         
         builder.OwnsMany(e => e.Repayments, r =>
         {
-            r.ToJson();
+            r.ToTable("expense_repayments");
+
+            r.WithOwner().HasForeignKey("expense_id");
+
+            r.Property(x => x.From).HasColumnName("from_user_id");
+            r.Property(x => x.To).HasColumnName("to_user_id");
+            r.Property(x => x.Amount).HasColumnName("amount").HasColumnType("decimal(18,2)");
+
+            r.HasKey("expense_id", "From", "To");
         });
         
         builder.OwnsOne(e => e.Receipt, r =>
         {
-            r.ToJson();
+            r.Property(x => x.Large).HasColumnName("receipt_large");
+            r.Property(x => x.Original).HasColumnName("receipt_original");
         });
     }
 }

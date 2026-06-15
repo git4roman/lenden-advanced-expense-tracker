@@ -20,9 +20,9 @@ public interface IGroupService
     Task DeleteGroupAsync(Guid groupId,long userId, CancellationToken ct = default);
     
     Task<IEnumerable<GroupEntity>> GetAllActiveAsync(CancellationToken ct = default);
-    Task<List<GroupMembersBalanceResponseDto>> GetGroupBalance(Guid groupId, CancellationToken ct = default);
+    Task<List<GroupRepayments>> GetGroupBalance(Guid groupId, CancellationToken ct = default);
 
-    List<GroupMembersBalanceResponseDto> GetBalance(GroupEntity group, CancellationToken ct=default);
+    List<GroupRepayments> GetBalance(GroupEntity group, CancellationToken ct=default);
     
     // Task<UserEntity?> GetGroupMemberByPublicId(Guid groupId, Guid userId, CancellationToken ct = default);
     

@@ -1,74 +1,31 @@
-import {
-  GroupBalanceResponse,
-  GroupSummaryResponse,
-} from "@/src/modules/groups/types/group-slice.type";
+import { GroupExpenses } from "@/src/modules/groups/types/expense-slice.type";
+import { IGroup } from "@/src/modules/groups/types/group-slice.type";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-// type MutualBalanceUser = {
-//   userId: number;
-//   fullName: string;
-// };
-// type MutualBalanceData = {
-//   fromUserId: number;
-//   fromUser: MutualBalanceUser;
-//   toUserId: number;
-//   toUser: MutualBalanceUser;
-//   amount: number;
-// };
-export type Member = {
-  id: string;
-  email: string;
-  givenName: string;
-  familyName: string;
-  netBalance?: number;
-};
+export interface GroupWithExpenses extends IGroup {
+  expenses?: GroupExpenses[];
+}
 
-export type Group = {
-  id: string;
-  name: string;
-  imageUrl: string;
-  members: Member[];
-  updatedAt?: string;
-  createdBy?: number;
-  // mutualBalanceData: MutualBalanceData[];
-  transaction: Transaction[];
-};
-
-export type GroupState = {
-  groups: Group[] | null;
-};
-
-export type Transaction = {
-  from: string;
-  fromUserId: string;
-  to: string;
-  toUserId: string;
-  amount: number;
-};
-
-const initialState: GroupSummaryResponse[] = [];
-
-type SetGroupBalancePayload = {
-  groupId: string;
-  transactions: GroupBalanceResponse[];
-};
+const initialState: GroupWithExpenses[] = [];
 
 const groupSlice = createSlice({
-  name: "group",
+  name: "groups",
   initialState,
   reducers: {
-    setUserGroups: (state, action: PayloadAction<GroupSummaryResponse[]>) => {
+    setUserGroups: (state, action: PayloadAction<IGroup[]>) => {
       return action.payload;
     },
-    setGroupBalance: (state, action: PayloadAction<SetGroupBalancePayload>) => {
-      const { groupId, transactions } = action.payload;
-      const group = state.groups?.find((g) => g.id === groupId);
+    setGroupExpenses: (
+      state,
+      action: PayloadAction<{ groupId: string; expenses: GroupExpenses[] }>,
+    ) => {
+      const group = state.find((g) => g.id === action.payload.groupId);
       if (group) {
-        group.transaction = transactions;
+        group.expenses = action.payload.expenses;
       }
     },
   },
 });
 
-export const { setUserGroups, setGroupBalance } = groupSlice.actions;
+export const { setUserGroups, setGroupExpenses } = groupSlice.actions;
 export default groupSlice.reducer;

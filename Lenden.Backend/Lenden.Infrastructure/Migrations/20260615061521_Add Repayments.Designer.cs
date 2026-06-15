@@ -3,6 +3,7 @@ using System;
 using Lenden.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lenden.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260615061521_Add Repayments")]
+    partial class AddRepayments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -372,7 +375,7 @@ namespace Lenden.Infrastructure.Migrations
                         .HasColumnName("image_url");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("varchar(255)")
+                        .HasColumnType("longtext")
                         .HasColumnName("phone_number");
 
                     b.Property<long>("UserId")
@@ -380,9 +383,6 @@ namespace Lenden.Infrastructure.Migrations
                         .HasColumnName("user_id");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PhoneNumber")
-                        .IsUnique();
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -510,7 +510,7 @@ namespace Lenden.Infrastructure.Migrations
 
                     b.OwnsMany("Lenden.Domain.ValueObjects.Repayments", "Repayments", b1 =>
                         {
-                            b1.Property<Guid>("expense_id")
+                            b1.Property<Guid>("ExpenseId")
                                 .HasColumnType("char(36)");
 
                             b1.Property<Guid>("From")
@@ -522,15 +522,14 @@ namespace Lenden.Infrastructure.Migrations
                                 .HasColumnName("to_user_id");
 
                             b1.Property<decimal>("Amount")
-                                .HasColumnType("decimal(18,2)")
-                                .HasColumnName("amount");
+                                .HasColumnType("decimal(18,2)");
 
-                            b1.HasKey("expense_id", "From", "To");
+                            b1.HasKey("ExpenseId", "From", "To");
 
                             b1.ToTable("expense_repayments", (string)null);
 
                             b1.WithOwner()
-                                .HasForeignKey("expense_id");
+                                .HasForeignKey("ExpenseId");
                         });
 
                     b.Navigation("Creator");

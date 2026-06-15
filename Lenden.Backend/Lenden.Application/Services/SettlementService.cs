@@ -25,8 +25,8 @@ public class SettlementService: ISettlementService
 
         var settlementTransaction = transactions
             .FirstOrDefault(t =>
-                t.ToUserId == request.RequestedBy &&
-                t.FromUserId == request.DebtorId);
+                t.To == request.RequestedBy &&
+                t.From == request.DebtorId);
         
         
 
@@ -87,7 +87,7 @@ public class SettlementService: ISettlementService
         var group = await _unitOfWork.GroupRepository.GetByPublicIdAsync(request.GroupId);
         if(group is null) throw new NotFoundException("Group does not exist");
         var transactions=  _groupService.GetBalance(group);
-        var settlementTransaction = transactions.Where(t=> (t.FromUserId == request.RequestedBy)|| (t.ToUserId== request.RequestedBy)).SingleOrDefault();
+        var settlementTransaction = transactions.Where(t=> (t.From == request.RequestedBy)|| (t.To== request.RequestedBy)).SingleOrDefault();
         if(settlementTransaction is null) throw new NotFoundException("Settlement transaction not found");
        
         

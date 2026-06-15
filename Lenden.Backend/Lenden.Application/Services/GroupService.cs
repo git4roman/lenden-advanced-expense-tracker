@@ -156,7 +156,7 @@ public class GroupService : IGroupService
 
     public async Task<IEnumerable<GroupEntity>> GetAllActiveAsync(CancellationToken ct = default)
     {
-        var allGroups = await _unitOfWork.GroupRepository.GetAllActiveAsync();
+        var allGroups = await _unitOfWork.GroupRepository.GetAllActiveAsync(ct);
         return allGroups;
     }
 
@@ -211,10 +211,12 @@ public class GroupService : IGroupService
                 GivenName = m.User.GivenName,
                 FamilyName = m.User.FamilyName,
                 Avatar = m.User?.UserInfo?.ImageUrl ?? "",
-                RegistrationStatus = m.User.Status.Name
+                RegistrationStatus = m.User.Status.Name,
+                Amount = m.NetBalance,
+                Role= m.Role.Name
             }).ToList(),
 
-            Balances = GetBalance(g, ct),
+            Repayments = GetBalance(g, ct),
             MemberCount = g.Members.Count,
             CreatedAt = g.CreatedAt,
             UpdatedAt = g.UpdatedAt,
@@ -224,7 +226,7 @@ public class GroupService : IGroupService
         return result;
     }
 
-    public async Task<List<GroupMembersBalanceResponseDto>> GetGroupBalance(Guid groupId, CancellationToken ct = default)
+    public async Task<List<GroupRepayments>> GetGroupBalance(Guid groupId, CancellationToken ct = default)
     {
         var group = await _unitOfWork.GroupRepository.GetByPublicIdAsync(groupId);
         if (group is null) throw new Exception("Group not found");
@@ -233,7 +235,7 @@ public class GroupService : IGroupService
         return transactions;
     }
 
-    public List<GroupMembersBalanceResponseDto> GetBalance(GroupEntity group, CancellationToken ct)
+    public List<GroupRepayments> GetBalance(GroupEntity group, CancellationToken ct)
     {
         // Work with a snapshot, not the real entities
         var balances = group.Members.ToDictionary(
@@ -255,7 +257,7 @@ public class GroupService : IGroupService
         var debtors = workingBalances.Where(p => p.Balance < 0).OrderBy(d => d.Balance).ToList();
         var creditorsList = workingBalances.Where(p => p.Balance > 0).OrderByDescending(p => p.Balance).ToList();
 
-        var transactions = new List<GroupMembersBalanceResponseDto>();
+        var transactions = new List<GroupRepayments>();
         int i = 0, j = 0;
 
         while (i < debtors.Count && j < creditorsList.Count)
@@ -265,12 +267,10 @@ public class GroupService : IGroupService
 
             decimal amount = Math.Min(-debtor.Balance, creditor.Balance);
 
-            transactions.Add(new GroupMembersBalanceResponseDto
+            transactions.Add(new GroupRepayments
             {
-                From = debtor.Member.User.GivenName,
-                FromUserId = debtor.Member.User.Slug,
-                To = creditor.Member.User.GivenName,
-                ToUserId = creditor.Member.User.Slug,
+                From = debtor.Member.User.Slug,
+                To = creditor.Member.User.Slug,
                 Amount = amount
             });
 

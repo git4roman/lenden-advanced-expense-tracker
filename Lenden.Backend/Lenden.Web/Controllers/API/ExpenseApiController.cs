@@ -70,26 +70,45 @@ public class ExpenseApiController : ControllerBase
         var result = await _expenseService.GetGroupExpensesAsync(groupId, ct);
         var response = result.Select(r =>
             new ExpenseResponseDto
-            {
+            {   
                 Id = r.Slug,
+                GroupId =r.Group.Slug,
                 Cost = r.Amount,
-                Users = r.Participants.Select(p => new Users
-                {
-                   Id= p.User.Slug,
-                   Email = p.User.Email.Value,
-                   GivenName = p.User.GivenName,
-                   FamilyName = p.User.FamilyName,
-                   Avatar= p.User.UserInfo.ImageUrl,
-                   PaidAmount= p.Paid,
-                   NetBalance= p.Net,
-                   SplitAmount=p.Split,
-
-                }).ToList(),
+                Users = r.Participants?
+                    .Where(p => p.User != null)
+                    .Select(p => new Users
+                    {
+                        Id = p.User.Slug,
+                        Email = p.User.Email?.Value,
+                        GivenName = p.User.GivenName,
+                        FamilyName = p.User.FamilyName,
+                        Avatar = p.User.UserInfo?.ImageUrl,
+                        PaidAmount = p.Paid,
+                        NetBalance = p.Net,
+                        SplitAmount = p.Split,
+                    })
+                    .ToList() ?? new List<Users>(),
                 CategoryKey = r.Category.Name,
                 Date =r.Date,
                 CreatedAt = r.CreatedAt,
                 UpdatedAt=r.UpdatedAt,
                 Receipt= r.Receipt,
+                Description = r.Description,
+                CreationMethod = r.CreationMethod.Name,
+                CreatedBy =new CreatedBy
+                {
+                    Id = r.Creator.Slug,
+                    Email = r.Creator.Email.Value,
+                    GivenName = r.Creator.GivenName,
+                    FamilyName = r.Creator.FamilyName,
+                    Avatar = r.Creator?.UserInfo?.ImageUrl ?? "",
+                },
+                Repayments = r.Repayments.Select(r=> new Repayments
+                {
+                    From = r.From,
+                    To = r.To,
+                    Amount = r.Amount
+                }).ToList()
             });
         return Ok(response);
     }

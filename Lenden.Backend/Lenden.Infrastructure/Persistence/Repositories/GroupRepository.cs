@@ -43,11 +43,12 @@ public class GroupRepository : IGroupRepository
     
     public async Task<IEnumerable<GroupEntity>> GetAllActiveAsync(CancellationToken ct = default)
     {
-        return await _context.Groups
+        var groups = await _context.Groups
             .Where(g => g.Status == GroupStatus.Active)
             .Include(g => g.Members)
             .ThenInclude(m => m.User).Include(g=>g.Settlements)
             .ToListAsync(ct);
+        return groups;
     }
 
     public async Task<GroupEntity?> GetByPublicIdAsync(Guid publicId, CancellationToken ct = default)

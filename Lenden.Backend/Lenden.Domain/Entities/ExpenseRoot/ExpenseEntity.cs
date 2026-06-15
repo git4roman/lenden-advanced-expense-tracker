@@ -10,14 +10,16 @@ public class ExpenseEntity
 
     public long GroupId { get; private set; }
     public GroupEntity Group { get; private set; } 
+
     public long CreatorId { get; private set; }
     public UserEntity Creator { get; private set; }
+    
     public decimal Amount { get; private set; }
     public ExpenseCategory Category { get; private set; } = null!;
     public CreationMethod CreationMethod { get; private set; }
     public string Description { get; private set; }
     public Receipt? Receipt { get; private set; }
-    public List<Repayments> Repayments { get; private set; }
+    public List<Repayments> Repayments { get; private set; } //who owes whom how much
     public DateTimeOffset Date { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; }
     public DateTimeOffset UpdatedAt { get; private set; }  

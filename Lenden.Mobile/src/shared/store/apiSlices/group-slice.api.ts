@@ -1,44 +1,77 @@
-import {
-  GroupBalanceResponse,
-  GroupDetailedResponse,
-  GroupSummaryResponse,
-} from "@/src/modules/groups/types/group-slice.type";
+import { API_CONFIG } from "@/api.config";
+import { mockData as groupsMockData } from "@/data/getGroups";
+import { mockData as groupExpensesMockData } from "@/data/groupExpenses";
+import { GroupExpenses } from "@/src/modules/groups";
+import { IGroup } from "@/src/modules/groups/types/group-slice.type";
 import { api } from "@/src/shared/store/apiSlices/apiClient";
-import { setGroupBalance, setUserGroups } from "../slices/group-slice";
+import { setGroupExpenses, setUserGroups } from "../slices/group-slice";
 // import { Group } from "./Group";
 
 const groupApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getGroups: builder.query<GroupSummaryResponse[], void>({
-      query: () => ({
-        url: "/groups",
-        method: "GET",
-      }),
+    getGroups: builder.query<IGroup[], void>({
+      ...(API_CONFIG.USE_MOCK
+        ? {
+            queryFn: async (_, { dispatch }) => {
+              dispatch(setUserGroups(groupsMockData));
+              return { data: groupsMockData as IGroup[] };
+            },
+          }
+        : {
+            query: () => ({ url: "/groups", method: "GET" }),
+            async onQueryStarted(_, { dispatch, queryFulfilled }) {
+              try {
+                const { data } = await queryFulfilled;
+                dispatch(setUserGroups(data as IGroup[]));
+              } catch (error) {
+                console.log("Group API Error", error);
+              }
+            },
+          }),
       providesTags: [{ type: "Group", id: "LIST" }],
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-          // console.log("Fetched Data", JSON.stringify(data, null, 2));
-          dispatch(setUserGroups(data));
-          console.log("I am fetched");
-        } catch (error) {
-          console.log("Group APi Error", JSON.stringify(error, null, 2));
-        }
-      },
     }),
-    getGroup: builder.query<GroupDetailedResponse, string>({
-      query: (payload) => ({
-        url: `/groups/${payload}`,
-        method: "GET",
-      }),
+
+    getGroupExpenses: builder.query<GroupExpenses[], string>({
+      ...(API_CONFIG.USE_MOCK
+        ? {
+            async queryFn(_, { dispatch }) {
+              dispatch(
+                setGroupExpenses({
+                  groupId: "2bb0ceca-81f8-4494-9f50-3b2630550ec7",
+                  expenses: groupExpensesMockData,
+                }),
+              );
+
+              return {
+                data: groupExpensesMockData as GroupExpenses[],
+              };
+            },
+          }
+        : {
+            query: (groupId) => ({
+              url: `expense/${groupId}`,
+              method: "GET",
+            }),
+
+            async onQueryStarted(groupId, { dispatch, queryFulfilled }) {
+              try {
+                const { data } = await queryFulfilled;
+                dispatch(
+                  setGroupExpenses({
+                    groupId: groupId,
+                    expenses: data,
+                  }),
+                );
+              } catch (error) {
+                console.log("Group API Error", error);
+              }
+            },
+          }),
+
       providesTags: (result, error, groupId) => [
         { type: "Group", id: groupId },
+        { type: "Group", id: "LIST" },
       ],
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-        } catch (error) {}
-      },
     }),
 
     createGroup: builder.mutation({
@@ -55,28 +88,6 @@ const groupApi = api.injectEndpoints({
         }
       },
       invalidatesTags: [{ type: "Group", id: "LIST" }],
-    }),
-
-    getGroupBalance: builder.query<GroupBalanceResponse[], string>({
-      query: (groupId) => ({
-        url: `/groups/${groupId}/balance`,
-        method: "GET",
-      }),
-
-      async onQueryStarted(groupId, { dispatch, queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-
-          dispatch(
-            setGroupBalance({
-              groupId: groupId,
-              transactions: data,
-            }),
-          );
-        } catch (err) {
-          console.error(err);
-        }
-      },
     }),
 
     deleteGroupById: builder.mutation({
@@ -147,8 +158,7 @@ const groupApi = api.injectEndpoints({
 export const {
   useCreateGroupMutation,
   useGetGroupsQuery,
-  useGetGroupQuery,
-  useGetGroupBalanceQuery,
+  useGetGroupExpensesQuery,
   useUpdateGroupMutation,
   useDeleteGroupByIdMutation,
   useLeaveGroupMutation,

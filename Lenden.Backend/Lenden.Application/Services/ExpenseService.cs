@@ -58,21 +58,28 @@ public class ExpenseService : IExpenseService
 
             var creditors = request?.Users.Where(u => u.NetAmount > 0).Select(u => u).ToList();
             var debtors = request?.Users.Where(u => u.NetAmount < 0).Select(u => u).ToList();
-            for (int i=0; i<=debtors?.Count;i++ )
+            int i = 0, j = 0;
+
+            while (i < debtors.Count && j < creditors.Count)
             {
-                var creditor = creditors[i];
-                for (int j = 0; j <= creditors?.Count; j++)
-                {
-                    var debtor = debtors[j];
-                    var amount = Math.Min(creditor.NetAmount, -debtor.NetAmount);
-                    
-                    repayments.Add(new Repayments(debtor.UserId,creditor.UserId,amount));
-                    
-                    debtor.NetAmount += amount;
-                    creditor.NetAmount -= amount;
-                    if (debtor.NetAmount == 0) j++;
-                    if (creditor.NetAmount == 0) i++;
-                }
+                var debtor = debtors[i];
+                var creditor = creditors[j];
+
+                var amount = Math.Min(creditor.NetAmount, -debtor.NetAmount);
+
+                repayments.Add(new Repayments(
+                    debtor.UserId,
+                    creditor.UserId,
+                    amount));
+
+                debtor.NetAmount += amount;
+                creditor.NetAmount -= amount;
+
+                if (Math.Abs(debtor.NetAmount) < 0.01m)
+                    i++;
+
+                if (Math.Abs(creditor.NetAmount) < 0.01m)
+                    j++;
             }
             var expenseEntity = ExpenseEntity.Create(
                 creator,
@@ -88,9 +95,9 @@ public class ExpenseService : IExpenseService
 
             foreach (var x in request.Users)
             {
-                var userId = userMap[x.UserId];
                 var paidAmount = x.PaidAmount;
                 var splitAmount = x.SplitAmount;
+                var userId = userMap[x.UserId];
                 expenseEntity.AddExpenseParticipant(
                     userId: userMap[x.UserId],
                     paid: paidAmount,
@@ -99,7 +106,6 @@ public class ExpenseService : IExpenseService
                 var member = group.Members.FirstOrDefault(m => m.UserId == userId);
                 if (member is null) continue;
                 member.UpdateNetBalance(paidAmount-splitAmount);
-                
             }
             await _unitOfWork.ExpenseRepository.AddAsync(expenseEntity, ct);
             await _unitOfWork.SaveChangesAsync(ct);

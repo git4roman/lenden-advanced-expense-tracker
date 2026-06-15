@@ -16,6 +16,7 @@
     "**/*.js",
     "metro.config.cjs",
     "app/(tabs)/quickAction",
-    "app/(tabs)/friends"
+    "app/(tabs)/friends",
+    "data/groupExpenses.jaon"
   ]
 }
