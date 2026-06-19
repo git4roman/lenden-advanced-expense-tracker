@@ -2,7 +2,9 @@ import { api } from "@/src/shared";
 import {
   useCreateGroupMutation,
   useDeleteGroupByIdMutation,
+  useGetGroupExpensesQuery,
   useLeaveGroupMutation,
+  useUpdateGroupMutation,
 } from "@/src/shared/store/apiSlices/group-slice.api";
 import { router } from "expo-router";
 import { useCallback, useState } from "react";
@@ -22,11 +24,21 @@ export type CreateGroupPayloadType = {
   users: SelectedGroupUser[];
 };
 
+export type ActiveDialog =
+  | "none"
+  | "menu"
+  | "edit"
+  | "delete"
+  | "leave"
+  | "filter";
+
 export const useGroupHandler = (groupIdParam: string) => {
   const dispatch = useDispatch();
   const [groupName, setGroupName] = useState("My Group");
   const [groupImageUri, setGroupImageUri] = useState("");
   const [selectedUsers, setSelectedUsers] = useState<SelectedGroupUser[]>([]);
+
+  const [activeDialog, setActiveDialog] = useState<ActiveDialog>("none");
 
   const [createGroup, { isLoading: isCreateGroupLoading }] =
     useCreateGroupMutation();
@@ -34,6 +46,11 @@ export const useGroupHandler = (groupIdParam: string) => {
     useDeleteGroupByIdMutation();
   const [leaveGroup, { isLoading: isLeaveGroupLoading }] =
     useLeaveGroupMutation();
+  const [updateGroup, { isLoading: isUpdatingGroup }] =
+    useUpdateGroupMutation();
+  const { data, refetch, isLoading } = useGetGroupExpensesQuery(
+    groupIdParam as string,
+  );
 
   const handleCreateGroup = async (onClose: () => void) => {
     try {
@@ -83,6 +100,28 @@ export const useGroupHandler = (groupIdParam: string) => {
     );
   }, [dispatch, groupIdParam]);
 
+  const handleEditSave = useCallback(
+    async ({
+      name,
+      coverPhotoUri,
+    }: {
+      name: string;
+      coverPhotoUri: string;
+    }) => {
+      if (!groupIdParam) return;
+      try {
+        await updateGroup({
+          id: groupIdParam,
+          name: name.trim(),
+          imageUrl: coverPhotoUri,
+        }).unwrap();
+        refetch();
+        setActiveDialog("none");
+      } catch {}
+    },
+    [groupIdParam],
+  );
+
   return {
     groupName,
     setGroupName,
@@ -97,5 +136,10 @@ export const useGroupHandler = (groupIdParam: string) => {
     isDeleteGroupLoading,
     isLeaveGroupLoading,
     handleRefresh,
+    activeDialog,
+    setActiveDialog,
+    isLoading,
+    handleEditSave,
+    isUpdatingGroup,
   };
 };

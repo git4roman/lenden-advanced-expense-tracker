@@ -1,4 +1,4 @@
-import { useGroupHandler } from "@/src/modules/groups";
+import { GroupMenuModal, useGroupHandler } from "@/src/modules/groups";
 import BalanceTab from "@/src/modules/groups/components/balance-tab";
 import ExpenseTab, {
   EXPENSE_FILTER_OPTIONS,
@@ -8,23 +8,17 @@ import TotalTab from "@/src/modules/groups/components/total-tab";
 import { groupButtonsLabel } from "@/src/modules/groups/constants/group-buttons-label.constant";
 import { RootState } from "@/src/shared";
 import { useImagePicker } from "@/src/shared/hooks/use-image-picker";
-import {
-  useGetGroupExpensesQuery,
-  useUpdateGroupMutation,
-} from "@/src/shared/store/apiSlices/group-slice.api";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
-import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { Stack, useLocalSearchParams } from "expo-router";
 import React, { useCallback, useState } from "react";
 import { Image, Modal, Pressable, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { GroupTabs } from "../../../../src/modules/groups/components/GroupTabs";
 
 type FilterKey = (typeof EXPENSE_FILTER_OPTIONS)[number]["key"];
-
-type ActiveDialog = "none" | "menu" | "edit" | "delete" | "leave" | "filter";
 
 const ConfirmModal = ({
   visible,
@@ -136,57 +130,32 @@ const GroupScreen = () => {
     handleRefresh,
     isLeaveGroupLoading,
     isDeleteGroupLoading,
+    activeDialog,
+    setActiveDialog,
+    isLoading,
+    handleEditSave,
+    isUpdatingGroup,
   } = useGroupHandler(groupIdParam);
-  const dispatch = useDispatch();
+
   const insets = useSafeAreaInsets();
 
   const [selectedTab, setSelectedTab] = useState<string>(
     groupButtonsLabel[0].key,
   );
-  const [activeDialog, setActiveDialog] = useState<ActiveDialog>("none");
 
   const [selectedFilterKey, setSelectedFilterKey] = useState<FilterKey>(
     EXPENSE_FILTER_OPTIONS[0].key,
   );
   const [editGroupName, setEditGroupName] = useState("");
-  const [editGroupImageUri, setEditGroupImageUri] = useState<string | null>(
-    null,
-  );
+  const [editGroupImageUri, setEditGroupImageUri] = useState<string>("");
 
   const { pickImage } = useImagePicker();
-  const { data, refetch, isLoading } = useGetGroupExpensesQuery(
-    groupId as string,
-  );
-
-  const [updateGroup, { isLoading: isUpdatingGroup }] =
-    useUpdateGroupMutation();
 
   const handleOpenEdit = useCallback(() => {
     setEditGroupName(group?.name ?? "");
-    setEditGroupImageUri(group?.coverPhoto ?? null);
+    setEditGroupImageUri(group?.coverPhoto!);
     setActiveDialog("edit");
   }, [group?.name, group?.coverPhoto]);
-
-  const handleEditSave = useCallback(async () => {
-    if (!groupIdParam) return;
-    try {
-      await updateGroup({
-        id: groupIdParam,
-        name: editGroupName.trim() || group?.name,
-        imageUrl: editGroupImageUri ?? group?.coverPhoto ?? "",
-      }).unwrap();
-      refetch();
-      setActiveDialog("none");
-    } catch {}
-  }, [
-    editGroupImageUri,
-    editGroupName,
-    group?.coverPhoto,
-    group?.name,
-    groupIdParam,
-    refetch,
-    updateGroup,
-  ]);
 
   const selectedFilterLabel =
     EXPENSE_FILTER_OPTIONS.find((o) => o.key === selectedFilterKey)?.label ??
@@ -353,120 +322,12 @@ const GroupScreen = () => {
         </View>
       </Modal>
 
-      <Modal
-        transparent
-        visible={activeDialog === "menu"}
-        animationType="fade"
-        onRequestClose={() => setActiveDialog("none")}
-      >
-        <View style={{ flex: 1 }}>
-          <Pressable
-            onPress={() => setActiveDialog("none")}
-            style={{
-              position: "absolute",
-              inset: 0,
-              backgroundColor: "rgba(0,0,0,0.35)",
-            }}
-          />
-          <View
-            style={{
-              position: "absolute",
-              top: insets.top + 48,
-              right: 12,
-              backgroundColor: Colors.neutral[800],
-              borderColor: Colors.neutral[700],
-              borderWidth: 1,
-              zIndex: 10000,
-              paddingVertical: 8,
-              paddingHorizontal: 8,
-              borderRadius: 14,
-              gap: 6,
-              minWidth: 110,
-            }}
-          >
-            {[
-              {
-                label: "Edit Info",
-                icon: (
-                  <Feather
-                    name="edit-2"
-                    size={15}
-                    color={Colors.neutral[300]}
-                  />
-                ),
-                onPress: () => {
-                  setActiveDialog("none");
-                  handleOpenEdit();
-                },
-                style: {
-                  backgroundColor: Colors.neutral[900],
-                  borderColor: Colors.neutral[700],
-                },
-                textColor: "neutral" as const,
-                textShade: 200,
-              },
-              {
-                label: "Leave Group",
-                icon: (
-                  <Ionicons
-                    name="exit-outline"
-                    size={16}
-                    color={Colors.warning[400]}
-                  />
-                ),
-                onPress: () => {
-                  setActiveDialog("leave");
-                },
-                style: {
-                  backgroundColor: Colors.neutral[900],
-                  borderColor: Colors.neutral[700],
-                },
-                textColor: "neutral" as const,
-                textShade: 200,
-              },
-              {
-                label: "Delete Group",
-                icon: (
-                  <AntDesign
-                    name="delete"
-                    size={14}
-                    color={Colors.warning[300]}
-                  />
-                ),
-                onPress: () => {
-                  setActiveDialog("delete");
-                },
-                style: {
-                  backgroundColor: Colors.warning[900],
-                  borderColor: Colors.warning[700],
-                },
-                textColor: "warning" as const,
-                textShade: 300,
-              },
-            ].map(({ label, icon, onPress, style, textColor, textShade }) => (
-              <Pressable
-                key={label}
-                onPress={onPress}
-                style={{
-                  flexDirection: "row",
-                  gap: 10,
-                  alignItems: "center",
-                  borderRadius: 10,
-                  paddingHorizontal: 10,
-                  paddingVertical: 10,
-                  borderWidth: 1,
-                  ...style,
-                }}
-              >
-                {icon}
-                <CText color={textColor} shade={800} weight="semibold">
-                  {label}
-                </CText>
-              </Pressable>
-            ))}
-          </View>
-        </View>
-      </Modal>
+      <GroupMenuModal
+        activeDialog={activeDialog}
+        setActiveDialog={setActiveDialog}
+        handleOpenEdit={handleOpenEdit}
+        insets={insets}
+      />
 
       <ConfirmModal
         visible={activeDialog === "filter"}
@@ -584,7 +445,12 @@ const GroupScreen = () => {
                 <CText shade={300}>Cancel</CText>
               </Pressable>
               <Pressable
-                onPress={handleEditSave}
+                onPress={() =>
+                  handleEditSave({
+                    name: editGroupName,
+                    coverPhotoUri: editGroupImageUri,
+                  })
+                }
                 disabled={isUpdatingGroup}
                 style={{
                   flex: 1,
