@@ -64,7 +64,7 @@ export const ActivityItem = ({ item }: any) => {
         </View>
         <View style={{}}>
           <CText size="ssm" weight="semibold" color="accent" shade={300}>
-            NPR. {item.amount}
+            NPR. {item.cost}
           </CText>
         </View>
       </View>

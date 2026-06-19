@@ -1,3 +1,4 @@
+import { useGroupHandler } from "@/src/modules/groups";
 import BalanceTab from "@/src/modules/groups/components/balance-tab";
 import ExpenseTab, {
   EXPENSE_FILTER_OPTIONS,
@@ -5,25 +6,25 @@ import ExpenseTab, {
 import GroupInfoTab from "@/src/modules/groups/components/group-info-tab";
 import TotalTab from "@/src/modules/groups/components/total-tab";
 import { groupButtonsLabel } from "@/src/modules/groups/constants/group-buttons-label.constant";
+import { RootState } from "@/src/shared";
 import { useImagePicker } from "@/src/shared/hooks/use-image-picker";
-import { api } from "@/src/shared/store/apiSlices/apiClient";
 import {
-  useDeleteGroupByIdMutation,
-  useGetGroupQuery,
-  useLeaveGroupMutation,
+  useGetGroupExpensesQuery,
   useUpdateGroupMutation,
 } from "@/src/shared/store/apiSlices/group-slice.api";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
-import { Stack, router, useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 import React, { useCallback, useState } from "react";
 import { Image, Modal, Pressable, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { GroupTabs } from "../../../../src/modules/groups/components/GroupTabs";
 
 type FilterKey = (typeof EXPENSE_FILTER_OPTIONS)[number]["key"];
+
+type ActiveDialog = "none" | "menu" | "edit" | "delete" | "leave" | "filter";
 
 const ConfirmModal = ({
   visible,
@@ -123,19 +124,27 @@ const ConfirmModal = ({
 
 const GroupScreen = () => {
   const { groupId } = useLocalSearchParams();
-
   const groupIdParam = Array.isArray(groupId) ? groupId[0] : groupId;
+  const group = useSelector((state: RootState) =>
+    state.groups.find((g) => g.id === groupId),
+  );
+  console.log("Expenses", group?.expenses);
+
+  const {
+    handleDeleteGroup,
+    handleLeaveGroup,
+    handleRefresh,
+    isLeaveGroupLoading,
+    isDeleteGroupLoading,
+  } = useGroupHandler(groupIdParam);
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
 
   const [selectedTab, setSelectedTab] = useState<string>(
     groupButtonsLabel[0].key,
   );
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [isLeaveOpen, setIsLeaveOpen] = useState(false);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [activeDialog, setActiveDialog] = useState<ActiveDialog>("none");
+
   const [selectedFilterKey, setSelectedFilterKey] = useState<FilterKey>(
     EXPENSE_FILTER_OPTIONS[0].key,
   );
@@ -145,31 +154,18 @@ const GroupScreen = () => {
   );
 
   const { pickImage } = useImagePicker();
-  const {
-    data: group,
-    refetch,
-    isLoading,
-  } = useGetGroupQuery(groupId as string);
+  const { data, refetch, isLoading } = useGetGroupExpensesQuery(
+    groupId as string,
+  );
+
   const [updateGroup, { isLoading: isUpdatingGroup }] =
     useUpdateGroupMutation();
-  const [deleteGroupById, { isLoading: isDeletingGroup }] =
-    useDeleteGroupByIdMutation();
-  const [leaveGroup, { isLoading: isLeavingGroup }] = useLeaveGroupMutation();
-
-  const handleRefresh = useCallback(() => {
-    dispatch(
-      api.util.invalidateTags([
-        { type: "Group", id: groupIdParam },
-        { type: "Expense", id: groupIdParam },
-      ]),
-    );
-  }, [dispatch, groupIdParam]);
 
   const handleOpenEdit = useCallback(() => {
     setEditGroupName(group?.name ?? "");
-    setEditGroupImageUri(group?.imageUrl ?? null);
-    setIsEditOpen(true);
-  }, [group?.name, group?.imageUrl]);
+    setEditGroupImageUri(group?.coverPhoto ?? null);
+    setActiveDialog("edit");
+  }, [group?.name, group?.coverPhoto]);
 
   const handleEditSave = useCallback(async () => {
     if (!groupIdParam) return;
@@ -177,98 +173,47 @@ const GroupScreen = () => {
       await updateGroup({
         id: groupIdParam,
         name: editGroupName.trim() || group?.name,
-        imageUrl: editGroupImageUri ?? group?.imageUrl ?? "",
+        imageUrl: editGroupImageUri ?? group?.coverPhoto ?? "",
       }).unwrap();
       refetch();
-      setIsEditOpen(false);
+      setActiveDialog("none");
     } catch {}
   }, [
     editGroupImageUri,
     editGroupName,
-    group?.imageUrl,
+    group?.coverPhoto,
     group?.name,
     groupIdParam,
     refetch,
     updateGroup,
   ]);
 
-  const handleDeleteGroup = useCallback(async () => {
-    if (!groupIdParam) return;
-    try {
-      await deleteGroupById(groupIdParam).unwrap();
-      setIsDeleteOpen(false);
-      router.back();
-    } catch {}
-  }, [deleteGroupById, groupIdParam]);
-
-  const handleLeaveGroup = useCallback(async () => {
-    if (!groupIdParam) return;
-    try {
-      await leaveGroup(groupIdParam).unwrap();
-      setIsLeaveOpen(false);
-      router.back();
-    } catch {}
-  }, [groupIdParam, leaveGroup]);
-
   const selectedFilterLabel =
     EXPENSE_FILTER_OPTIONS.find((o) => o.key === selectedFilterKey)?.label ??
     EXPENSE_FILTER_OPTIONS[0].label;
 
-  const groupHeader = React.useMemo(
-    () => (
-      <>
-        <View
-          style={{
-            paddingHorizontal: 12,
-            paddingVertical: 12,
-            marginBottom: 8,
-          }}
-        >
-          <Image
-            source={{ uri: group?.imageUrl }}
-            style={{ width: "100%", height: 150, borderRadius: 16 }}
-            resizeMode="cover"
-          />
-        </View>
-        <View style={{ paddingHorizontal: 8, marginBottom: 4 }}>
-          <GroupTabs
-            selectedTab={selectedTab}
-            setSelectedTab={setSelectedTab}
-          />
-        </View>
-      </>
-    ),
-    [group?.imageUrl, selectedTab],
-  );
-
-  const activeTabScreen = React.useMemo(() => {
+  const activeTabScreen = (() => {
     switch (selectedTab) {
       case "Expenses":
         return (
           <ExpenseTab
             groupId={groupId as string}
             filterKey={selectedFilterKey}
-            ListHeaderComponent={groupHeader}
             refreshing={isLoading}
             onRefresh={handleRefresh}
           />
         );
-      case "label2":
+
+      case "Balances":
         return <BalanceTab groupId={groupId as string} />;
-      case "label3":
+
+      case "Total":
         return <TotalTab groupId={groupId as string} />;
 
       default:
         return <GroupInfoTab groupId={groupId as string} />;
     }
-  }, [
-    groupId,
-    selectedFilterKey,
-    selectedTab,
-    groupHeader,
-    isLoading,
-    handleRefresh,
-  ]);
+  })();
 
   const isExpensesTab = selectedTab === "Expenses";
 
@@ -278,7 +223,7 @@ const GroupScreen = () => {
         options={{
           title: group?.name ?? "Group",
           headerRight: () => (
-            <Pressable onPress={() => setIsMenuOpen((prev) => !prev)}>
+            <Pressable onPress={() => setActiveDialog("menu")}>
               <Feather
                 name="more-vertical"
                 size={24}
@@ -289,20 +234,33 @@ const GroupScreen = () => {
         }}
       />
 
-      {isExpensesTab ? (
-        activeTabScreen
-      ) : (
-        <View style={{ flex: 1 }}>
-          {groupHeader}
-          <View style={{ flex: 1, paddingHorizontal: 8 }}>
-            {activeTabScreen}
-          </View>
+      <View style={{ flex: 1 }}>
+        <View
+          style={{
+            paddingHorizontal: 12,
+            paddingVertical: 12,
+            marginBottom: 8,
+          }}
+        >
+          <Image
+            source={{ uri: group?.coverPhoto }}
+            style={{ width: "100%", height: 150, borderRadius: 16 }}
+            resizeMode="cover"
+          />
         </View>
-      )}
+        <View style={{ paddingHorizontal: 8, marginBottom: 4 }}>
+          <GroupTabs
+            selectedTab={selectedTab}
+            setSelectedTab={setSelectedTab}
+          />
+        </View>
+
+        <View style={{ flex: 1, paddingHorizontal: 8 }}>{activeTabScreen}</View>
+      </View>
 
       {isExpensesTab && (
         <Pressable
-          onPress={() => setIsFilterOpen(true)}
+          onPress={() => setActiveDialog("filter")}
           style={{
             position: "absolute",
             right: 16,
@@ -325,13 +283,13 @@ const GroupScreen = () => {
 
       <Modal
         transparent
-        visible={isFilterOpen}
+        visible={activeDialog === "filter"}
         animationType="fade"
-        onRequestClose={() => setIsFilterOpen(false)}
+        onRequestClose={() => setActiveDialog("none")}
       >
         <View style={{ flex: 1 }}>
           <Pressable
-            onPress={() => setIsFilterOpen(false)}
+            onPress={() => setActiveDialog("none")}
             style={{
               position: "absolute",
               inset: 0,
@@ -365,7 +323,7 @@ const GroupScreen = () => {
                   key={option.key}
                   onPress={() => {
                     setSelectedFilterKey(option.key);
-                    setIsFilterOpen(false);
+                    setActiveDialog("none");
                   }}
                   style={{
                     paddingHorizontal: 12,
@@ -397,13 +355,13 @@ const GroupScreen = () => {
 
       <Modal
         transparent
-        visible={isMenuOpen}
+        visible={activeDialog === "menu"}
         animationType="fade"
-        onRequestClose={() => setIsMenuOpen(false)}
+        onRequestClose={() => setActiveDialog("none")}
       >
         <View style={{ flex: 1 }}>
           <Pressable
-            onPress={() => setIsMenuOpen(false)}
+            onPress={() => setActiveDialog("none")}
             style={{
               position: "absolute",
               inset: 0,
@@ -437,7 +395,7 @@ const GroupScreen = () => {
                   />
                 ),
                 onPress: () => {
-                  setIsMenuOpen(false);
+                  setActiveDialog("none");
                   handleOpenEdit();
                 },
                 style: {
@@ -457,8 +415,7 @@ const GroupScreen = () => {
                   />
                 ),
                 onPress: () => {
-                  setIsMenuOpen(false);
-                  setIsLeaveOpen(true);
+                  setActiveDialog("leave");
                 },
                 style: {
                   backgroundColor: Colors.neutral[900],
@@ -477,8 +434,7 @@ const GroupScreen = () => {
                   />
                 ),
                 onPress: () => {
-                  setIsMenuOpen(false);
-                  setIsDeleteOpen(true);
+                  setActiveDialog("delete");
                 },
                 style: {
                   backgroundColor: Colors.warning[900],
@@ -513,36 +469,36 @@ const GroupScreen = () => {
       </Modal>
 
       <ConfirmModal
-        visible={isLeaveOpen}
+        visible={activeDialog === "filter"}
         title="Leave Group?"
         message="You will lose access to this group."
         confirmLabel="Leave"
-        isLoading={isLeavingGroup}
+        isLoading={isLeaveGroupLoading}
         onConfirm={handleLeaveGroup}
-        onCancel={() => setIsLeaveOpen(false)}
+        onCancel={() => setActiveDialog("none")}
         danger
       />
 
       <ConfirmModal
-        visible={isDeleteOpen}
+        visible={activeDialog === "delete"}
         title="Delete Group?"
         message="This action cannot be undone."
         confirmLabel="Delete"
-        isLoading={isDeletingGroup}
+        isLoading={isDeleteGroupLoading}
         onConfirm={handleDeleteGroup}
-        onCancel={() => setIsDeleteOpen(false)}
+        onCancel={() => setActiveDialog("none")}
         danger
       />
 
       <Modal
         transparent
-        visible={isEditOpen}
+        visible={activeDialog === "edit"}
         animationType="fade"
-        onRequestClose={() => setIsEditOpen(false)}
+        onRequestClose={() => setActiveDialog("none")}
       >
         <View style={{ flex: 1 }}>
           <Pressable
-            onPress={() => setIsEditOpen(false)}
+            onPress={() => setActiveDialog("none")}
             style={{
               position: "absolute",
               inset: 0,
@@ -615,7 +571,7 @@ const GroupScreen = () => {
 
             <View style={{ flexDirection: "row", gap: 10 }}>
               <Pressable
-                onPress={() => setIsEditOpen(false)}
+                onPress={() => setActiveDialog("none")}
                 style={{
                   flex: 1,
                   borderWidth: 1,

@@ -1,11 +1,8 @@
-import {
-  CreateGroupModal,
-  GroupSummaryResponse,
-  useGroupHandler,
-} from "@/src/modules/groups";
+import { CreateGroupModal, useGroupHandler } from "@/src/modules/groups";
 import {
   CText,
   Colors,
+  GroupWithExpenses,
   RootState,
   getColorFromString,
   getInitials,
@@ -27,8 +24,9 @@ import { useSelector } from "react-redux";
 
 const GroupScreen = () => {
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
-  const [selectedGroup, setSelectedGroup] =
-    useState<GroupSummaryResponse | null>(null);
+  const [selectedGroup, setSelectedGroup] = useState<GroupWithExpenses | null>(
+    null,
+  );
   const [isGroupActionOpen, setIsGroupActionOpen] = useState(false);
 
   const { data, refetch, isFetching } = useGetGroupsQuery();
@@ -40,9 +38,11 @@ const GroupScreen = () => {
     isLeaveGroupLoading: isLeavingGroup,
   } = useGroupHandler(() => setIsGroupActionOpen(false), selectedGroup?.id);
 
-  const groups: GroupSummaryResponse[] = useSelector(
-    (state: RootState) => state.group,
+  const groups: GroupWithExpenses[] = useSelector(
+    (state: RootState) => state.groups,
   );
+
+  console.log("groups", groups);
 
   const onRefresh = useCallback(() => {
     refetch();
@@ -90,7 +90,7 @@ const GroupScreen = () => {
             </CText>
           </View>
         ) : (
-          groups.map((group: GroupSummaryResponse, index: number) => (
+          groups.map((group: GroupWithExpenses, index: number) => (
             <React.Fragment key={group.id}>
               <Pressable
                 style={{
@@ -124,9 +124,9 @@ const GroupScreen = () => {
                     overflow: "hidden",
                   }}
                 >
-                  {group.imageUrl ? (
+                  {group.coverPhoto ? (
                     <Image
-                      source={{ uri: group.imageUrl }}
+                      source={{ uri: group.coverPhoto }}
                       resizeMode="cover"
                       style={{ width: "100%", height: "100%" }}
                     />
@@ -182,7 +182,7 @@ const GroupScreen = () => {
                           }}
                         >
                           <Image
-                            source={{ uri: member.imageUrl }}
+                            source={{ uri: member.avatar }}
                             style={{ width: "100%", height: "100%" }}
                             resizeMode="cover"
                           />

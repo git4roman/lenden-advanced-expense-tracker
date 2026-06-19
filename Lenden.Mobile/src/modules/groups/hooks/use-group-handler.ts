@@ -1,3 +1,4 @@
+import { api } from "@/src/shared";
 import {
   useCreateGroupMutation,
   useDeleteGroupByIdMutation,
@@ -6,6 +7,7 @@ import {
 import { router } from "expo-router";
 import { useCallback, useState } from "react";
 import Toast from "react-native-toast-message";
+import { useDispatch } from "react-redux";
 
 type SelectedGroupUser = {
   id: string;
@@ -20,7 +22,8 @@ export type CreateGroupPayloadType = {
   users: SelectedGroupUser[];
 };
 
-export const useGroupHandler = (onClose: () => void, groupIdParam?: string) => {
+export const useGroupHandler = (groupIdParam: string) => {
+  const dispatch = useDispatch();
   const [groupName, setGroupName] = useState("My Group");
   const [groupImageUri, setGroupImageUri] = useState("");
   const [selectedUsers, setSelectedUsers] = useState<SelectedGroupUser[]>([]);
@@ -32,7 +35,7 @@ export const useGroupHandler = (onClose: () => void, groupIdParam?: string) => {
   const [leaveGroup, { isLoading: isLeaveGroupLoading }] =
     useLeaveGroupMutation();
 
-  const handleCreateGroup = async () => {
+  const handleCreateGroup = async (onClose: () => void) => {
     try {
       const payload = {
         name: groupName,
@@ -71,6 +74,15 @@ export const useGroupHandler = (onClose: () => void, groupIdParam?: string) => {
     } catch {}
   }, [leaveGroup, groupIdParam]);
 
+  const handleRefresh = useCallback(() => {
+    dispatch(
+      api.util.invalidateTags([
+        { type: "Group", id: groupIdParam },
+        { type: "Expense", id: groupIdParam },
+      ]),
+    );
+  }, [dispatch, groupIdParam]);
+
   return {
     groupName,
     setGroupName,
@@ -84,5 +96,6 @@ export const useGroupHandler = (onClose: () => void, groupIdParam?: string) => {
     isCreateGroupLoading,
     isDeleteGroupLoading,
     isLeaveGroupLoading,
+    handleRefresh,
   };
 };

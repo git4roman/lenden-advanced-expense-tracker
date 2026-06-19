@@ -1,7 +1,5 @@
-import {
-  GroupMembersSummary,
-  GroupSummaryResponse,
-} from "@/src/modules/groups/types/group-slice.type";
+import { GroupMembersSummary } from "@/src/modules/groups/types/group-slice.type";
+import { GroupWithExpenses } from "@/src/shared";
 import {
   ExpenseCategories,
   ExpenseCategory,
@@ -49,13 +47,13 @@ export interface ExpenseFormParticipantType extends ExpenseFormUserType {}
 
 export type ExpenseFormType = {
   totalAmount: number;
-  groups: GroupSummaryResponse[];
+  groups: GroupWithExpenses[];
   categories: ExpenseCategory[];
   description: string;
   imageUrl: string;
   users: ExpenseFormUserType[];
   participants: ExpenseFormParticipantType[] | [];
-  selectedGroup: GroupSummaryResponse | null;
+  selectedGroup: GroupWithExpenses | null;
   selectedCategory: number;
   expenseMetaData: ExpenseMetaData;
 };
@@ -69,8 +67,8 @@ export type UserUpdate = {
 const Expense = () => {
   const { data, isLoading } = useGetGroupsQuery(undefined);
 
-  const groups: GroupSummaryResponse[] = useSelector(
-    (state: RootState) => state.group,
+  const groups: GroupWithExpenses[] = useSelector(
+    (state: RootState) => state.groups,
   );
 
   const [expenseForm, setExpenseForm] = useState<ExpenseFormType>({
@@ -403,7 +401,7 @@ const Expense = () => {
               onPress={() =>
                 openSheet(
                   "selectGroup",
-                  (group: GroupSummaryResponse) => {
+                  (group: GroupWithExpenses) => {
                     setExpenseForm((prev) => ({
                       ...prev,
                       selectedGroup: group,
