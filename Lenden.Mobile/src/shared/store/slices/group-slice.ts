@@ -1,9 +1,9 @@
-import { GroupExpenses } from "@/src/modules/groups/types/expense-slice.type";
+import { GroupExpense } from "@/src/modules/groups/types/expense-slice.type";
 import { IGroup } from "@/src/modules/groups/types/group-slice.type";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface GroupWithExpenses extends IGroup {
-  expenses?: GroupExpenses[];
+  expenses?: GroupExpense[];
 }
 
 const initialState: GroupWithExpenses[] = [];
@@ -17,7 +17,7 @@ const groupSlice = createSlice({
     },
     setGroupExpenses: (
       state,
-      action: PayloadAction<{ groupId: string; expenses: GroupExpenses[] }>,
+      action: PayloadAction<{ groupId: string; expenses: GroupExpense[] }>,
     ) => {
       const group = state.find((g) => g.id === action.payload.groupId);
       if (group) {

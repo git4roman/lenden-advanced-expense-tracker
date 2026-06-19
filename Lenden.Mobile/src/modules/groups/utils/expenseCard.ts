@@ -9,7 +9,7 @@ export const toActivityData = (expense: any): ActivityData => {
     time,
     categoryKey: expense.categoryKey ?? "other",
     description: buildDescription(payers, expense.categoryKey),
-    amount: expense.totalAmount?.toString() ?? "0",
+    cost: expense.cost?.toString() ?? "0",
   };
 };
 

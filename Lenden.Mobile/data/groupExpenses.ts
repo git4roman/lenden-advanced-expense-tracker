@@ -1,6 +1,6 @@
-import { GroupExpenses } from "@/src/modules/groups/types/expense-slice.type";
+import { GroupExpense } from "@/src/modules/groups/types/expense-slice.type";
 
-export const mockData: GroupExpenses[] = [
+export const mockData: GroupExpense[] = [
   {
     id: "eccdc65d-7f6f-4cff-88c9-5c707d466b6c",
     groupId: "2bb0ceca-81f8-4494-9f50-3b2630550ec7",

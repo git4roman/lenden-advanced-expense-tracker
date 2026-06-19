@@ -1,7 +1,7 @@
 import { API_CONFIG } from "@/api.config";
 import { mockData as groupsMockData } from "@/data/getGroups";
 import { mockData as groupExpensesMockData } from "@/data/groupExpenses";
-import { GroupExpenses } from "@/src/modules/groups";
+import { GroupExpense } from "@/src/modules/groups";
 import { IGroup } from "@/src/modules/groups/types/group-slice.type";
 import { api } from "@/src/shared/store/apiSlices/apiClient";
 import { setGroupExpenses, setUserGroups } from "../slices/group-slice";
@@ -31,7 +31,7 @@ const groupApi = api.injectEndpoints({
       providesTags: [{ type: "Group", id: "LIST" }],
     }),
 
-    getGroupExpenses: builder.query<GroupExpenses[], string>({
+    getGroupExpenses: builder.query<GroupExpense[], string>({
       ...(API_CONFIG.USE_MOCK
         ? {
             async queryFn(_, { dispatch }) {
@@ -43,7 +43,7 @@ const groupApi = api.injectEndpoints({
               );
 
               return {
-                data: groupExpensesMockData as GroupExpenses[],
+                data: groupExpensesMockData as GroupExpense[],
               };
             },
           }

@@ -1,6 +1,6 @@
 import { Repayment } from "./group-slice.type";
 
-export interface GroupExpenses {
+export interface GroupExpense {
   id: string;
   groupId: string;
   description: string;

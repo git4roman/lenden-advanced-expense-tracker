@@ -9,6 +9,8 @@ export const ActivityItem = ({ item }: any) => {
   const category = ExpenseCategories.find(
     (cat) => cat.key === item.categoryKey,
   );
+
+  console.log("Activity Item", item);
   return (
     <View
       style={{

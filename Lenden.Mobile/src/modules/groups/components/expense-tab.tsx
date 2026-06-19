@@ -1,4 +1,4 @@
-import { useGetExpensesQuery } from "@/src/shared/store/apiSlices/expense-slice.api";
+import { RootState } from "@/src/shared";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { router } from "expo-router";
@@ -10,7 +10,8 @@ import {
   RefreshControl,
   View,
 } from "react-native";
-import { groupByDate, toActivityData } from "../utils/expenseCard";
+import { useSelector } from "react-redux";
+import { GroupExpense } from "../types";
 import { ActivityItem } from "./activity-item";
 
 export const EXPENSE_FILTER_OPTIONS = [
@@ -30,7 +31,7 @@ export type ActivityData = {
   time: string;
   categoryKey: string;
   description: string;
-  amount: string;
+  cost: string;
 };
 
 export type GroupedActivity = {
@@ -74,7 +75,11 @@ const ExpenseTab = ({
   refreshing,
   onRefresh,
 }: ExpenseTabProps) => {
-  const { data: expenses } = useGetExpensesQuery(groupId);
+  // const { data: expenses } = useGetExpensesQuery(groupId);
+
+  const group = useSelector((state: RootState) =>
+    state.groups.find((g) => g.id === groupId),
+  );
   const [visibleCount, setVisibleCount] = React.useState(INITIAL_VISIBLE_COUNT);
   const [isLoadingMore, setIsLoadingMore] = React.useState(false);
   const loadMoreTimeout = React.useRef<ReturnType<typeof setTimeout> | null>(
@@ -92,16 +97,16 @@ const ExpenseTab = ({
   }, []);
 
   const filteredExpenses = React.useMemo(
-    () => filterAndSortExpenses(expenses ?? [], filterKey),
-    [expenses, filterKey],
+    () => filterAndSortExpenses(group?.expenses ?? [], filterKey),
+    [group?.expenses, filterKey],
   );
 
-  const groupedActivityData = React.useMemo<GroupedActivity[]>(() => {
-    const paged = filteredExpenses.slice(0, visibleCount);
-    const mapped = paged.map(toActivityData);
-    const grouped = groupByDate(mapped);
-    return grouped;
-  }, [filteredExpenses, visibleCount]);
+  // const groupedActivityData = React.useMemo<GroupedActivity[]>(() => {
+  //   const paged = filteredExpenses.slice(0, visibleCount);
+  //   const mapped = paged.map(toActivityData);
+  //   const grouped = groupByDate(mapped);
+  //   return grouped;
+  // }, [filteredExpenses, visibleCount]);
 
   const canLoadMore = visibleCount < filteredExpenses.length;
 
@@ -129,7 +134,8 @@ const ExpenseTab = ({
     );
   };
 
-  const renderGroup = ({ item: group }: { item: GroupedActivity }) => {
+  const renderGroup = ({ item: expense }: { item: any }) => {
+    console.log("Item render group", expense);
     return (
       <View style={{ gap: 10, marginBottom: 12 }}>
         <View
@@ -147,7 +153,7 @@ const ExpenseTab = ({
             weight="medium"
             style={{ paddingHorizontal: 10 }}
           >
-            {group.date}
+            {expense.date}
           </CText>
           <View
             style={{ flex: 1, height: 1, backgroundColor: Colors.neutral[700] }}
@@ -155,19 +161,14 @@ const ExpenseTab = ({
         </View>
 
         <View style={{ borderRadius: 10, gap: 10 }}>
-          {group.items.map((item, index) => (
+          {expense.map((item: GroupExpense, index: number) => (
             <Pressable
-              key={`${group.date}-${index}`}
+              key={`${expense.date}-${index}`}
               onPress={() =>
                 router.push({
                   pathname: "/(stack)/groups/[groupId]/details",
                   params: {
                     groupId,
-                    date: item.date,
-                    time: item.time,
-                    categoryKey: item.categoryKey,
-                    description: item.description,
-                    amount: item.amount,
                   },
                 })
               }
@@ -190,7 +191,7 @@ const ExpenseTab = ({
 
   return (
     <FlatList
-      data={groupedActivityData}
+      data={group?.expenses}
       keyExtractor={(item) => item.date}
       renderItem={renderGroup}
       ListHeaderComponent={ListHeaderComponent}

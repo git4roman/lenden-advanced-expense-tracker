@@ -122,7 +122,7 @@ const GroupScreen = () => {
   const group = useSelector((state: RootState) =>
     state.groups.find((g) => g.id === groupId),
   );
-  console.log("Expenses", group?.expenses);
+  // console.log("Expenses", JSON.stringify(group?.expenses, null, 3));
 
   const {
     handleDeleteGroup,
