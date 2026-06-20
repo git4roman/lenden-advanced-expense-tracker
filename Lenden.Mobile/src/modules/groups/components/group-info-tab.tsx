@@ -1,17 +1,14 @@
-import { View, ScrollView, Pressable, Image, Modal } from "react-native";
-import React, { useState } from "react";
+import { GroupWithExpenses } from "@/src/shared";
+import { selectCurrentUser } from "@/src/shared/store/slices/auth-slice";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { Feather } from "@expo/vector-icons";
-import { useGetGroupQuery } from "@/src/shared/store/apiSlices/group-slice.api";
-import { GroupMember } from "../types/group-member";
+import React, { useState } from "react";
+import { Image, Modal, Pressable, ScrollView, View } from "react-native";
 import { useSelector } from "react-redux";
-import { RootState } from "@/src/shared/store/store";
-import { selectCurrentUser } from "@/src/shared/store/slices/auth-slice";
+import { GroupMember } from "../types/group-member";
 
-const GroupInfoTab = ({ groupId }: { groupId: string }) => {
-  const { data: group } = useGetGroupQuery(groupId as string);
-  console.log("The Group Data is:", JSON.stringify(group, null, 2));
+const GroupInfoTab = ({ group }: { group: GroupWithExpenses }) => {
   const [text, setText] = useState("");
   const [isRemoveOpen, setIsRemoveOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<GroupMember | null>(
@@ -114,7 +111,7 @@ const GroupInfoTab = ({ groupId }: { groupId: string }) => {
             </Pressable>
           </View>
           <View style={{ gap: 8 }}>
-            {group.members.map((item: GroupMember) => {
+            {group.members.map((item: GroupWithExpenses["members"][number]) => {
               const isYou = currentUserId && item.id === currentUserId;
               return (
                 <View
@@ -138,7 +135,7 @@ const GroupInfoTab = ({ groupId }: { groupId: string }) => {
                     }}
                   >
                     <Image
-                      source={{ uri: item.imgUrl ?? "" }}
+                      source={{ uri: item.avatar ?? "" }}
                       resizeMode="cover"
                       style={{ width: "100%", height: "100%" }}
                     />

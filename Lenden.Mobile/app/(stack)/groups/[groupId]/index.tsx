@@ -174,13 +174,19 @@ const GroupScreen = () => {
         );
 
       case "Balances":
-        return <BalanceTab groupId={groupId as string} />;
+        return (
+          <BalanceTab
+            repayments={group?.repayments ?? []}
+            groupId={groupId as string}
+            members={group?.members ?? []}
+          />
+        );
 
       case "Total":
         return <TotalTab groupId={groupId as string} />;
 
       default:
-        return <GroupInfoTab groupId={groupId as string} />;
+        return <GroupInfoTab group={group} />;
     }
   })();
 

@@ -1,4 +1,4 @@
-import { CreateGroupModal, useGroupHandler } from "@/src/modules/groups";
+import { CreateGroupModal } from "@/src/modules/groups";
 import {
   CText,
   Colors,
@@ -31,18 +31,18 @@ const GroupScreen = () => {
 
   const { data, refetch, isFetching } = useGetGroupsQuery();
 
-  const {
-    handleDeleteGroup,
-    handleLeaveGroup,
-    isDeleteGroupLoading: isDeletingGroup,
-    isLeaveGroupLoading: isLeavingGroup,
-  } = useGroupHandler(() => setIsGroupActionOpen(false), selectedGroup?.id);
+  // const {
+  //   handleDeleteGroup,
+  //   handleLeaveGroup,
+  //   isDeleteGroupLoading: isDeletingGroup,
+  //   isLeaveGroupLoading: isLeavingGroup,
+  // } = useGroupHandler();
 
   const groups: GroupWithExpenses[] = useSelector(
     (state: RootState) => state.groups,
   );
 
-  console.log("groups", groups);
+  console.log("groups", JSON.stringify(groups, null, 3));
 
   const onRefresh = useCallback(() => {
     refetch();
@@ -293,23 +293,23 @@ const GroupScreen = () => {
             </CText>
 
             <Pressable
-              onPress={handleLeaveGroup}
+              onPress={() => {}}
               style={{
                 borderWidth: 1,
                 borderColor: Colors.neutral[600],
                 padding: 12,
                 borderRadius: 10,
                 alignItems: "center",
-                opacity: isLeavingGroup ? 0.7 : 1,
+                opacity: 1,
               }}
             >
               <CText weight="bold" color="neutral" shade={300}>
-                {isLeavingGroup ? "Leaving..." : "Leave Group"}
+                {"Leave Group"}
               </CText>
             </Pressable>
 
             <Pressable
-              onPress={handleDeleteGroup}
+              onPress={() => {}}
               style={{
                 backgroundColor: Colors.warning[900],
                 borderWidth: 1,
@@ -317,11 +317,11 @@ const GroupScreen = () => {
                 padding: 12,
                 borderRadius: 10,
                 alignItems: "center",
-                opacity: isDeletingGroup ? 0.7 : 1,
+                opacity: 1,
               }}
             >
               <CText weight="bold" color="warning" shade={300}>
-                {isDeletingGroup ? "Deleting..." : "Delete Group"}
+                {"Delete Group"}
               </CText>
             </Pressable>
 

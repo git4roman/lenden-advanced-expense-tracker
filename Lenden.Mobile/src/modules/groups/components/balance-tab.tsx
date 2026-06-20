@@ -1,8 +1,4 @@
-import {
-  useGetGroupBalanceQuery,
-  useGetGroupQuery,
-} from "@/src/shared/store/apiSlices/group-slice.api";
-import { Transaction } from "@/src/shared/store/slices/group-slice";
+import { GroupWithExpenses } from "@/src/shared/store/slices/group-slice";
 import { RootState } from "@/src/shared/store/store";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
@@ -12,23 +8,29 @@ import React from "react";
 import { FlatList, Pressable, ScrollView, View } from "react-native";
 import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
+import { useMembers } from "../hooks/use-member";
+import { Repayment } from "../types";
+import { BalanceItem } from "./balance-tab/BalanceItem";
 
-const BalanceTab = ({ groupId }: { groupId: string }) => {
-  const { data: group, isLoading: isGroupLoading } = useGetGroupQuery(groupId);
-  const { data: mutualBalances } = useGetGroupBalanceQuery(groupId);
-  const balanceItems = (group?.members ?? []).map((member: any) => ({
-    user: member,
-    balance: member.netBalance ?? 0,
-  }));
-  const maxBalance =
-    Math.max(
-      1,
-      ...balanceItems
-        .map((b: any) => Math.abs(Number(b.balance) || 0))
-        .filter((v: any) => Number.isFinite(v)),
-    ) || 1;
+const BalanceTab = ({
+  repayments,
+  groupId,
+  members,
+}: {
+  repayments: GroupWithExpenses["repayments"];
+  groupId: string;
+  members: GroupWithExpenses["members"];
+}) => {
+  const { getMember } = useMembers(members);
+  const maxAmount =
+    repayments?.length > 0
+      ? Math.max(...repayments.map((repayment) => repayment.amount))
+      : 0;
+  console.log("maxAmount", maxAmount);
 
-  const currentUser = useSelector((state: RootState) => state.auth.user);
+  // const maxAmount = 2000;
+
+  const currentUser = useSelector((state: RootState) => state.userInfo);
 
   const handleSettlement = (type: string) => {
     console.log("Type", type);
@@ -74,7 +76,7 @@ const BalanceTab = ({ groupId }: { groupId: string }) => {
         </CText>
       </Pressable>
       <View style={{ gap: 12, paddingBottom: 20 }}>
-        {balanceItems.length === 0 && !isGroupLoading ? (
+        {repayments?.length === 0 ? (
           <View
             style={{
               borderWidth: 1,
@@ -91,9 +93,14 @@ const BalanceTab = ({ groupId }: { groupId: string }) => {
           </View>
         ) : (
           <FlatList
-            data={balanceItems}
+            data={repayments}
             renderItem={({ item }) => (
-              <BalanceItem item={item} maxBalance={maxBalance} />
+              <BalanceItem
+                item={item}
+                maxBalance={maxAmount}
+                user={currentUser}
+                getMember={getMember}
+              />
             )}
             contentContainerStyle={{
               gap: 10,
@@ -103,18 +110,19 @@ const BalanceTab = ({ groupId }: { groupId: string }) => {
               backgroundColor: Colors.neutral[900],
               borderColor: Colors.neutral[800],
             }}
-            keyExtractor={(item) => item.user.id?.toString() ?? item.user.email}
+            keyExtractor={(item) => `${item.from}-${item.to}`}
             scrollEnabled={false}
           />
         )}
         <FlatList
           keyExtractor={(_, index) => index.toString()}
-          data={mutualBalances ?? []}
+          data={repayments ?? []}
           renderItem={({ item }) => (
             <GroupMemberMutualBalance
               item={item}
               handleSettlement={handleSettlement}
-              currentUserId={currentUser?.slug ?? ""}
+              user={currentUser}
+              getMember={getMember}
             />
           )}
           contentContainerStyle={{
@@ -146,74 +154,25 @@ const BalanceTab = ({ groupId }: { groupId: string }) => {
 
 export default BalanceTab;
 
-function BalanceItem({ item, maxBalance }: { item: any; maxBalance: any }) {
-  const isPositive = item.balance > 0;
-  const absBalance = Math.abs(item.balance);
-  const minWidth = 55;
-  const maxWidth = 90;
-  const widthPercent =
-    absBalance === 0
-      ? minWidth
-      : Math.floor(
-          Math.max(
-            minWidth,
-            Math.min(maxWidth, (absBalance / maxBalance) * maxWidth),
-          ),
-        );
-
-  return (
-    <View style={{ flexDirection: isPositive ? "row" : "row-reverse" }}>
-      <View style={{ flex: 1, padding: 8 }}>
-        <View style={{ alignItems: isPositive ? "flex-end" : "stretch" }}>
-          <CText shade={50} size="sm" letterSpacing={0.4}>
-            {item.user.givenName} {item.user.familyName}
-          </CText>
-        </View>
-      </View>
-      <View
-        style={{ flex: 1, alignItems: isPositive ? "flex-start" : "flex-end" }}
-      >
-        <View
-          style={{
-            width: `${widthPercent}%`,
-            backgroundColor:
-              absBalance === 0
-                ? Colors.neutral[700]
-                : isPositive
-                  ? "green"
-                  : "red",
-            padding: 8,
-            borderTopRightRadius: isPositive ? 8 : 0,
-            borderBottomRightRadius: isPositive ? 8 : 0,
-            borderTopLeftRadius: isPositive ? 0 : 8,
-            borderBottomLeftRadius: isPositive ? 0 : 8,
-            alignItems: isPositive ? "stretch" : "flex-end",
-          }}
-        >
-          <CText shade={50} size="sm" letterSpacing={0.4}>
-            {absBalance === 0
-              ? `NPR ${absBalance} `
-              : isPositive
-                ? `+ NPR ${absBalance} `
-                : `- NPR ${absBalance} `}
-          </CText>
-        </View>
-      </View>
-    </View>
-  );
-}
-
 function GroupMemberMutualBalance({
   item,
-  currentUserId,
   handleSettlement,
+  user,
+  getMember,
 }: {
-  item: Transaction;
-  currentUserId: string;
+  item: Repayment;
   handleSettlement: (type: string) => void;
+  user: any;
+  getMember: (id: string) => {
+    givenName: string;
+    familyName: string;
+    avatar: string;
+  };
 }) {
-  const isUserDebtor = currentUserId === item.fromUserId;
-  const isUserCreditor = currentUserId === item.toUserId;
+  const isUserDebtor = user.id === item.from;
+  const isUserCreditor = user.id === item.to;
+  const fromUser = getMember(item.from);
+  const toUser = getMember(item.to);
   return (
     <View
       style={{
@@ -237,16 +196,16 @@ function GroupMemberMutualBalance({
       >
         <View style={{ gap: 2 }}>
           <View>
-            <CText color="neutral" shade={300} weight="semibold" size="md">
-              {item.from}
+            <CText color="neutral" shade={300} weight="medium" size="md">
+              {fromUser.givenName} {fromUser.familyName}
             </CText>
           </View>
           <CText color="neutral" shade={500} weight="regular" size="ssm">
             owes
           </CText>
           <View>
-            <CText color="neutral" shade={300} weight="semibold" size="md">
-              {item.to}
+            <CText color="neutral" shade={300} weight="medium" size="md">
+              {toUser.givenName} {toUser.familyName}
             </CText>
           </View>
         </View>

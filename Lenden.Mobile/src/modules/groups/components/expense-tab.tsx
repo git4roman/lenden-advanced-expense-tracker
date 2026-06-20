@@ -11,7 +11,6 @@ import {
   View,
 } from "react-native";
 import { useSelector } from "react-redux";
-import { GroupExpense } from "../types";
 import { ActivityItem } from "./activity-item";
 
 export const EXPENSE_FILTER_OPTIONS = [
@@ -77,9 +76,12 @@ const ExpenseTab = ({
 }: ExpenseTabProps) => {
   // const { data: expenses } = useGetExpensesQuery(groupId);
 
-  const group = useSelector((state: RootState) =>
-    state.groups.find((g) => g.id === groupId),
+  const expenses = useSelector(
+    (state: RootState) => state.groups.find((g) => g.id === groupId)?.expenses,
   );
+
+  console.log("Expenses", expenses);
+
   const [visibleCount, setVisibleCount] = React.useState(INITIAL_VISIBLE_COUNT);
   const [isLoadingMore, setIsLoadingMore] = React.useState(false);
   const loadMoreTimeout = React.useRef<ReturnType<typeof setTimeout> | null>(
@@ -97,8 +99,8 @@ const ExpenseTab = ({
   }, []);
 
   const filteredExpenses = React.useMemo(
-    () => filterAndSortExpenses(group?.expenses ?? [], filterKey),
-    [group?.expenses, filterKey],
+    () => filterAndSortExpenses(expenses ?? [], filterKey),
+    [expenses, filterKey],
   );
 
   // const groupedActivityData = React.useMemo<GroupedActivity[]>(() => {
@@ -161,29 +163,28 @@ const ExpenseTab = ({
         </View>
 
         <View style={{ borderRadius: 10, gap: 10 }}>
-          {expense.map((item: GroupExpense, index: number) => (
-            <Pressable
-              key={`${expense.date}-${index}`}
-              onPress={() =>
-                router.push({
-                  pathname: "/(stack)/groups/[groupId]/details",
-                  params: {
-                    groupId,
-                  },
-                })
-              }
-              style={{
-                backgroundColor: Colors.neutral[800],
-                borderWidth: 1,
-                borderRadius: 12,
-                borderColor: Colors.neutral[700],
-                marginHorizontal: 10,
-                paddingHorizontal: 10,
-              }}
-            >
-              <ActivityItem item={item} />
-            </Pressable>
-          ))}
+          <Pressable
+            key={`${expense.date}}`}
+            onPress={() =>
+              router.push({
+                pathname: "/(stack)/groups/[groupId]/details",
+                params: {
+                  groupId,
+                },
+              })
+            }
+            style={{
+              backgroundColor: Colors.neutral[800],
+              borderWidth: 1,
+              borderRadius: 12,
+              borderColor: Colors.neutral[700],
+              marginHorizontal: 10,
+              paddingHorizontal: 10,
+            }}
+          >
+            <ActivityItem item={expense} />
+          </Pressable>
+          ))
         </View>
       </View>
     );
@@ -191,7 +192,7 @@ const ExpenseTab = ({
 
   return (
     <FlatList
-      data={group?.expenses}
+      data={expenses}
       keyExtractor={(item) => item.date}
       renderItem={renderGroup}
       ListHeaderComponent={ListHeaderComponent}
