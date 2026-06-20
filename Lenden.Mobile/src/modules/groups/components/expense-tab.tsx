@@ -188,7 +188,7 @@ const ExpenseTab = ({
       refreshControl={
         <RefreshControl
           refreshing={refreshing ?? false}
-          onRefresh={onRefresh}
+          onRefresh={handleRefresh}
           tintColor={Colors.neutral[200]}
           colors={[Colors.accent[400]]}
         />
