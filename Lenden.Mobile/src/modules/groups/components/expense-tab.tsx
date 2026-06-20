@@ -1,4 +1,3 @@
-import { RootState } from "@/src/shared";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
 import { router } from "expo-router";
@@ -10,7 +9,7 @@ import {
   RefreshControl,
   View,
 } from "react-native";
-import { useSelector } from "react-redux";
+import { useGroupContext } from "../providers";
 import { ActivityItem } from "./activity-item";
 
 export const EXPENSE_FILTER_OPTIONS = [
@@ -33,17 +32,10 @@ export type ActivityData = {
   cost: string;
 };
 
-export type GroupedActivity = {
-  date: string;
-  items: ActivityData[];
-};
-
 type ExpenseTabProps = {
-  groupId: string;
   filterKey?: FilterKey;
   ListHeaderComponent?: React.ReactElement;
   refreshing?: boolean;
-  onRefresh?: () => void;
 };
 
 const INITIAL_VISIBLE_COUNT = 5;
@@ -68,17 +60,15 @@ const filterAndSortExpenses = (expenses: any[], filterKey?: FilterKey) => {
 };
 
 const ExpenseTab = ({
-  groupId,
   filterKey,
   ListHeaderComponent,
   refreshing,
-  onRefresh,
 }: ExpenseTabProps) => {
   // const { data: expenses } = useGetExpensesQuery(groupId);
 
-  const expenses = useSelector(
-    (state: RootState) => state.groups.find((g) => g.id === groupId)?.expenses,
-  );
+  const { group, handleRefresh } = useGroupContext();
+
+  const expenses = group.expenses;
 
   console.log("Expenses", expenses);
 
@@ -90,7 +80,7 @@ const ExpenseTab = ({
 
   React.useEffect(() => {
     setVisibleCount(INITIAL_VISIBLE_COUNT);
-  }, [groupId, filterKey]);
+  }, [group.id, filterKey]);
 
   React.useEffect(() => {
     return () => {
@@ -102,13 +92,6 @@ const ExpenseTab = ({
     () => filterAndSortExpenses(expenses ?? [], filterKey),
     [expenses, filterKey],
   );
-
-  // const groupedActivityData = React.useMemo<GroupedActivity[]>(() => {
-  //   const paged = filteredExpenses.slice(0, visibleCount);
-  //   const mapped = paged.map(toActivityData);
-  //   const grouped = groupByDate(mapped);
-  //   return grouped;
-  // }, [filteredExpenses, visibleCount]);
 
   const canLoadMore = visibleCount < filteredExpenses.length;
 
@@ -169,7 +152,7 @@ const ExpenseTab = ({
               router.push({
                 pathname: "/(stack)/groups/[groupId]/details",
                 params: {
-                  groupId,
+                  groupId: group.id,
                 },
               })
             }
@@ -203,14 +186,12 @@ const ExpenseTab = ({
       onEndReachedThreshold={0.4}
       onEndReached={handleLoadMore}
       refreshControl={
-        onRefresh ? (
-          <RefreshControl
-            refreshing={refreshing ?? false}
-            onRefresh={onRefresh}
-            tintColor={Colors.neutral[200]}
-            colors={[Colors.accent[400]]}
-          />
-        ) : undefined
+        <RefreshControl
+          refreshing={refreshing ?? false}
+          onRefresh={onRefresh}
+          tintColor={Colors.neutral[200]}
+          colors={[Colors.accent[400]]}
+        />
       }
     />
   );

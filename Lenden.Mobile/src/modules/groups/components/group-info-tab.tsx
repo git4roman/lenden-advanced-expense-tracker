@@ -8,7 +8,7 @@ import { Image, Modal, Pressable, ScrollView, View } from "react-native";
 import { useSelector } from "react-redux";
 import { GroupMember } from "../types/group-member";
 
-const GroupInfoTab = ({ group }: { group: GroupWithExpenses }) => {
+const GroupInfoTab = ({ group }: { group: GroupWithExpenses | undefined }) => {
   const [text, setText] = useState("");
   const [isRemoveOpen, setIsRemoveOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<GroupMember | null>(
