@@ -1,4 +1,3 @@
-import { GroupWithExpenses } from "@/src/shared/store/slices/group-slice";
 import { RootState } from "@/src/shared/store/store";
 import { CText } from "@/src/shared/ui/components/CText";
 import { Colors } from "@/src/shared/ui/theme/colors";
@@ -9,18 +8,13 @@ import { FlatList, Pressable, ScrollView, View } from "react-native";
 import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
 import { useMembers } from "../hooks/use-member";
+import { useGroupContext } from "../providers";
 import { Repayment } from "../types";
 import { BalanceItem } from "./balance-tab/BalanceItem";
 
-const BalanceTab = ({
-  repayments,
-  groupId,
-  members,
-}: {
-  repayments: GroupWithExpenses["repayments"];
-  groupId: string;
-  members: GroupWithExpenses["members"];
-}) => {
+const BalanceTab = () => {
+  const { group } = useGroupContext();
+  const { repayments, members, id } = group;
   const { getMember } = useMembers(members);
   const maxAmount =
     repayments?.length > 0
@@ -61,7 +55,7 @@ const BalanceTab = ({
     >
       <Pressable
         onPress={() => {
-          router.push(`/(stack)/groups/${groupId}/settlement`);
+          router.push(`/(stack)/groups/${id}/settlement`);
         }}
         style={{
           justifyContent: "flex-end",

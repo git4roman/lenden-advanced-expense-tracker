@@ -6,9 +6,11 @@ import { Feather } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { Image, Modal, Pressable, ScrollView, View } from "react-native";
 import { useSelector } from "react-redux";
+import { useGroupContext } from "../providers";
 import { GroupMember } from "../types/group-member";
 
-const GroupInfoTab = ({ group }: { group: GroupWithExpenses | undefined }) => {
+const GroupInfoTab = () => {
+  const { group } = useGroupContext();
   const [text, setText] = useState("");
   const [isRemoveOpen, setIsRemoveOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<GroupMember | null>(
